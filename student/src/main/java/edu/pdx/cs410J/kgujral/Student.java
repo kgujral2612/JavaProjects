@@ -4,7 +4,7 @@ import edu.pdx.cs410J.lang.Human;
 
 import java.util.ArrayList;
                                                                                     
-/**                                                                                 
+/**
  * This class is represents a <code>Student</code>.                                 
  */                                                                                 
 public class Student extends Human {                                                
@@ -31,7 +31,7 @@ public class Student extends Human {
    */
   @Override
   public String says() {                                                            
-    throw new UnsupportedOperationException("Not implemented yet");
+    return "This class is too much work";
   }
                                                                                     
   /**                                                                               

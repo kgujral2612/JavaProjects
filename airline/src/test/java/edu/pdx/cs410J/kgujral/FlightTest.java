@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for the {@link Flight} class.
@@ -12,25 +11,63 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * You'll need to update these unit tests as you build out you program.
  */
 public class FlightTest {
+  Flight sample_flight = new Flight(3561, "DDN", "DDL", "05:00", "05:45");
 
   /**
-   * This unit test will need to be modified (likely deleted) as you implement
-   * your project.
+   * When no values are passed while creating
+   * an object of the flight class,
+   * the default constructor is called
    */
   @Test
-  void getArrivalStringNeedsToBeImplemented() {
+  void flightWithDefaultValuesWhenNoValuesAreProvided() {
     Flight flight = new Flight();
-    assertThrows(UnsupportedOperationException.class, flight::getArrivalString);
+    assertThat(flight, is(not(equalTo(nullValue()))));
+    assertThat(flight.getNumber(), equalTo(42));
+    assertThat(flight.getSource(), equalTo(""));
+    assertThat(flight.getDepartureString(), equalTo(""));
+    assertThat(flight.getDestination(), equalTo(""));
+    assertThat(flight.getArrivalString(), equalTo(""));
   }
 
-  /**
-   * This unit test will need to be modified (likely deleted) as you implement
-   * your project.
+   /* When values are passed while creating
+   * an object of the flight class,
+   * the parameterized constructor is called
    */
   @Test
-  void initiallyAllFlightsHaveTheSameNumber() {
-    Flight flight = new Flight();
-    assertThat(flight.getNumber(), equalTo(42));
+  void flightWhenValuesAreProvided() {
+    int number = 123;
+    String src = "PDX";
+    String dest = "SFO";
+    String departure = "16:00";
+    String arrival = "19:00";
+    Flight flight = new Flight(number, src, dest, departure, arrival);
+    assertThat(flight, is(not(equalTo(nullValue()))));
+    assertThat(flight.getNumber(), equalTo(number));
+    assertThat(flight.getSource(), equalTo(src));
+    assertThat(flight.getDestination(), equalTo(dest));
+    assertThat(flight.getDepartureString(), equalTo(departure));
+    assertThat(flight.getArrivalString(), equalTo(arrival));
+  }
+
+  @Test
+  void getNumberReturnsNumber(){
+    assertThat(sample_flight.getNumber(), is(3561));
+  }
+  @Test
+  void getSourceReturnsSource(){
+    assertThat(sample_flight.getSource(), is("DDN"));
+  }
+  @Test
+  void getDepartureStringReturnsDepartureString(){
+    assertThat(sample_flight.getDepartureString(), is("05:00"));
+  }
+  @Test
+  void getDestinationReturnsDestination(){
+    assertThat(sample_flight.getDestination(), is("DDL"));
+  }
+  @Test
+  void getArrivalStringReturnsArrivalString(){
+    assertThat(sample_flight.getArrivalString(), is("05:45"));
   }
 
   @Test
@@ -38,5 +75,17 @@ public class FlightTest {
     Flight flight = new Flight();
     assertThat(flight.getDeparture(), is(nullValue()));
   }
-  
+
+  @Test
+  void forProject1ItIsOkayIfGetArrivalTimeReturnsNull() {
+    Flight flight = new Flight();
+    assertThat(flight.getArrival(), is(nullValue()));
+  }
+
+  @Test
+  void toStringReturnsValidOutput() {
+    Flight flight = new Flight();
+    var op = flight.toString();
+    assertThat(op, containsString("Flight 42 departs  at  arrives  at "));
+  }
 }

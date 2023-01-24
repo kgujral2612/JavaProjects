@@ -11,26 +11,15 @@ import java.util.HashMap;
  */
 public class Project1 {
 
-  @VisibleForTesting
-  static HashMap<String, String> argMap = new HashMap<>();
+  private static final String[] argNames = {"airline", "flightNumber", "src", "depart", "dest", "arrive"};
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
     return true;
   }
 
-  public static void initArgMap(){
-    argMap.put("airline", null);
-    argMap.put("flightNumber", null);
-    argMap.put("src", null);
-    argMap.put("depart", null);
-    argMap.put("dest", null);
-    argMap.put("arrive", null);
-    argMap.put("print", null);
-    argMap.put("README", null);
-  }
 
-  public static void parseArguments(String[] args){
-    String[] argNames = {"airline", "flightNumber", "src", "depart", "dest", "arrive"};
+  public static HashMap<String, String> parseArguments(String[] args){
+    HashMap<String, String> argMap = new HashMap<>();
     for(int i=0, j=0; i < args.length; i++){
       if(args[i] == null){
         j++;
@@ -38,18 +27,36 @@ public class Project1 {
       }
       if(args[i].startsWith("-"))
         argMap.put(args[i].substring(1), ""); //empty string indicates that an option was selected
-      else
+      else{
         argMap.put(argNames[j++], args[i]);
+      }
     }
+    return argMap;
   }
-  public static Airline createAirline(){
+  public static int findMissingArguments(HashMap<String, String> argMap){
+    StringBuilder message = new StringBuilder();
+    message.append("Missing argument(s):\n");
+    int i = 0;
+    for(String arg : argNames){
+      if(argMap.get(arg) == null){
+        message.append(++i + ". ");
+        message.append(arg);
+        message.append("\n");
+      }
+    }
+    if(i>0){
+      System.err.println(message);
+    }
+    return i;
+  }
+  public static Airline createAirline(HashMap<String, String> argMap){
     var airlineName = argMap.get("airline");
     if(airlineName== null || airlineName.isEmpty())
       return null;
     return new Airline(airlineName);
   }
 
-  public static Flight createFlight(){
+  public static Flight createFlight(HashMap<String, String> argMap){
     var flightNumber = Integer.parseInt(argMap.get("flightNumber"));
     var src = argMap.get("src");
     var depart = argMap.get("depart");
@@ -81,26 +88,36 @@ public class Project1 {
       System.err.println("Missing command line arguments");
       return;
     }
-    initArgMap();
-    parseArguments(args);
-    var airline = createAirline();
-    var flight = createFlight();
-    if(argMap.get("print") !=null){
-      //Prints a description of the new flight
-      airline.toString();
-      flight.toString();
-    }
-    if(argMap.get("README") !=null){
-     //Prints a README for this project and exits
-      try{
 
-      }
-      catch(Exception e){
-
-      }
-      finally{
-        System.exit(0);
-      }
+    for(String arg: args){
+      System.out.println(arg);
     }
+
+
+
+//    parseArguments(args);
+//    if(findMissingArguments() > 0)
+//      System.exit(0);
+//
+//    //Everything is fine, continue
+//    var airline = createAirline();
+//    var flight = createFlight();
+//    if(argMap.get("print") !=null){
+//      //Prints a description of the new flight
+//      airline.toString();
+//      flight.toString();
+//    }
+//    if(argMap.get("README") !=null){
+//     //Prints a README for this project and exits
+//      try{
+//
+//      }
+//      catch(Exception e){
+//
+//      }
+//      finally{
+//        System.exit(0);
+//      }
+//    }
   }
 }

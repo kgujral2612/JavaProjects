@@ -225,12 +225,12 @@ public class Project1 {
   public static void main(String[] args) {
     if(args == null || args.length == 0){
       System.err.println("Missing command line arguments");
+      System.err.println("Please view how to use the program by running the command: \njava -jar target/airline-2023.0.0.jar -README\n");
       return;
     }
 
     HashMap<String, String> argMap = parseArguments(args);
     if(argMap == null){
-      System.err.println("Please try again!");
       return;
     }
     if(argMap.size()==0){

@@ -21,6 +21,7 @@ class Project1IT extends InvokeMainTestCase {
   void testNoCommandLineArguments() {
     MainMethodResult result = invokeMain();
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Please view how to use the program by running the command: \njava -jar target/airline-2023.0.0.jar -README"));
   }
 
   /**
@@ -43,7 +44,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"Some Valid Airline", "Flight1234", "PDX", "03/04/2022", "16:00", "SFO", "03/04/2022", "19:00"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid or missing flight number. Flight number must be numeric. For example: 4578"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   @Test
@@ -51,7 +51,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"Some Valid Airline", "1234", "Portland", "03/04/2022", "16:00", "SFO", "03/04/2022", "19:00"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid or missing airport code for src. Airport codes must contain exactly 3 letter. For example: PDX"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   @Test
@@ -59,7 +58,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"Some Valid Airline", "1234", "PDX", "03/04/2022", "16:00", "San Francisco", "03/04/2022", "19:00"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid or missing airport code for dest. Airport codes must contain exactly 3 letter. For example: SFO"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   @Test
@@ -67,7 +65,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"Some Valid Airline", "1234", "PDX", "03-04-2022", "16:00", "SFO", "03/04/2022", "19:00"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid or missing departure time. Departure time must be 2 separate command line arguments containing date and time in the format mm/dd/yyyy hh:mm. For example: 3/15/2023 10:39"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   @Test
@@ -75,7 +72,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"Some Valid Airline", "1234", "PDX", "03/04/2022", "16:00", "SFO", "2022/04/21", "19:00"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid or missing arrival time. Arrival time must be 2 separate command line arguments containing date and time in the format mm/dd/yyyy hh:mm. For example: 3/15/2023 10:39"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   @Test
@@ -83,7 +79,6 @@ class Project1IT extends InvokeMainTestCase {
     String[] args = {"-print", "Some Valid Airline", "1234"};
     MainMethodResult result = invokeMain(args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Some Arguments are missing in the input."));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Please try again!"));
   }
 
   /**

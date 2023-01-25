@@ -119,6 +119,10 @@ class Project1IT extends InvokeMainTestCase {
     assertThat(content, containsString("- arrive: Arrival date and time (24-hour time in mm/dd/yyy hh:mm format)"));
     assertThat(result.getTextWrittenToStandardError(), is(equalTo("")));
   }
+
+  /**
+   * If both options are given, only print out the README and end program.
+   * */
   @Test
   void printsReadmeWhenBothOptionsAreGiven(){
     String[] validArgs = {"-README","-print","Some Valid Airline", "1234", "PDX", "03/04/2022", "16:00", "SFO", "03/04/2022", "19:00"};

@@ -15,6 +15,11 @@ class Project1Test {
   String[] validArgsReadmeOp = {"-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
   String[] validArgsNoOp = {"My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
 
+  /**
+   * Validation checking methods should return
+   * true when the criteria are met and
+   * false otherwise
+   * */
   @Test
   void isValidOptionShouldReturnFalseIfInputIsInvalid(){
     String invalidOption = "-printing";
@@ -78,11 +83,20 @@ class Project1Test {
     assertThat(Project1.isValidDateAndTime(invalidDateTime), is(false));
   }
 
+  /**
+   * When valid arguments are passed, a map of arguments should be returned
+   * */
   @Test
   void parseArgumentsWithValidArgAllOps(){
     var argMap = Project1.parseArguments(validArgs);
     assertThat(argMap, is(not(nullValue())));
   }
+
+  /**
+   * When valid arguments are passed along with '-print' option,
+   * the key 'print' should be present
+   * but the key 'README' should be null
+   * */
   @Test
   void parseArgumentsWithValidArgPrintOps(){
     var argMap = Project1.parseArguments(validArgsPrintOp);
@@ -91,11 +105,21 @@ class Project1Test {
     assertThat(argMap.get("print"), is(not(nullValue())));
     assertThat(argMap.get("README"), is(nullValue()));
   }
+
+  /**
+   * When valid arguments are passed along with '-print' and 'README' options,
+   * an empty map should be returned
+   * */
   @Test
   void parseArgumentsWithValidArgReadMeOps(){
     var argMap = Project1.parseArguments(validArgsReadmeOp);
     assertThat(argMap, is(not(nullValue())));
   }
+
+  /**
+   * When valid arguments are passed along with no options,
+   * the keys 'print' and 'README' should not be present
+   * */
   @Test
   void parseArgumentsWithValidArgNoOps(){
     var argMap = Project1.parseArguments(validArgsNoOp);
@@ -104,30 +128,55 @@ class Project1Test {
     assertThat(argMap.get("print"), is(nullValue()));
     assertThat(argMap.get("README"), is(nullValue()));
   }
+
+  /**
+   * When arguments contain invalid flight data
+   * a null map should be returned
+   * */
   @Test
   void parseArgumentsWithInvalidFlight(){
     String[] invalidFlight = {"My Awesome Airways", "Flight1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
     var argMap = Project1.parseArguments(invalidFlight);
     assertThat(argMap,is(nullValue()));
   }
+
+  /**
+   * When arguments contain invalid src data
+   * a null map should be returned
+   * */
   @Test
   void parseArgumentsWithInvalidSrc(){
     String[] invalidSrc = {"My Awesome Airways", "1234", "Portland", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
     var argMap = Project1.parseArguments(invalidSrc);
     assertThat(argMap,is(nullValue()));
   }
+
+  /**
+   * When arguments contain invalid dest data
+   * a null map should be returned
+   * */
   @Test
   void parseArgumentsWithInvalidDest(){
     String[] invalidDest = {"My Awesome Airways", "123", "PDX", "3/15/2023", "1:03", "San Francisco", "3/15/2023", "3:33"};
     var argMap = Project1.parseArguments(invalidDest);
     assertThat(argMap,is(nullValue()));
   }
+
+  /**
+   * When arguments contain invalid depart data
+   * a null map should be returned
+   * */
   @Test
   void parseArgumentsWithInvalidDepart(){
     String[] invalidDepart = {"My Awesome Airways", "123", "PDX", "3/15/2023", "", "SFO", "3/15/2023", "3:33"};
     var argMap = Project1.parseArguments(invalidDepart);
     assertThat(argMap,is(nullValue()));
   }
+
+  /**
+   * When arguments contain invalid arrive data
+   * a null map should be returned
+   * */
   @Test
   void parseArgumentsWithInvalidArrive(){
     String[] invalidArrive = {"My Awesome Airways", "123", "PDX", "3/15/2023", "1:03", "SFO", "2023/15/20", "3:33"};
@@ -135,6 +184,11 @@ class Project1Test {
     assertThat(argMap,is(nullValue()));
   }
 
+  /**
+   * the readMe() method should read README.txt
+   * as a project resource and return the content
+   * in form of a string
+   * */
   @Test
   void readMeShouldReturnContentOfReadMeFile(){
     try{

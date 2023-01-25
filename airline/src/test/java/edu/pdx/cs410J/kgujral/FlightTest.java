@@ -7,11 +7,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Unit tests for the {@link Flight} class.
- *
  * You'll need to update these unit tests as you build out you program.
  */
 public class FlightTest {
-  Flight sample_flight = new Flight(3561, "DDN", "DDL", "05:00", "05:45");
+  Flight sample_flight = new Flight(3561, "DDN", "DDL", "03/03/2020 05:00", "03/03/2020 05:45");
 
   /**
    * When no values are passed while creating
@@ -29,7 +28,7 @@ public class FlightTest {
     assertThat(flight.getArrivalString(), equalTo(""));
   }
 
-   /* When values are passed while creating
+   /** When values are passed while creating
    * an object of the flight class,
    * the parameterized constructor is called
    */
@@ -38,8 +37,8 @@ public class FlightTest {
     int number = 123;
     String src = "PDX";
     String dest = "SFO";
-    String departure = "16:00";
-    String arrival = "19:00";
+    String departure = "03/03/2020 16:00";
+    String arrival = "03/03/2020 19:00";
     Flight flight = new Flight(number, src, dest, departure, arrival);
     assertThat(flight, is(not(equalTo(nullValue()))));
     assertThat(flight.getNumber(), equalTo(number));
@@ -59,7 +58,7 @@ public class FlightTest {
   }
   @Test
   void getDepartureStringReturnsDepartureString(){
-    assertThat(sample_flight.getDepartureString(), is("05:00"));
+    assertThat(sample_flight.getDepartureString(), is("03/03/2020 05:00"));
   }
   @Test
   void getDestinationReturnsDestination(){
@@ -67,7 +66,7 @@ public class FlightTest {
   }
   @Test
   void getArrivalStringReturnsArrivalString(){
-    assertThat(sample_flight.getArrivalString(), is("05:45"));
+    assertThat(sample_flight.getArrivalString(), is("03/03/2020 05:45"));
   }
 
   @Test

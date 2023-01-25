@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
 /**
  * The main class for the CS410J airline Project
  */
@@ -22,15 +21,34 @@ public class Project1 {
   private static final String invalidArriveMsg = "Invalid or missing arrival time. Arrival time must be 2 separate command line arguments containing date and time in the format mm/dd/yyyy hh:mm. For example: 3/15/2023 10:39";
 
 
+  /**
+  * Returns true if the option is valid,
+  * i.e, either '-print' or '-README'
+  * @param    option    an option that needs to be validated
+  * @return             true if the option is valid, false otherwise
+  * */
   @VisibleForTesting
-  static boolean isValidOption(String arg){
-    return arg.equals("-print") || arg.equals("-README") ;
-  }
-  @VisibleForTesting
-  static boolean isValidAirlineName(String airline){
-    return airline !=null && !airline.isEmpty() && !airline.isBlank();
+  static boolean isValidOption(String option){
+    return option.equals("-print") || option.equals("-README") ;
   }
 
+  /**
+   * Returns true if the airlineName is valid,
+   * i.e, it should not be null, empty or blank
+   * @param  airlineName  the name of an airline that needs to be validated
+   * @return              true if airline is valid, false otherwise
+   * */
+  @VisibleForTesting
+  static boolean isValidAirlineName(String airlineName){
+    return airlineName !=null && !airlineName.isEmpty() && !airlineName.isBlank();
+  }
+
+  /**
+   * Returns true if the flightNumber is valid,
+   * i.e, it should be numeric
+   * @param  flightNumber  a flight's number that needs to be validated
+   * @return               true if flightNumber is valid, false otherwise
+   * */
   @VisibleForTesting
   static boolean isValidFlightNumber(String flightNumber){
     for(int i=0; i<flightNumber.length(); i++){
@@ -40,6 +58,12 @@ public class Project1 {
     return true;
   }
 
+  /**
+   * Returns true if the airportCode is valid,
+   * i.e, it should consist of letters and should be of length 3
+   * @param  airportCode  airport code that needs to be validated
+   * @return              true if airportCode is valid, false otherwise
+   * */
   @VisibleForTesting
   static boolean isValidAirportCode(String airportCode){
     for(int i=0; i<airportCode.length(); i++){
@@ -49,6 +73,13 @@ public class Project1 {
     return airportCode.length() == 3;
   }
 
+  /**
+   * Returns true if the dateAndTime is valid,
+   * i.e, it should consist of date and time in
+   * the format of mm/dd/yyyy hh:mm
+   * @param  dateAndTime  a string consisting of date and time with space in between
+   * @return              true if dateAndTime is valid, false otherwise
+   * */
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -71,6 +102,18 @@ public class Project1 {
     return true;
   }
 
+  /**
+   * Parses arguments
+   * If -README option is selected, calls the readMe() method and exits
+   * Otherwise, creates a hashmap mapping all the user arguments
+   * after validating each one.
+   * Assumes that the options precede the main arguments
+   * Options may be '-print' or '-README'
+   * Other arguments will be in the order: airline, flightNumber, src, depart, dest, arrive.
+   * @param  args  an array of arguments
+   * @return       a hashmap of mapped user arguments
+   * @see #readMe()
+   * */
   @VisibleForTesting
   static HashMap<String, String> parseArguments(String[] args){
     HashMap<String, String> argMap = new HashMap<>();
@@ -149,12 +192,14 @@ public class Project1 {
     }
     return argMap;
   }
-  @VisibleForTesting
-  static Airline createAirline(String airline){ return new Airline(airline); }
 
-  @VisibleForTesting
-  static Flight createFlight(int flightNumber, String src, String dest, String depart, String arrive){ return new Flight(flightNumber, src, dest, depart, arrive); }
-
+  /**
+   * Returns a string composed of the content
+   * inside the project's README.txt file
+   * @throws IOException if an input or output exception
+   * occurs while reading the file.
+   * @return  a string representing the content inside README.txt
+   * */
   @VisibleForTesting
   static String readMe() throws IOException{
     StringBuilder content = new StringBuilder();
@@ -171,7 +216,12 @@ public class Project1 {
     return content.toString();
   }
 
-
+  /**
+   * Main control of the program
+   * Receives user command line arguments
+   * Processes arguments and orchestrates calling other functions
+   * @param  args  user input (command-line arguments)
+   * */
   public static void main(String[] args) {
     if(args == null || args.length == 0){
       System.err.println("Missing command line arguments");
@@ -187,8 +237,8 @@ public class Project1 {
       return;
     }
 
-    var flight = createFlight(Integer.parseInt(argMap.get(argNames[1])), argMap.get(argNames[2]), argMap.get(argNames[3]), argMap.get(argNames[3]), argMap.get(argNames[4]));
-    var airline = createAirline(argMap.get(argNames[0]));
+    var flight = new Flight(Integer.parseInt(argMap.get(argNames[1])), argMap.get(argNames[2]), argMap.get(argNames[3]), argMap.get(argNames[3]), argMap.get(argNames[4]));
+    var airline = new Airline(argMap.get(argNames[0]));
     airline.addFlight(flight);
 
     if(argMap.get("print") != null){

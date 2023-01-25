@@ -90,6 +90,8 @@ public class Project1 {
     try{
       dateFormat.parse(splitDT[0]);
       String[] splitT = splitDT[1].split(":");
+      if(splitT.length !=2)
+        return false;
       int hours = Integer.parseInt(splitT[0]);
       int minutes = Integer.parseInt(splitT[1]);
       if(hours > 24 || hours < 0 || minutes > 59 || minutes < 0 ){

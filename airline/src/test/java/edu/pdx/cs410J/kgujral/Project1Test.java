@@ -81,6 +81,8 @@ class Project1Test {
     assertThat(Project1.isValidDateAndTime(invalidDateTime), is(false));
     invalidDateTime = "2023/3/20 12:33";
     assertThat(Project1.isValidDateAndTime(invalidDateTime), is(false));
+    invalidDateTime = "2/3/2023 12 o'clock";
+    assertThat(Project1.isValidDateAndTime(invalidDateTime), is(false));
   }
 
   /**

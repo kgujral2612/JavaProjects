@@ -24,6 +24,19 @@ public class TextParserTest {
   }
 
   @Test
+  void airlineAndFlightCanBeParsed() throws ParserException{
+    InputStream resource = getClass().getResourceAsStream("airline-flight-info.txt");
+    assertThat(resource, notNullValue());
+
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    Airline airline = parser.parse();
+    assertThat(airline.getName(), equalTo("Alaska Airlines"));
+    assertThat(airline.getFlights().size(), equalTo(2));
+    assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 28/01/2023 19:00 arrives SFO at 28/01/2023 20:30"));
+    assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 28/01/2023 17:23 arrives PDX at 28/01/2023 20:53"));
+  }
+
+  @Test
   void invalidTextFileThrowsParserException() {
     InputStream resource = getClass().getResourceAsStream("empty-airline.txt");
     assertThat(resource, notNullValue());
@@ -31,4 +44,7 @@ public class TextParserTest {
     TextParser parser = new TextParser(new InputStreamReader(resource));
     assertThrows(ParserException.class, parser::parse);
   }
+
 }
+
+

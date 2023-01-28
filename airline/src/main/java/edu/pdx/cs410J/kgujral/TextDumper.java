@@ -22,7 +22,13 @@ public class TextDumper implements AirlineDumper<Airline> {
       PrintWriter pw = new PrintWriter(this.writer)
       ) {
       pw.println(airline.getName());
-
+      for(var flight: airline.getFlights()){
+        pw.println(flight.getNumber());
+        pw.println(flight.getSource());
+        pw.println(flight.getDepartureString());
+        pw.println(flight.getDestination());
+        pw.println(flight.getArrivalString());
+      }
       pw.flush();
     }
   }

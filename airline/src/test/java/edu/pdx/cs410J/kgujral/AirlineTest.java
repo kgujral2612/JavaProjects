@@ -9,7 +9,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * You'll need to update these unit tests as you build out you program.
  */
 public class AirlineTest {
+    /** sample airline for testing */
     Airline sample_airline = new Airline("Kingfisher Airlines");
+    /** sample flight for testing */
     Flight sample_flight = new Flight(3561, "DDN", "DDL", "05:00", "05:45");
 
     /**

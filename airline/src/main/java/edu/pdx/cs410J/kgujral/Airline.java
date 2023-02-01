@@ -9,7 +9,9 @@ import java.util.Collection;
  * The Airline class which implements the {@link AbstractAirline} abstract class
  * */
 public class Airline extends AbstractAirline<Flight> {
+  /** The airline name */
   private final String name;
+  /** The collection of flights inside an airline*/
   private Collection<Flight> flights;
 
   /**

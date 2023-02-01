@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.ParserException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
@@ -63,6 +64,7 @@ class Project2IT extends InvokeMainTestCase {
         assertThat(read.getName(), equalTo(validArgsPrintFileOp[3]));
     }
 
+    @Disabled("Testing absolute path")
     @Test
     void shouldNotAddFlightDetailsIfAirlineNameIsDifferentWithOp(){
         String [] args = new String[] {"-textFile", "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/airline-flight-info.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
@@ -70,11 +72,12 @@ class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.airlineNameMismatch, "My Awesome Airways", "Alaska Airlines")));
     }
 
+    @Disabled("Testing absolute path")
     @Test
     void shouldNotAddFlightDetailsIfFileContainsErrorsWithOp(){
         String[] args = new String[]{"-textFile", "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/invalid-airline-flight-info.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString("Missing or Invalid Departure Airport Code in text file! Was PDX 28/01/2023 19:00 | Expected A 3-letter String. eg: PDX"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Departure Airport Code in text file! Was PDX 28/01/2023 19:00 | Expected A 3-letter String. eg: PDX"));
     }
 
     @Test

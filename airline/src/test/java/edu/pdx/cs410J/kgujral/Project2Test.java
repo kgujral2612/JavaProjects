@@ -3,12 +3,16 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link Project2} class
  * */
 public class Project2Test {
+    /**a valid argument array with all options*/
     String[] validArgsAllOp = {"-print", "-textFile", "filepath", "-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
+    /**a valid argument array with no options*/
     String[] validArgsNoOp = {"My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
 
     /**
@@ -29,22 +33,17 @@ public class Project2Test {
         }
     }
 
+    /**Airline name must not be null or empty*/
     @Test
     void shouldValidateAirlineName(){
-        boolean result = Project2.isValidAirlineName(null);
-        assertThat(result, is(false));
-        result = Project2.isValidAirlineName("");
-        assertThat(result, is(false));
-        result = Project2.isValidAirlineName(" ");
-        assertThat(result, is(false));
-        result = Project2.isValidAirlineName("      ");
-        assertThat(result, is(false));
-        result = Project2.isValidAirlineName("valid1name");
-        assertThat(result, is(true));
-        result = Project2.isValidAirlineName("^^^^^^^");
-        assertThat(result, is(true));
+        assertFalse(Project2.isValidAirlineName(null));
+        assertFalse(Project2.isValidAirlineName(""));
+        assertFalse(Project2.isValidAirlineName(" "));
+        assertFalse(Project2.isValidAirlineName("      "));
+        assertTrue(Project2.isValidAirlineName("valid1name"));
+        assertTrue(Project2.isValidAirlineName("^^^^^^^"));
     }
-
+    /**Flight number must be a valid whole number*/
     @Test
     void shouldValidateFlightNumber(){
         boolean result = Project2.isValidFlightNumber(null);
@@ -59,50 +58,36 @@ public class Project2Test {
         assertThat(result, is(true));
     }
 
+    /**Airport code must be a valid 3-letter word*/
     @Test
     void shouldValidateAirportCode(){
-        boolean result = Project2.isValidAirportCode(null);
-        assertThat(result, is(false));
-        result = Project2.isValidAirportCode("");
-        assertThat(result, is(false));
-        result = Project2.isValidAirportCode("123");
-        assertThat(result, is(false));
-        result = Project2.isValidAirportCode("ABC");
-        assertThat(result, is(true));
+        assertFalse(Project2.isValidAirportCode(null));
+        assertFalse(Project2.isValidAirportCode(""));
+        assertFalse(Project2.isValidAirportCode("123"));
+        assertTrue(Project2.isValidAirportCode("ABC"));
     }
 
+    /**Date must be in mm/dd/yyyy format*/
     @Test
     void shouldValidateDate(){
-        boolean result = Project2.isValidDate("12-22-2022");
-        assertThat(result, is(false));
-        result = Project2.isValidDate("12,22 2022");
-        assertThat(result, is(false));
-        result = Project2.isValidDate("");
-        assertThat(result, is(false));
-        result = Project2.isValidDate(null);
-        assertThat(result, is(false));
-        result = Project2.isValidDate("12/22/2022");
-        assertThat(result, is(true));
+        assertFalse(Project2.isValidDate(null));
+        assertFalse(Project2.isValidDate(""));
+        assertFalse(Project2.isValidDate("12-22-2022"));
+        assertFalse(Project2.isValidDate("12,22 2022"));
+        assertTrue(Project2.isValidDate("12/22/2022"));
     }
-
+    /**Time must be in hh:mm format*/
     @Test
     void shouldValidateTime(){
-        boolean result = Project2.isValidTime("22:00");
-        assertThat(result, is(true));
-        result = Project2.isValidTime("22:600");
-        assertThat(result, is(false));
-        result = Project2.isValidTime("25:00");
-        assertThat(result, is(false));
-        result = Project2.isValidTime("16.00");
-        assertThat(result, is(false));
-        result = Project2.isValidTime("");
-        assertThat(result, is(false));
-        result = Project2.isValidTime("");
-        assertThat(result, is(false));
-        result = Project2.isValidTime(null);
-        assertThat(result, is(false));
+        assertTrue(Project2.isValidTime("22:00"));
+        assertFalse(Project2.isValidTime(""));
+        assertFalse(Project2.isValidTime(null));
+        assertFalse(Project2.isValidTime("22:600"));
+        assertFalse(Project2.isValidTime("25:00"));
+        assertFalse(Project2.isValidTime("16.00"));
     }
 
+    /**Utility method should return the index where arguments begin from if options are provided*/
     @Test
     void getArgumentIndexWithOps(){
         int result = Project2.getArgumentIndex(validArgsAllOp);
@@ -110,12 +95,14 @@ public class Project2Test {
         assertThat(result, is(4));
     }
 
+    /**Utility method should return the index where arguments begin from if options are not provided*/
     @Test
     void getArgumentIndexWithoutOps(){
         int result = Project2.getArgumentIndex(validArgsNoOp);
         assertThat(result, is(0));
     }
 
+    /**Options should be parsed and added to a hashmap*/
     @Test
     void shouldParseOptions(){
         var argMap = Project2.parseOptions(validArgsAllOp);
@@ -130,6 +117,7 @@ public class Project2Test {
         assertThat(argMap.get("textFile"), is(nullValue()));
     }
 
+    /**.txt file extension should be appended to the filename if it is not present*/
     @Test
     void shouldAddFileExtensionIfNotProvided(){
         String[] args = new String[] {"-textFile", "fileName", "PDX"};
@@ -141,7 +129,7 @@ public class Project2Test {
         assertThat(opMap.get("textFile"), equalTo("somefile.txt"));
 
     }
-
+    /**Arguments passed by the user must be parsed and added onto a hashmap*/
     @Test
     void shouldParseArgs(){
         var argMap = Project2.parseArgs(validArgsNoOp);
@@ -155,6 +143,7 @@ public class Project2Test {
         assertThat(argMap.get("arriveTime"), equalTo("3:33"));
     }
 
+    /**The missing argument should be detected in the user input*/
     @Test
     void shouldDetectIfOneArgIsMissing(){
         var argMap = Project2.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "SFO", "3/15/2023", "3:33"});
@@ -168,7 +157,7 @@ public class Project2Test {
         assertThat(argMap.get("arriveDate"), equalTo("3/15/2023"));
         assertThat(argMap.get("arriveTime"), equalTo("3:33"));
     }
-
+    /**The missing arguments should be detected in the user input*/
     @Test
     void shouldDetectIfTwoArgsAreMissing(){
         var argMap = Project2.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "3/15/2023", "3:33"});
@@ -182,7 +171,7 @@ public class Project2Test {
         assertThat(argMap.get("arriveDate"), equalTo("3/15/2023"));
         assertThat(argMap.get("arriveTime"), equalTo("3:33"));
     }
-
+    /**The missing arguments should be detected in the user input and the hashmap should not contain those values*/
     @Test
     void shouldDetectIfArgsAreMissing(){
         var argMap = Project2.parseArgs(new String[]{"1234", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023", "3:33"});
@@ -202,5 +191,4 @@ public class Project2Test {
         argMap = Project2.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023"});
         assertThat(argMap.get("arriveTime"), is(nullValue()));
     }
-
 }

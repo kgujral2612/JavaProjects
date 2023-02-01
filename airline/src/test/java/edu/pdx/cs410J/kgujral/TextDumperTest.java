@@ -12,6 +12,8 @@ import static org.hamcrest.Matchers.equalTo;
  * */
 public class TextDumperTest {
 
+  /**If an airline only contains an airline name and no flights,
+   * it should be successfully dumped onto the text file*/
   @Test
   void airlineNameIsDumpedInTextFormat() {
     String airlineName = "Test Airline";
@@ -24,6 +26,9 @@ public class TextDumperTest {
     String text = sw.toString();
     assertThat(text, containsString(airlineName));
   }
+
+  /**If an airline only contains an airline name and multiple flights,
+   * it should be successfully dumped onto the text file*/
   @Test
   void airlineAndFlightInfoIsDumped(@TempDir File tempDir) throws IOException, ParserException {
     String airlineName = "Indigo Airline";
@@ -43,6 +48,7 @@ public class TextDumperTest {
     assertThat(read.getFlights().toArray()[1].toString(), equalTo("Flight 5241 departs DDN at 2/01/2022 08:23 arrives HYD at 2/01/2022 11:53"));
   }
 
+  /**The text dumped should be parsable*/
   @Test
   void canParseTextWrittenByTextDumper(@TempDir File tempDir) throws IOException, ParserException {
     String airlineName = "Test Airline";

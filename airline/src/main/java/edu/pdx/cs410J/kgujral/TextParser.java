@@ -31,6 +31,8 @@ public class TextParser implements AirlineParser<Airline> {
    * that parses text files searching for a
    * single airline and its flights
    * @return Airline along with its flight information
+   * @throws ParserException when the file is either not
+   * available or can't be parsed due to formatting issues
    * */
   @Override
   public Airline parse() throws ParserException {

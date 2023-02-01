@@ -9,6 +9,8 @@ import java.io.Writer;
 public class TextDumper implements AirlineDumper<Airline> {
   private final Writer writer;
 
+  /** Parameterized constructor that assigns the value of the given writer to the writer data member
+   * @param writer the writer object*/
   public TextDumper(Writer writer) {
     this.writer = writer;
   }
@@ -19,9 +21,6 @@ public class TextDumper implements AirlineDumper<Airline> {
    * */
   @Override
   public void dump(Airline airline) {
-    if(airline == null || airline.getName() == ""){
-      return;
-    }
     try (
       PrintWriter pw = new PrintWriter(this.writer)
       ) {

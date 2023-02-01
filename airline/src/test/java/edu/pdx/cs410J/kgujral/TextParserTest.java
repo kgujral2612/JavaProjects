@@ -1,14 +1,11 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TextParserTest {
   @Test
@@ -30,6 +27,14 @@ public class TextParserTest {
     assertThat(airline.getFlights().size(), equalTo(2));
     assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 2/01/2023 19:00 arrives SFO at 2/01/2023 20:30"));
     assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 2/01/2023 17:23 arrives PDX at 2/01/2023 20:53"));
+  }
+
+  @Test
+  void emptyTextFileCanBeParsed()throws ParserException{
+    InputStream resource = getClass().getResourceAsStream("empty-airline.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertNull(parser.parse());
   }
 
   @Test

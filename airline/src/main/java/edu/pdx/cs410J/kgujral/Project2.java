@@ -59,7 +59,7 @@ public class Project2 {
 
     /**
      * Prints a flight
-     * @param flight
+     * @param flight the object containing a flight
      * */
     @VisibleForTesting
     static void print(Flight flight){
@@ -86,7 +86,10 @@ public class Project2 {
             parser = new TextParser(new FileReader(textFile));
             try{
                 airlineFromFile = parser.parse();
-                if(!airlineFromFile.getName().equals(airline.getName())){
+                if(airlineFromFile == null){
+                    airlineFromFile = airline;
+                }
+                else if(!airlineFromFile.getName().equals(airline.getName())){
                     System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
                     return;
                 }
@@ -326,7 +329,7 @@ public class Project2 {
                             i--; continue;
                         }
                         else{
-                            System.err.printf((invalidArgument) + "%n", "Time of Departure", args[i], "A time in the format hh:mm. eg: 05:45");
+                            System.err.printf((invalidArgument) + "%n", "Time of Departure", args[i], "24-hour time in the format hh:mm. eg: 05:45");
                             break;
                         }
                     }
@@ -357,7 +360,7 @@ public class Project2 {
                     argMap.put("arriveDate", args[i]);
                     break;
                 case 7: if(!isValidTime(args[i])){
-                    System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "A time in the format hh:mm. eg: 08:05");
+                    System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "24-hour time in the format hh:mm. eg: 08:05");
                     break;
                     }
                     argMap.put("arriveTime", args[i]);

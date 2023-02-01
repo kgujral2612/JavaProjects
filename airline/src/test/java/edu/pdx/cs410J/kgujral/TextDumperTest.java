@@ -1,16 +1,15 @@
 package edu.pdx.cs410J.kgujral;
-
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
 import java.io.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Unit tests for the {@link TextDumper} class
+ * */
 public class TextDumperTest {
 
   @Test
@@ -56,14 +55,5 @@ public class TextDumperTest {
     TextParser parser = new TextParser(new FileReader(textFile));
     Airline read = parser.parse();
     assertThat(read.getName(), equalTo(airlineName));
-  }
-
-  @Test
-  void shouldNotWriteEmptyAirline(@TempDir File tempDir) throws IOException, ParserException{
-    File textFile = new File(tempDir, "airline.txt");
-    TextDumper dumper = new TextDumper(new FileWriter(textFile));
-    dumper.dump(null);
-    TextParser parser = new TextParser(new FileReader(textFile));
-    assertThrows(ParserException.class, parser::parse);
   }
 }

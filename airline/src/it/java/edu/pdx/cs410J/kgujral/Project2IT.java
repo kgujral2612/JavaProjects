@@ -77,6 +77,12 @@ class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString("Missing or Invalid Departure Airport Code in text file! Was PDX 28/01/2023 19:00 | Expected A 3-letter String. eg: PDX"));
     }
 
+    @Test
+    void shouldIssueErrorIfFilePathDoesNotExist(){
+        String[] args = new String[]{"-textFile", "dir/some.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.ioError, args[1])));
+    }
    @Test
     void shouldValidateAirlineName(){
        String[] args = {"", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
@@ -108,7 +114,7 @@ class Project2IT extends InvokeMainTestCase {
     void shouldValidateDepartureTime(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "103", "SFO", "3/15/2023", "3:33"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.invalidArgument, "Time of Departure", args[4], "A time in the format hh:mm. eg: 05:45")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.invalidArgument, "Time of Departure", args[4], "24-hour time in the format hh:mm. eg: 05:45")));
     }
 
     @Test
@@ -127,7 +133,7 @@ class Project2IT extends InvokeMainTestCase {
     void shouldValidateArrivalTime(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "333"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.invalidArgument, "Time of Arrival", args[7], "A time in the format hh:mm. eg: 08:05")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project2.invalidArgument, "Time of Arrival", args[7], "24-hour time in the format hh:mm. eg: 08:05")));
     }
 
     @Test

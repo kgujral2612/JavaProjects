@@ -1,8 +1,5 @@
 package edu.pdx.cs410J.kgujral;
-
 import edu.pdx.cs410J.AirlineDumper;
-
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 

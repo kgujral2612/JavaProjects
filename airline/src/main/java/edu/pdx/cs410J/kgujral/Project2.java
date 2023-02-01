@@ -7,18 +7,31 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The main class for the CS410J airline Project
+ */
 public class Project2 {
-
+    /** string containing textFile option */
     static final String textFileOp = "-textFile";
+    /** string containing README option */
     static final String readMeOp = "-README";
+    /** string containing print option */
     static final String printOp = "-print";
+    /** string containing invalid argument message */
     static final String invalidArgument = "Invalid %s! Was %s | Expected %s";
+    /** string containing too many argument message*/
     static final String tooManyArguments = "You must not provide more than 8 arguments";
+    /** string containing date and time format  */
     static final String datetimeFormat = "%s %s";
+    /** string containing could not load readme message */
     static final String couldNotLoadReadMe = "Unable to lead README.txt file";
+    /** string containing airline mismatch message  */
     static final String airlineNameMismatch = "The name of the airline specified in the arguments is different from that in the file. Was %s | Expected %s ";
+    /** string containing missing CLI arguments message  */
     static final String missingCLIArguments = "Missing command line arguments";
+    /** string containing missing arguments message */
     static final String missingArguments = "These items were missing from your input: ";
+    /** string containing io error message */
     static final String ioError = "Unable to write to the file %s";
 
     /**
@@ -46,6 +59,7 @@ public class Project2 {
 
     /**
      * Prints a flight
+     * @param flight
      * */
     @VisibleForTesting
     static void print(Flight flight){
@@ -60,6 +74,9 @@ public class Project2 {
      * In case the file is not found, it creates a new file
      * In case the file has formatting errors,
      * it provides user with a troubleshooting message
+     * @param textFile the path to the textFile
+     * @param airline the airline whose name should be matched with the contents of the textFile
+     * @param flight the flight that needs to be added to the airline in the text file
      * */
     @VisibleForTesting
     static void textFile(String textFile, Airline airline, Flight flight){
@@ -362,7 +379,7 @@ public class Project2 {
 
     /**
      * Orchestrates the code flow by calling various methods.
-     * Gets parsed options, and parsed & validated arguments.
+     * Gets parsed options, and parsed as well as validated arguments.
      * Creates airline and flight objects.
      * If -README option is selected, displays the README.txt for the project and exits
      * If -print option is selected, displays the new flight information

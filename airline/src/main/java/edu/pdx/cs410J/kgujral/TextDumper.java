@@ -13,8 +13,15 @@ public class TextDumper implements AirlineDumper<Airline> {
     this.writer = writer;
   }
 
+  /**
+   * The method that writes the contents of an airline (and its flights) onto a text file.
+   * @param airline the airline object that needs to be written inside the text file
+   * */
   @Override
   public void dump(Airline airline) {
+    if(airline == null || airline.getName() == ""){
+      return;
+    }
     try (
       PrintWriter pw = new PrintWriter(this.writer)
       ) {

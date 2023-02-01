@@ -9,8 +9,18 @@ import java.io.Reader;
  * A skeletal implementation of the <code>TextParser</code> class for Project 2.
  */
 public class TextParser implements AirlineParser<Airline> {
+
+    /** The reader object that reads text files */
   private final Reader reader;
+    /** missing or invalid argument message */
   static final String missingOrInvalidArgument = "Missing or Invalid %s in text file! Was %s | Expected %s";
+    /** ioerror message */
+  static final String ioError = "Unable to open given text file.";
+    /** Parameterized constructor that
+     * accepts a reader object and
+     * assigns it to the class reader data memeber
+     * @param reader the reader object
+     * */
   public TextParser(Reader reader) {
     this.reader = reader;
   }
@@ -19,7 +29,7 @@ public class TextParser implements AirlineParser<Airline> {
    * An override method
    * that parses text files searching for a
    * single airline and its flights
-   * @return Airline contained inside a flight
+   * @return Airline along with its flight information
    * */
   @Override
   public Airline parse() throws ParserException {
@@ -85,7 +95,7 @@ public class TextParser implements AirlineParser<Airline> {
 
     }
     catch (IOException e) {
-      throw new ParserException(e.getMessage());
+      throw new ParserException(ioError);
     }
   }
 }

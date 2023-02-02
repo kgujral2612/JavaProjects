@@ -18,14 +18,14 @@ public class AboutDates {
 
     @Koan
     public void dateToString() {
-        assertEquals(date.toString(), __);
+        assertEquals(date.toString(), "Sat Mar 03 04:33:21 PST 1973");
     }
 
     @Koan
     public void changingDateValue() {
         int oneHourInMiliseconds = 3600000;
         date.setTime(date.getTime() + oneHourInMiliseconds);
-        assertEquals(date.toString(), __);
+        assertEquals(date.toString(), "Sat Mar 03 05:33:21 PST 1973");
     }
 
     @Koan
@@ -33,7 +33,7 @@ public class AboutDates {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.MONTH, 1);
-        assertEquals(cal.getTime().toString(), __);
+        assertEquals(cal.getTime().toString(), "Tue Apr 03 05:33:21 PST 1973");
     }
 
     @Koan
@@ -41,7 +41,7 @@ public class AboutDates {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.roll(Calendar.MONTH, 12);
-        assertEquals(cal.getTime().toString(), __);
+        assertEquals(cal.getTime().toString(), "Sat Mar 03 05:33:21 PST 1973");
     }
 
     @Koan

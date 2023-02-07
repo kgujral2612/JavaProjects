@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * The main class for the CS410J airline Project
  */
-public class Project2 {
+public class Project3 {
     /** string containing textFile option */
     static final String textFileOp = "-textFile";
     /** string containing README option */
@@ -44,7 +44,7 @@ public class Project2 {
     @VisibleForTesting
     static String readMe() throws IOException {
         StringBuilder content = new StringBuilder();
-        try (InputStream readme = Project2.class.getResourceAsStream("README.txt")) {
+        try (InputStream readme = Project3.class.getResourceAsStream("README.txt")) {
             if(readme == null)
                 return null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -430,21 +430,23 @@ public class Project2 {
      * Prints program usage
      * */
     @VisibleForTesting
-    static void printUsage(){
+    static void     printUsage(){
         StringBuilder msg = new StringBuilder();
         msg.append("java -jar target/airline-2023.0.0.jar [options] <args>\n");
         msg.append("\nargs are (in this order):\n");
         msg.append("airline\tThe name of the airline\n");
         msg.append("flightNumber\tThe flight number\n");
         msg.append("src\tThree-letter code of departure airport\n");
-        msg.append("depart\tDeparture date and time (24-hour time)\n");
+        msg.append("depart\tDeparture date and time (am/pm)\n");
         msg.append("dest\tThree-letter code of arrival airport\n");
-        msg.append("arrive\tArrival date and time (24-hour time)\n");
+        msg.append("arrive\tArrival date and time (am/pm)\n");
         msg.append("\noptions are (options may appear in any order):\n");
+        msg.append("-pretty file \tPretty print the airline’s flights to\n" +
+                "a text file or standard out (file -)\n");
         msg.append("-textFile file\tWhere to read/write the airline info\n");
         msg.append("-print\tPrints a description of the new flight\n");
         msg.append("-README\tPrints a README for this project and exits\n");
-        msg.append("Dates and times should be in the format: mm/dd/yyyy hh:mm\n");
+        msg.append("Dates and times should be in 12 hour format: mm/dd/yyyy hh:mm am/pm\n");
         System.out.println(msg);
     }
 

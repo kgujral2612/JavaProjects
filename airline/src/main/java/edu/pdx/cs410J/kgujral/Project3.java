@@ -235,7 +235,7 @@ public class Project3 {
     static boolean isValidAirportName(String airportCode){
         if(airportCode == null)
             return false;
-        return AirportNames.getName(airportCode)!=null;
+        return AirportNames.getName(airportCode.toUpperCase())!=null;
     }
     /**
      * Returns true if the date is valid,
@@ -507,6 +507,7 @@ public class Project3 {
                 System.err.print(missingItem + "; ");
             }
             System.err.println();
+            return null;
         }
         return argMap;
     }
@@ -545,6 +546,8 @@ public class Project3 {
         Airline airline;
         Flight flight;
         var argMap = parseArgs(args);
+        if(argMap == null)
+            return;
         if(argMap.size() == 8){
             airline = new Airline(argMap.get("airline"));
             Date departure = DateHelper.stringToDate(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
@@ -557,7 +560,7 @@ public class Project3 {
                 System.err.printf((invalidFlightDuration) + "%n", departure, arrival);
                 return;
             }
-            flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
+            flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src").toUpperCase(), argMap.get("dest").toUpperCase(), departure, arrival);
             airline.addFlight(flight);
             if(opMap.get("print")!=null)
                 print(flight);

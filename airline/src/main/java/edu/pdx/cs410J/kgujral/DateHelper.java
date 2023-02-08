@@ -5,8 +5,6 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class DateHelper {
-    /**Error message when date passed is invalid*/
-    static String invalidDateMessage = "Unable to parse date because it is invalid. Was %s | Expected 12-hour date time format. eg: 2/5/2022 5:45 pm";
    /** Convert String to Date*/
     public static Date stringToDate(String date){
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
@@ -23,9 +21,8 @@ public class DateHelper {
             return formatter.parse(date);
         }
         catch(ParseException p){
-            System.err.println(String.format(invalidDateMessage, date));
+            return null;
         }
-        return null;
     }
 
     /** Convert Date to Short String*/

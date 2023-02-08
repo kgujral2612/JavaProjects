@@ -1,6 +1,8 @@
 package edu.pdx.cs410J.kgujral;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
+import java.util.Date;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,6 +16,7 @@ public class Project3Test {
     String[] validArgsAllOp = {"-print", "-textFile", "filepath", "-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
     /**a valid argument array with no options*/
     String[] validArgsNoOp = {"My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03","am" ,"SFO", "3/15/2023", "3:33", "pm"};
+    String[] validArgsPrettyOpStd = {"-print", "-pretty", "-","My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03","am" ,"SFO", "3/15/2023", "3:33", "pm"};
 
     /**
      * the readMe() method should read README.txt
@@ -90,18 +93,33 @@ public class Project3Test {
 
     /** Time must have the 12-hour indicator: am/pm */
     @Test
-    void shouldValidateTimeIndication(){
-        assertFalse(Project3.isValidTimeIndication("ao"));
-        assertTrue(Project3.isValidTimeIndication("am"));
-        assertTrue(Project3.isValidTimeIndication("AM"));
-        assertTrue(Project3.isValidTimeIndication("pm"));
+    void shouldValidateTimeMarker(){
+        assertFalse(Project3.isValidTimeMarker("ao"));
+        assertTrue(Project3.isValidTimeMarker("am"));
+        assertTrue(Project3.isValidTimeMarker("AM"));
+        assertTrue(Project3.isValidTimeMarker("pm"));
     }
+
+    @Test
+    void shouldValidateFlightDuration(){
+        Date oldDate = new Date(100010001000L);
+        Date newDate = new Date();
+        assertFalse(Project3.isValidFlightDuration(newDate, oldDate));
+        assertFalse(Project3.isValidFlightDuration(newDate, newDate));
+        assertTrue(Project3.isValidFlightDuration(oldDate, newDate));
+    }
+
     /**Utility method should return the index where arguments begin from if options are provided*/
     @Test
     void getArgumentIndexWithOps(){
         int result = Project3.getArgumentIndex(validArgsAllOp);
         assertThat(result, is(not(0)));
         assertThat(result, is(4));
+    }
+    @Test
+    void getArgumentIndexWithPrettyPrintOps(){
+        int result = Project3.getArgumentIndex(validArgsPrettyOpStd);
+        assertThat(result, is(3));
     }
 
     /**Utility method should return the index where arguments begin from if options are not provided*/
@@ -124,6 +142,16 @@ public class Project3Test {
         assertThat(argMap.get("readme"), is(nullValue()));
         assertThat(argMap.get("print"), is(nullValue()));
         assertThat(argMap.get("textFile"), is(nullValue()));
+    }
+
+    /** When pretty option is passed, the location must be stored too.*/
+    @Test
+    void shouldParseOptionsWithPretty(){
+        var argMap = Project3.parseOptions(validArgsPrettyOpStd);
+        assertThat(argMap.get("pretty"), equalTo("-"));
+        validArgsPrettyOpStd[2] = "myTextFile";
+        argMap = Project3.parseOptions(validArgsPrettyOpStd);
+        assertThat(argMap.get("pretty"), equalTo("myTextFile.txt"));
     }
 
     /**.txt file extension should be appended to the filename if it is not present*/

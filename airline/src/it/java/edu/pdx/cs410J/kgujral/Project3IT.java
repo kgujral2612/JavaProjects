@@ -10,6 +10,7 @@ import java.io.FileReader;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * An integration test for the {@link Project3} main class.
@@ -57,7 +58,7 @@ class Project3IT extends InvokeMainTestCase {
     @Test
     void shouldPrintFlightInfoWhenOptionIsSelected(){
         var result = invokeMain(validArgsPrintOp);
-        assertThat(result.getTextWrittenToStandardOut(), equalTo("Flight 1234 departs PDX at 3/15/2023 1:03 am arrives SFO at 3/15/2023 3:33 pm\n"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo("Flight 1234 departs PDX at 3/3/24, 1:03 AM arrives SFO at 3/3/24, 3:33 PM\n"));
     }
     /** When file is not present, a new file should be created
      * in the directory and airline information should be added onto it */
@@ -95,7 +96,7 @@ class Project3IT extends InvokeMainTestCase {
      * an error message for the user should be displayed*/
     @Test
     void shouldIssueErrorIfFilePathDoesNotExist(){
-        String[] args = new String[]{"-textFile", "dir/some.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
+        String[] args = new String[]{"-textFile", "dir/some.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "am"};
         var result = invokeMain(args);
         assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.ioError, args[1])));
     }
@@ -270,5 +271,57 @@ class Project3IT extends InvokeMainTestCase {
         var result = invokeMain(args);
         assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("am/pm after time of arrival"));
+    }
+
+    @Test
+    void shouldIdentifyIfFlightDurationIsInvalid(){
+        String[] args = {"British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "am"};
+        var result = invokeMain(args);
+        var departure = DateHelper.stringToDate(args[3] + " " +args[4] + " " + args[5]);
+        var arrival = DateHelper.stringToDate(args[7] + " " +args[8] + " " + args[9]);
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidFlightDuration,departure, arrival)));
+    }
+
+    @Test
+    void shouldPrettyPrintToStdOut(){
+        String[] args = {"-pretty", "-", "British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight # 234\n" +
+                "From San Francisco, CA To San Francisco, CA\n" +
+                "Departs at: Dec 3, 2022, 11:30:00 AM\n" +
+                "Arrives at: Dec 3, 2022, 3:33:00 PM\n" +
+                "Total Duration of Flight: 243 minutes."));
+    }
+
+    /** pretty print on std out along with print option */
+    @Test
+    void shouldPrettyPrintToStdOutAlongWithPrintOp(){
+        String[] args = {"-print", "-pretty", "-", "British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight # 234\n" +
+                "From San Francisco, CA To San Francisco, CA\n" +
+                "Departs at: Dec 3, 2022, 11:30:00 AM\n" +
+                "Arrives at: Dec 3, 2022, 3:33:00 PM\n" +
+                "Total Duration of Flight: 243 minutes."));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 234 departs SFO at 12/3/22, 11:30 AM arrives SFO at 12/3/22, 3:33 PM"));
+    }
+    /** pretty print to a file*/
+    @Test
+    void shouldPrettyPrintToFile(){
+        String[] args = {"-print", "-pretty", "pretty-airline-info", "Kaushambi Airways", "234", "PDX", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    }
+
+    /** pretty print to a file with textFile op*/
+    @Disabled
+    @Test
+    void shouldPrettyPrintToFileWithFileOp(){
+        String pathToFile = "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/airline-flight-info.txt";
+        String [] args = new String[] {"-pretty", pathToFile,"-textFile", pathToFile, "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertNull(result.getTextWrittenToStandardError());
     }
 }

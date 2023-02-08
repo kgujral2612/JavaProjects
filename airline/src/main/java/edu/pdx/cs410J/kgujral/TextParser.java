@@ -114,4 +114,21 @@ public class TextParser implements AirlineParser<Airline> {
         }
         return new Date();
     }
+
+    /** Should be able to read text from a given file
+     * @return String which contains the content of the file
+     * @throws ParserException when an IOException is encountered.*/
+    public String readText()throws ParserException{
+        try (
+                BufferedReader br = new BufferedReader(this.reader)) {
+            String result="", line ="";
+            while ((line = br.readLine()) != null) {
+                result += line + "\n";
+            }
+            return result;
+        }
+        catch (IOException e) {
+            throw new ParserException(ioError);
+        }
+    }
 }

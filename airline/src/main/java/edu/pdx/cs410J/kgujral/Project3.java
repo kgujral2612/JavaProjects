@@ -14,12 +14,16 @@ import java.util.HashMap;
 public class Project3 {
     /** string containing textFile option */
     static final String textFileOp = "-textFile";
+    /** string containing pretty print option */
+    static final String prettyOp = "-pretty";
     /** string containing README option */
     static final String readMeOp = "-README";
     /** string containing print option */
     static final String printOp = "-print";
     /** string containing invalid argument message */
     static final String invalidArgument = "Invalid %s! Was %s | Expected %s";
+    /** string containing invalid duration message */
+    static final String invalidFlightDuration = "Invalid flight duration! Flight departs at %s and arrives at %s | Arrival must occur later than Departure.";
     /** string containing too many argument message*/
     static final String tooManyArguments = "You must not provide more than 10 arguments";
     /** string containing date and time format  */
@@ -68,6 +72,71 @@ public class Project3 {
     }
 
     /**
+     * Prints/Writes an airline in pretty format
+     * @param airline the airline object
+     * @param location the location where the
+     * object information must be written
+     * */
+    @VisibleForTesting
+    static void prettyPrint(Airline airline, String location){
+        if(location.equals("-")){
+            System.out.println(PrettyHelper.prettify(airline));
+        }
+        else {
+            try{
+                PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
+                dumper.dump(airline);
+            }
+            catch(IOException e){
+                System.err.printf((ioError) + "%n", location);
+            }
+        }
+    }
+    /**
+     * Prints/Writes an airline in pretty format
+     * @param airline the airline object
+     * @param location the location where the
+     * object information must be written
+     * @param textFile the location where previous
+     * airline information must be read from
+     * */
+    @VisibleForTesting
+    static void prettyPrint(Airline airline, String location, String textFile){
+        Airline airlineFromFile ;
+            var flight = (Flight) airline.getFlights().toArray()[0];
+            TextParser parser;
+            try {
+                parser = new TextParser(new FileReader(textFile));
+                try{
+                    airlineFromFile = parser.parse();
+                    if(airlineFromFile == null){
+                        airlineFromFile = airline;
+                    }
+                    else if(!airlineFromFile.getName().equals(airline.getName())){
+                        System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
+                        return;
+                    }
+                }
+                catch (ParserException e) {
+                    System.err.println(e.getMessage());
+                    return;
+                }
+            }
+            catch (FileNotFoundException e) {
+                airlineFromFile = airline;
+            }
+            airlineFromFile.addFlight(flight);
+
+            try{
+                PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
+                dumper.dump(airlineFromFile);
+            }
+            catch(IOException e){
+                System.err.printf((ioError) + "%n", location);
+            }
+    }
+
+    /**
      * Parses the file to gather airline information
      * If the airline is same as the airline provided
      * in the arguments, the new flight information
@@ -103,7 +172,6 @@ public class Project3 {
         catch (FileNotFoundException e) {
             airlineFromFile = airline;
         }
-
         airlineFromFile.addFlight(flight);
         try{
             TextDumper dumper = new TextDumper(new FileWriter(textFile));
@@ -180,7 +248,7 @@ public class Project3 {
         }
     }
     @VisibleForTesting
-    static boolean isValidTimeIndication(String mm){
+    static boolean isValidTimeMarker(String mm){
         return(mm.compareToIgnoreCase("am")==0) || (mm.compareToIgnoreCase("pm") == 0);
     }
 
@@ -207,6 +275,11 @@ public class Project3 {
         }
     }
 
+    @VisibleForTesting
+    static boolean isValidFlightDuration(Date departure, Date arrival){
+        return arrival.getTime() - departure.getTime() > 0;
+    }
+
     /**
      * Returns the index where the arguments
      * begin and options end.
@@ -219,7 +292,7 @@ public class Project3 {
         int i=0;
         while(i<args.length){
             if(args[i].startsWith("-")){
-                if(args[i].equals(textFileOp))
+                if(args[i].equals(textFileOp) || args[i].equals(prettyOp))
                     i++;
             }
             else
@@ -254,6 +327,12 @@ public class Project3 {
                     if(!filePath.endsWith(".txt"))
                         filePath += ".txt";
                     argMap.put("textFile", filePath);
+                    break;
+                case prettyOp:
+                    var prettyLocation = args[++i];
+                    if(!prettyLocation.equals("-"))
+                        prettyLocation += ".txt";
+                    argMap.put("pretty", prettyLocation);
                     break;
             }
         }
@@ -340,7 +419,7 @@ public class Project3 {
                     }
                     argMap.put("departTime", args[i]);
                     break;
-                case 5: if(!isValidTimeIndication(args[i])){
+                case 5: if(!isValidTimeMarker(args[i])){
                     if(argsAreMissing){
                         missingList.add("am/pm after time of departure");
                         i--; continue;
@@ -387,7 +466,7 @@ public class Project3 {
                     }
                     argMap.put("arriveTime", args[i]);
                     break;
-                case 9: if(!isValidTimeIndication(args[i])){
+                case 9: if(!isValidTimeMarker(args[i])){
                         System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "time must be succeeded by am/pm");
                         break;
                     }
@@ -417,6 +496,8 @@ public class Project3 {
      * If -README option is selected, displays the README.txt for the project and exits
      * If -print option is selected, displays the new flight information
      * If -textFile option is selected, add new flight information to the airline stored inside the file
+     * If -pretty option is selected and location is -, print the prettified airline onto stdout
+     * If -pretty option is selected and location is a path to a file, write the prettified airline onto the file
      * @param  args  user input (command-line arguments)
      * */
     @VisibleForTesting
@@ -433,6 +514,7 @@ public class Project3 {
         }
 
         int opCount = opMap.get("textFile")!=null? opMap.size()+1 : opMap.size();
+        opCount = opMap.get("pretty")!=null? opCount+1 : opCount;
         if(args.length - opCount > 10){
             System.err.println(tooManyArguments);
             return;
@@ -447,12 +529,27 @@ public class Project3 {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
                 Date departure = formatter.parse(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
                 Date arrival = formatter.parse(String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
+                if(!isValidFlightDuration(departure, arrival))
+                {
+                    System.err.println(String.format(invalidFlightDuration, departure, arrival));
+                    return;
+                }
                 flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
+                airline.addFlight(flight);
                 if(opMap.get("print")!=null)
                     print(flight);
 
                 if(opMap.get("textFile")!=null)
                     textFile(opMap.get("textFile"), airline, flight);
+
+                if(opMap.get("pretty")!=null){
+                    String textFile = opMap.get("textFile");
+                    if(textFile == null)
+                        prettyPrint(airline, opMap.get("pretty"));
+                    else
+                        prettyPrint(airline, opMap.get("pretty"), opMap.get("textFile"));
+                }
+
             }
             catch (ParseException e){
                 System.err.println("There was an error parsing the date time");
@@ -464,7 +561,7 @@ public class Project3 {
      * Prints program usage
      * */
     @VisibleForTesting
-    static void     printUsage(){
+    static void printUsage(){
         StringBuilder msg = new StringBuilder();
         msg.append("java -jar target/airline-2023.0.0.jar [options] <args>\n");
         msg.append("\nargs are (in this order):\n");

@@ -27,8 +27,8 @@ public class DateHelperTest {
         assertThat(DateHelper.datetoShortString(date), is(not(nullValue())));
     }
     @Test
-    void shouldConvertDateToShortStringWithoutComma(){
+    void shouldConvertDateToMediumString(){
         Date date = new Date();
-        assertThat(DateHelper.datetoShortString(date), is(not(nullValue())));
+        assertThat(DateHelper.datetoMediumString(date), is(not(nullValue())));
     }
 }

@@ -63,6 +63,15 @@ public class TextParserTest {
     var parser = new TextParser(new InputStreamReader(resource));
     assertThrows(ParserException.class, parser::parse);
   }
+  /** */
+  @Test
+  void readsTextFromValidFile() throws ParserException {
+    InputStream resource = getClass().getResourceAsStream("airline-flight-info.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    String content = parser.readText();
+    assertNotNull(content);
+  }
 }
 
 

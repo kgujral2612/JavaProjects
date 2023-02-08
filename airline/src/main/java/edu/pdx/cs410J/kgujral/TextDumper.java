@@ -28,9 +28,9 @@ public class TextDumper implements AirlineDumper<Airline> {
       for(var flight: airline.getFlights()){
         pw.println(flight.getNumber());
         pw.println(flight.getSource());
-        pw.println(flight.getDepartureString());
+        pw.println(flight.getDepartureString().replace(",", ""));
         pw.println(flight.getDestination());
-        pw.println(flight.getArrivalString());
+        pw.println(flight.getArrivalString().replace(",", ""));
       }
       pw.flush();
     }

@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 
 public class DateHelper {
     /**Error message when date passed is invalid*/
-    static String invalidDateMessage = "Unable to parse date because it is invalid. Was %s | Expected 12-hour date time format. eg: 2/5/2022 5:45pm";
+    static String invalidDateMessage = "Unable to parse date because it is invalid. Was %s | Expected 12-hour date time format. eg: 2/5/2022 5:45 pm";
    /** Convert String to Date*/
     public static Date stringToDate(String date){
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -33,9 +33,8 @@ public class DateHelper {
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(dateTime);
     }
 
-    /** Convert Date to Short String Without Comma*/
-    public static String dateToShortStringNoComma(Date dateTime){
-        String dt = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(dateTime);
-        return dt.replace(",", "");
+    /** Convert Date to Medium String*/
+    public static String datetoMediumString(Date dateTime){
+        return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(dateTime);
     }
 }

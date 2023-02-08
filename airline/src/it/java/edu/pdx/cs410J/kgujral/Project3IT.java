@@ -10,7 +10,6 @@ import java.io.FileReader;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * An integration test for the {@link Project3} main class.
@@ -325,6 +324,28 @@ class Project3IT extends InvokeMainTestCase {
                 "Total Duration of Flight: 243 minutes."));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 234 departs SFO at 3/12/22, 11:30 AM arrives SFO at 3/12/22, 3:33 PM"));
     }
+
+    /** pretty print on std out along with print and text file option*/
+    @Test
+    void shouldPrettyPrintToStdOutWithPrintAndFileOp(@TempDir File tempDir) throws FileNotFoundException, ParserException {
+        File textFile = new File(tempDir, "my_temp_file.txt");
+        String[] args = {"-print", "-pretty", "-", "-textFile", textFile.getPath(), "British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways\n" +
+                "Flight # 234\n" +
+                "From San Francisco, CA To San Francisco, CA\n" +
+                "Departs at: Mar 12, 22, 11:30:00 AM\n" +
+                "Arrives at: Mar 12, 22, 3:33:00 PM\n" +
+                "Total Duration of Flight: 243 minutes."));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 234 departs SFO at 3/12/22, 11:30 AM arrives SFO at 3/12/22, 3:33 PM"));
+
+        TextParser parser = new TextParser(new FileReader(textFile));
+        Airline read = parser.parse();
+        assertThat(read.getName(), equalTo("British Airways"));
+        assertThat(read.getFlights().size(), equalTo(1));
+        assertThat(read.getFlights().toArray()[0].toString(), containsString("Flight 234 departs SFO at 3/12/22, 11:30 AM arrives SFO at 3/12/22, 3:33 PM"));
+    }
+
     /** pretty print to a file*/
     @Test
     void shouldPrettyPrintToFile(@TempDir File tempDir) throws FileNotFoundException, ParserException {
@@ -370,6 +391,5 @@ class Project3IT extends InvokeMainTestCase {
                 "Departs at: Mar 15, 23, 1:03:00 AM\n" +
                 "Arrives at: Mar 15, 23, 3:33:00 PM\n" +
                 "Total Duration of Flight: 870 minutes.\n"));
-
     }
 }

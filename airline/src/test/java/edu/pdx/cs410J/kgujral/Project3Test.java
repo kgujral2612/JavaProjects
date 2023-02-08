@@ -130,6 +130,13 @@ public class Project3Test {
         assertThat(result, is(3));
     }
 
+    @Test
+    void getArgumentIndexWithAllOps(){
+        String[] args = {"-print", "-pretty", "-", "-textFile", "some-file", "British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+        int result = Project3.getArgumentIndex(args);
+        assertThat(result, is(5));
+    }
+
     /**Utility method should return the index where arguments begin from if options are not provided*/
     @Test
     void getArgumentIndexWithoutOps(){

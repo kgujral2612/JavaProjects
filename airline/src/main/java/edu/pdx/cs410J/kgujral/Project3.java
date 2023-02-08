@@ -104,6 +104,13 @@ public class Project3 {
     @VisibleForTesting
     static void prettyPrint(Airline airline, String location, String textFile){
         Airline airlineFromFile = readAirline(textFile, airline);
+        if(airlineFromFile == null){
+            return;
+        }
+        if(location.equals("-")){
+            System.out.println(PrettyHelper.prettify(airlineFromFile));
+            return;
+        }
         try{
             PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
             dumper.dump(airlineFromFile);
@@ -547,7 +554,7 @@ public class Project3 {
             }
             if(!isValidFlightDuration(departure, arrival))
             {
-                System.err.println(String.format(invalidFlightDuration, departure, arrival));
+                System.err.printf((invalidFlightDuration) + "%n", departure, arrival);
                 return;
             }
             flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
@@ -573,22 +580,21 @@ public class Project3 {
      * */
     @VisibleForTesting
     static void printUsage(){
-        StringBuilder msg = new StringBuilder();
-        msg.append("java -jar target/airline-2023.0.0.jar [options] <args>\n");
-        msg.append("\nargs are (in this order):\n");
-        msg.append("airline\tThe name of the airline\n");
-        msg.append("flightNumber\tThe flight number\n");
-        msg.append("src\tThree-letter code of departure airport\n");
-        msg.append("depart\tDeparture date and time (am/pm)\n");
-        msg.append("dest\tThree-letter code of arrival airport\n");
-        msg.append("arrive\tArrival date and time (am/pm)\n");
-        msg.append("\noptions are (options may appear in any order):\n");
-        msg.append("-pretty file \tPretty print the airline’s flights to\n" +
-                "a text file or standard out (file -)\n");
-        msg.append("-textFile file\tWhere to read/write the airline info\n");
-        msg.append("-print\tPrints a description of the new flight\n");
-        msg.append("-README\tPrints a README for this project and exits\n");
-        msg.append("Dates and times should be in 12 hour format: mm/dd/yyyy hh:mm am/pm\n");
+        String msg = "java -jar target/airline-2023.0.0.jar [options] <args>\n" +
+                "\nargs are (in this order):\n" +
+                "airline\tThe name of the airline\n" +
+                "flightNumber\tThe flight number\n" +
+                "src\tThree-letter code of departure airport\n" +
+                "depart\tDeparture date and time (am/pm)\n" +
+                "dest\tThree-letter code of arrival airport\n" +
+                "arrive\tArrival date and time (am/pm)\n" +
+                "\noptions are (options may appear in any order):\n" +
+                "-pretty file \tPretty print the airline’s flights to\n" +
+                "a text file or standard out (file -)\n" +
+                "-textFile file\tWhere to read/write the airline info\n" +
+                "-print\tPrints a description of the new flight\n" +
+                "-README\tPrints a README for this project and exits\n" +
+                "Dates and times should be in 12 hour format: mm/dd/yyyy hh:mm am/pm\n";
         System.out.println(msg);
     }
 

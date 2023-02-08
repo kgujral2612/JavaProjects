@@ -1,8 +1,0 @@
-Kaushambi Airways
-Flight # 234
-From Portland, OR To San Francisco, CA
-Departs at: Dec 3, 2022, 11:30:00 AM
-Arrives at: Dec 3, 2022, 3:33:00 PM
-Total Duration of Flight: 243 minutes.
-------------------------------------------
-

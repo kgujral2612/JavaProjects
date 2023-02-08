@@ -41,6 +41,6 @@ The user can add options while calling the program. Any combination of options c
     11/01/2023 08:30 am
 
 The below command(s) are also valid:
-java -jar target/airline-2023.0.0.jar -print -README "My Airline" 1234 PDX 2/2/1995 10:00 am SFO 2/2/1995 12:45 am
+java -jar target/airline-2023.0.0.jar -print -README "My Airline" 1234 PDX 2/2/1995 10:00 am SFO 2/2/1995 12:45 pm
 java -jar target/airline-2023.0.0.jar -pretty "some-pretty.txt"  -textFile "some.txt" "My Airline" 503 abq 6/21/1995 12:02 am gye 6/23/1995 12:45 pm
 ===============================================================

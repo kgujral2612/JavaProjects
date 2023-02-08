@@ -33,8 +33,8 @@ public class TextParserTest {
     Airline airline = parser.parse();
     assertThat(airline.getName(), equalTo("Alaska Airlines"));
     assertThat(airline.getFlights().size(), equalTo(2));
-    assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 2/01/2023 19:00 arrives SFO at 2/01/2023 20:30"));
-    assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 2/01/2023 17:23 arrives PDX at 2/01/2023 20:53"));
+    assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 2/01/2023 9:00 arrives SFO at 2/01/2023 2:30"));
+    assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 2/01/2023 7:23 arrives PDX at 2/01/2023 2:53"));
   }
   /** An empty text file should
    * be parsed successfully

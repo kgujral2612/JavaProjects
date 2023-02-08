@@ -20,7 +20,7 @@ public class Project3 {
     /** string containing invalid argument message */
     static final String invalidArgument = "Invalid %s! Was %s | Expected %s";
     /** string containing too many argument message*/
-    static final String tooManyArguments = "You must not provide more than 8 arguments";
+    static final String tooManyArguments = "You must not provide more than 10 arguments";
     /** string containing date and time format  */
     static final String datetimeFormat = "%s %s";
     /** string containing could not load readme message */
@@ -178,6 +178,10 @@ public class Project3 {
             return false;
         }
     }
+    @VisibleForTesting
+    static boolean isValidTimeIndication(String mm){
+        return(mm.compareToIgnoreCase("am")==0) || (mm.compareToIgnoreCase("pm") == 0);
+    }
 
     /**
      * Returns true if the time is valid,
@@ -195,7 +199,7 @@ public class Project3 {
                 return false;
             int hours = Integer.parseInt(splitT[0]);
             int minutes = Integer.parseInt(splitT[1]);
-            return hours <= 24 && hours >= 0 && minutes <= 59 && minutes >= 0;
+            return hours <= 12 && hours >= 0 && minutes <= 59 && minutes >= 0;
         }
         catch (Exception e){
             return false;
@@ -270,7 +274,7 @@ public class Project3 {
 
         boolean argsAreMissing = false;
         var missingList = new ArrayList<String>();
-        if(args.length - idxFrom < 8){
+        if(args.length - idxFrom < 10){
             argsAreMissing = true;
         }
         for(int i=idxFrom, j=0; i<args.length; i++, j++){
@@ -329,13 +333,26 @@ public class Project3 {
                             i--; continue;
                         }
                         else{
-                            System.err.printf((invalidArgument) + "%n", "Time of Departure", args[i], "24-hour time in the format hh:mm. eg: 05:45");
+                            System.err.printf((invalidArgument) + "%n", "Time of Departure", args[i], "12-hour time in the format hh:mm. eg: 05:45");
                             break;
                         }
                     }
                     argMap.put("departTime", args[i]);
                     break;
-                case 5: if(!isValidAirportCode(args[i])){
+                case 5: if(!isValidTimeIndication(args[i])){
+                    if(argsAreMissing){
+                        missingList.add("am/pm after time of departure");
+                        i--; continue;
+                    }
+                    else{
+                        System.err.printf((invalidArgument) + "%n", "Time of Departure", args[i], "time must be succeeded by am/pm");
+                        break;
+                    }
+                }
+                argMap.put("departTime", argMap.get("departTime") == null? args[i]: argMap.get("departTime") + " " + args[i]);
+                break;
+
+                case 6: if(!isValidAirportCode(args[i])){
                     if(argsAreMissing){
                         missingList.add("Arrival Airport Code");
                         i--; continue;
@@ -347,7 +364,7 @@ public class Project3 {
                 }
                     argMap.put("dest", args[i]);
                     break;
-                case 6: if(!isValidDate(args[i])){
+                case 7: if(!isValidDate(args[i])){
                     if(argsAreMissing){
                         missingList.add("Date of Arrival");
                         i--; continue;
@@ -359,16 +376,28 @@ public class Project3 {
                 }
                     argMap.put("arriveDate", args[i]);
                     break;
-                case 7: if(!isValidTime(args[i])){
-                    System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "24-hour time in the format hh:mm. eg: 08:05");
+                case 8: if(!isValidTime(args[i])){
+                    if(argsAreMissing){
+                        missingList.add("Time of Arrival");
+                        i--; continue;
+                    }
+                    System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "12-hour time in the format hh:mm. eg: 08:05");
                     break;
                     }
                     argMap.put("arriveTime", args[i]);
                     break;
+                case 9: if(!isValidTimeIndication(args[i])){
+                        System.err.printf((invalidArgument) + "%n", "Time of Arrival", args[i], "time must be succeeded by am/pm");
+                        break;
+                    }
+                    argMap.put("arriveTime", argMap.get("arriveTime") == null? args[i]: argMap.get("arriveTime") + " " + args[i]);
+                    break;
             }
         }
-        if(argMap.size() < 8 && argMap.get("arriveTime") == null){
-            missingList.add("Time of Arrival");
+        if(argMap.get("arriveTime")!=null){
+            if(!argMap.get("arriveTime").contains("am") && !argMap.get("arriveTime").contains("AM") &&
+                    !argMap.get("arriveTime").contains("pm") && !argMap.get("arriveTime").contains("PM"))
+                        missingList.add("am/pm after time of arrival");
         }
         if(missingList.size()>0){
             System.err.print(missingArguments);
@@ -403,8 +432,7 @@ public class Project3 {
         }
 
         int opCount = opMap.get("textFile")!=null? opMap.size()+1 : opMap.size();
-        if(args.length - opCount > 8){
-
+        if(args.length - opCount > 10){
             System.err.println(tooManyArguments);
             return;
         }

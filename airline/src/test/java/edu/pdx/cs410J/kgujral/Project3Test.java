@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * */
 public class Project3Test {
     /**a valid argument array with all options*/
-    String[] validArgsAllOp = {"-print", "-textFile", "filepath", "-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
+    String[] validArgsAllOp = {"-print", "-textFile", "filepath", "-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
     /**a valid argument array with no options*/
-    String[] validArgsNoOp = {"My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "SFO", "3/15/2023", "3:33"};
+    String[] validArgsNoOp = {"My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03","am" ,"SFO", "3/15/2023", "3:33", "pm"};
 
     /**
      * the readMe() method should read README.txt
@@ -79,7 +79,8 @@ public class Project3Test {
     /**Time must be in hh:mm format*/
     @Test
     void shouldValidateTime(){
-        assertTrue(Project3.isValidTime("22:00"));
+        assertTrue(Project3.isValidTime("12:00"));
+        assertFalse(Project3.isValidTime("22:00"));
         assertFalse(Project3.isValidTime(""));
         assertFalse(Project3.isValidTime(null));
         assertFalse(Project3.isValidTime("22:600"));
@@ -87,6 +88,14 @@ public class Project3Test {
         assertFalse(Project3.isValidTime("16.00"));
     }
 
+    /** Time must have the 12-hour indicator: am/pm */
+    @Test
+    void shouldValidateTimeIndication(){
+        assertFalse(Project3.isValidTimeIndication("ao"));
+        assertTrue(Project3.isValidTimeIndication("am"));
+        assertTrue(Project3.isValidTimeIndication("AM"));
+        assertTrue(Project3.isValidTimeIndication("pm"));
+    }
     /**Utility method should return the index where arguments begin from if options are provided*/
     @Test
     void getArgumentIndexWithOps(){
@@ -137,30 +146,30 @@ public class Project3Test {
         assertThat(argMap.get("flightNumber"), equalTo("1234"));
         assertThat(argMap.get("src"), equalTo("PDX"));
         assertThat(argMap.get("departDate"), equalTo("3/15/2023"));
-        assertThat(argMap.get("departTime"), equalTo("1:03"));
+        assertThat(argMap.get("departTime"), equalTo("1:03 am"));
         assertThat(argMap.get("dest"), equalTo("SFO"));
         assertThat(argMap.get("arriveDate"), equalTo("3/15/2023"));
-        assertThat(argMap.get("arriveTime"), equalTo("3:33"));
+        assertThat(argMap.get("arriveTime"), equalTo("3:33 pm"));
     }
 
     /**The missing argument should be detected in the user input*/
     @Test
     void shouldDetectIfOneArgIsMissing(){
-        var argMap = Project3.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "SFO", "3/15/2023", "3:33"});
-        assertThat(argMap.size(), is(7));
+        var argMap = Project3.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "am", "SFO", "3/15/2023", "3:33", "pm"});
+        assertThat(argMap.size(), is(8));
         assertThat(argMap.get("airline"), equalTo("AirlineName"));
         assertThat(argMap.get("flightNumber"), equalTo("1234"));
         assertThat(argMap.get("src"), equalTo("PDX"));
         assertThat(argMap.get("departDate"), equalTo("3/15/2023"));
-        assertThat(argMap.get("departTime"), is(nullValue()));
+        assertThat(argMap.get("departTime"), equalTo("am"));
         assertThat(argMap.get("dest"), equalTo("SFO"));
         assertThat(argMap.get("arriveDate"), equalTo("3/15/2023"));
-        assertThat(argMap.get("arriveTime"), equalTo("3:33"));
+        assertThat(argMap.get("arriveTime"), equalTo("3:33 pm"));
     }
     /**The missing arguments should be detected in the user input*/
     @Test
     void shouldDetectIfTwoArgsAreMissing(){
-        var argMap = Project3.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "3/15/2023", "3:33"});
+        var argMap = Project3.parseArgs(new String[]{"AirlineName", "1234", "PDX", "3/15/2023", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.size(), is(6));
         assertThat(argMap.get("airline"), equalTo("AirlineName"));
         assertThat(argMap.get("flightNumber"), equalTo("1234"));
@@ -169,26 +178,30 @@ public class Project3Test {
         assertThat(argMap.get("departTime"), is(nullValue()));
         assertThat(argMap.get("dest"), is(nullValue()));
         assertThat(argMap.get("arriveDate"), equalTo("3/15/2023"));
-        assertThat(argMap.get("arriveTime"), equalTo("3:33"));
+        assertThat(argMap.get("arriveTime"), equalTo("3:33 pm"));
     }
     /**The missing arguments should be detected in the user input and the hashmap should not contain those values*/
     @Test
     void shouldDetectIfArgsAreMissing(){
-        var argMap = Project3.parseArgs(new String[]{"1234", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023", "3:33"});
+        var argMap = Project3.parseArgs(new String[]{"1234", "PDX", "3/15/2023", "3:33", "am", "SFO", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("flightNumber"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "PDX", "3/15/2023", "3:33", "am" ,"SFO", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("flightNumber"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "3/15/2023", "3:33", "SFO", "3/15/2023", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "3/15/2023", "3:33", "am","SFO", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("src"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3:33", "SFO", "3/15/2023", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3:33", "am", "SFO", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("departDate"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "SFO", "3/15/2023", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "SFO", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("departTime"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "3/15/2023", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "am", "3/15/2023", "3:33", "pm"});
         assertThat(argMap.get("dest"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "SFO", "3:33"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "am", "SFO", "3:33", "pm"});
         assertThat(argMap.get("arriveDate"), is(nullValue()));
-        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023"});
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "am", "SFO", "3/15/2023"});
         assertThat(argMap.get("arriveTime"), is(nullValue()));
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "am", "SFO", "3/15/2023", "3:33"});
+        assertThat(argMap.get("arriveTime"), equalTo("3:33"));
+        argMap = Project3.parseArgs(new String[]{"Airline", "1234", "PDX", "3/15/2023", "3:33", "SFO", "3/15/2023", "3:33", "pm"});
+        assertThat(argMap.get("departTime"), equalTo("3:33"));
     }
 }

@@ -69,6 +69,14 @@ public class Project3Test {
         assertFalse(Project3.isValidAirportCode("123"));
         assertTrue(Project3.isValidAirportCode("ABC"));
     }
+    /**Airport code must correspond to a valid name*/
+    @Test
+    void shouldValidateAirportName(){
+        assertFalse(Project3.isValidAirportName(null));
+        assertFalse(Project3.isValidAirportName(""));
+        assertFalse(Project3.isValidAirportName("ABC"));
+        assertTrue(Project3.isValidAirportName("BOM"));
+    }
 
     /**Date must be in mm/dd/yyyy format*/
     @Test

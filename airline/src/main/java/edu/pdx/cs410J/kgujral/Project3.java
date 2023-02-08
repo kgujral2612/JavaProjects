@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kgujral;
 import com.google.common.annotations.VisibleForTesting;
+import edu.pdx.cs410J.AirportNames;
 import edu.pdx.cs410J.ParserException;
 import java.io.*;
 import java.text.ParseException;
@@ -228,6 +229,17 @@ public class Project3 {
     }
 
     /**
+     * Returns true if the airportCode has a corresponding airportName,
+     * @param  airportCode  airport code that needs to be validated
+     * @return              true if airportCode is valid, false otherwise
+     * */
+    @VisibleForTesting
+    static boolean isValidAirportName(String airportCode){
+        if(airportCode == null)
+            return false;
+        return AirportNames.getName(airportCode)!=null;
+    }
+    /**
      * Returns true if the date is valid,
      * i.e, in the format of mm/dd/yyyy
      * @param  date  a string consisting of date
@@ -397,6 +409,10 @@ public class Project3 {
                             break;
                         }
                     }
+                    else if(!isValidAirportName(args[i])){
+                            System.err.printf((invalidArgument) + "%n", "Departure Airport Code", args[i], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)");
+                            break;
+                        }
                     argMap.put("src", args[i]);
                     break;
                 case 3: if(!isValidDate(args[i])){
@@ -445,6 +461,10 @@ public class Project3 {
                         System.err.printf((invalidArgument) + "%n", "Arrival Airport Code", args[i], "A 3-letter String. eg: SFO");
                         break;
                     }
+                }
+                else if(!isValidAirportName(args[i])){
+                    System.err.printf((invalidArgument) + "%n", "Arrival Airport Code", args[i], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)");
+                    break;
                 }
                     argMap.put("dest", args[i]);
                     break;

@@ -127,6 +127,15 @@ class Project3IT extends InvokeMainTestCase {
         var result = invokeMain(args);
         assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Departure Airport Code", args[2], "A 3-letter String. eg: PDX")));
     }
+    /** When the departure airport code does not correspond to an airport name
+     * the program should issue
+     * an error message for the user*/
+    @Test
+    void shouldValidateDepartureAirportName(){
+        String[] args = {"British Airways", "123", "ABC", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Departure Airport Code", args[2], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
+    }
     /** When the departure date is invalid
      * the program should issue
      * an error message for the user*/
@@ -163,6 +172,15 @@ class Project3IT extends InvokeMainTestCase {
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "S4O", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
         assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Arrival Airport Code", args[6], "A 3-letter String. eg: SFO")));
+    }
+    /** When the arrival airport code does not correspond to an airport name
+     * the program should issue
+     * an error message for the user*/
+    @Test
+    void shouldValidateArrivalAirportName(){
+        String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "ABC", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Arrival Airport Code", args[6], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
     }
     /** When the arrival date is invalid
      * the program should issue

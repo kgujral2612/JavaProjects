@@ -91,6 +91,24 @@ public class TextParserTest {
     assertThrows(ParserException.class, parser::parse);
   }
 
+  /** Airline should not be returned if file contains departure invalid airport code*/
+  @Test
+  void invalidDepartureAirportCode(){
+    InputStream resource = getClass().getResourceAsStream("invalid-departure-airport-code.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
+  /** Airline should not be returned if file contains invalid airport code*/
+  @Test
+  void invalidArrivalAirportCode(){
+    InputStream resource = getClass().getResourceAsStream("invalid-arrival-airport-code.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
 }
 
 

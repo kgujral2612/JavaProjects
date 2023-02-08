@@ -68,6 +68,9 @@ public class TextParser implements AirlineParser<Airline> {
               case 1: if(!Project3.isValidAirportCode(line)){
                           throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "A 3-letter String. eg: PDX"));
                       }
+                      if(!Project3.isValidAirportName(line)){
+                          throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "Must correspond to a real-world airport code."));
+                      }
                       src = line;
                       count++;
                       break;
@@ -85,6 +88,9 @@ public class TextParser implements AirlineParser<Airline> {
                       break;
               case 3: if(!Project3.isValidAirportCode(line)){
                           throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "A 3-letter String. eg: PDX"));
+                      }
+                      if(!Project3.isValidAirportName(line)){
+                          throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "Must correspond to a real-world airport code."));
                       }
                       dest = line;
                       count++;

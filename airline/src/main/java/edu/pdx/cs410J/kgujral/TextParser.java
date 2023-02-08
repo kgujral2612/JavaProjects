@@ -77,6 +77,9 @@ public class TextParser implements AirlineParser<Airline> {
                       if(!Project3.isValidTime(line.split(" ")[1])){
                           throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time in the format hh:mm. eg: 05:45"));
                       }
+                      if(!Project3.isValidTimeMarker(line.split(" ")[2])){
+                          throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time marker. eg: am/pm"));
+                      }
                       depart = line;
                       count++;
                       break;
@@ -92,8 +95,14 @@ public class TextParser implements AirlineParser<Airline> {
                       if(!Project3.isValidTime(line.split(" ")[1])){
                           throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time in the format hh:mm. eg: 05:45"));
                       }
+                      if(!Project3.isValidTimeMarker(line.split(" ")[2])){
+                          throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time marker. eg: am/pm"));
+                      }
                       arrive = line;
-                      airline.addFlight(new Flight(number, src, dest, getDate(depart), getDate(arrive)));
+                      if(!Project3.isValidFlightDuration(DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive))){
+                          throw new ParserException(String.format(invalidArgument, "Flight Duration", "negative or zero", "positive duration"));
+                      }
+                      airline.addFlight(new Flight(number, src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive)));
                       count=0;
                       break;
             }
@@ -104,16 +113,6 @@ public class TextParser implements AirlineParser<Airline> {
       throw new ParserException(ioError);
     }
   }
-    Date getDate(String date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-        try{
-            return formatter.parse(date);
-        }
-        catch(ParseException p){
-            System.err.println("An error occured while creating departure date for the test");
-        }
-        return new Date();
-    }
 
     /** Should be able to read text from a given file
      * @return String which contains the content of the file

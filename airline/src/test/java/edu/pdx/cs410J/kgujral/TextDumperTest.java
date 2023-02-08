@@ -44,8 +44,8 @@ public class TextDumperTest {
     Airline read = parser.parse();
     assertThat(read.getName(), equalTo(airlineName));
     assertThat(read.getFlights().size(), equalTo(2));
-    assertThat(read.getFlights().toArray()[0].toString(), equalTo("Flight 6798 departs DDN at 2/01/2022 06:15 pm arrives DDL at 2/01/2022 07:00 pm"));
-    assertThat(read.getFlights().toArray()[1].toString(), equalTo("Flight 5241 departs DDN at 2/01/2022 08:23 am arrives HYD at 2/01/2022 11:53 am"));
+    assertThat(read.getFlights().toArray()[0].toString(), equalTo("Flight 6798 departs DDN at 2/1/22, 6:15 PM arrives DDL at 2/1/22, 7:00 PM"));
+    assertThat(read.getFlights().toArray()[1].toString(), equalTo("Flight 5241 departs DDN at 2/1/22, 8:23 AM arrives HYD at 2/1/22, 11:53 AM"));
   }
 
   /**The text dumped should be parsable*/

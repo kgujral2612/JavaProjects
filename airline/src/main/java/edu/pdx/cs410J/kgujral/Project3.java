@@ -277,6 +277,8 @@ public class Project3 {
 
     @VisibleForTesting
     static boolean isValidFlightDuration(Date departure, Date arrival){
+        if(departure == null || arrival == null)
+            return false;
         return arrival.getTime() - departure.getTime() > 0;
     }
 
@@ -330,8 +332,10 @@ public class Project3 {
                     break;
                 case prettyOp:
                     var prettyLocation = args[++i];
-                    if(!prettyLocation.equals("-"))
-                        prettyLocation += ".txt";
+                    if(!prettyLocation.equals("-")){
+                        if(!prettyLocation.endsWith(".txt"))
+                            prettyLocation += ".txt";
+                    }
                     argMap.put("pretty", prettyLocation);
                     break;
             }
@@ -525,34 +529,27 @@ public class Project3 {
         var argMap = parseArgs(args);
         if(argMap.size() == 8){
             airline = new Airline(argMap.get("airline"));
-            try{
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-                Date departure = formatter.parse(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
-                Date arrival = formatter.parse(String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
-                if(!isValidFlightDuration(departure, arrival))
-                {
-                    System.err.println(String.format(invalidFlightDuration, departure, arrival));
-                    return;
-                }
-                flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
-                airline.addFlight(flight);
-                if(opMap.get("print")!=null)
-                    print(flight);
-
-                if(opMap.get("textFile")!=null)
-                    textFile(opMap.get("textFile"), airline, flight);
-
-                if(opMap.get("pretty")!=null){
-                    String textFile = opMap.get("textFile");
-                    if(textFile == null)
-                        prettyPrint(airline, opMap.get("pretty"));
-                    else
-                        prettyPrint(airline, opMap.get("pretty"), opMap.get("textFile"));
-                }
-
+            Date departure = DateHelper.stringToDate(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
+            Date arrival = DateHelper.stringToDate(String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
+            if(!isValidFlightDuration(departure, arrival))
+            {
+                System.err.println(String.format(invalidFlightDuration, departure, arrival));
+                return;
             }
-            catch (ParseException e){
-                System.err.println("There was an error parsing the date time");
+            flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
+            airline.addFlight(flight);
+            if(opMap.get("print")!=null)
+                print(flight);
+
+            if(opMap.get("textFile")!=null)
+                textFile(opMap.get("textFile"), airline, flight);
+
+            if(opMap.get("pretty")!=null){
+                String textFile = opMap.get("textFile");
+                if(textFile == null)
+                    prettyPrint(airline, opMap.get("pretty"));
+                else
+                    prettyPrint(airline, opMap.get("pretty"), opMap.get("textFile"));
             }
         }
     }

@@ -33,8 +33,8 @@ public class TextParserTest {
     Airline airline = parser.parse();
     assertThat(airline.getName(), equalTo("Alaska Airlines"));
     assertThat(airline.getFlights().size(), equalTo(2));
-    assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 2/01/2023 9:00 arrives SFO at 2/01/2023 2:30"));
-    assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 2/01/2023 7:23 arrives PDX at 2/01/2023 2:53"));
+    assertThat(airline.getFlights().toArray()[0].toString(), equalTo("Flight 6791 departs PDX at 12/1/23, 9:00 PM arrives SFO at 12/2/23, 2:30 AM"));
+    assertThat(airline.getFlights().toArray()[1].toString(), equalTo("Flight 6792 departs SFO at 2/1/23, 7:23 AM arrives PDX at 2/1/23, 2:53 PM"));
   }
   /** An empty text file should
    * be parsed successfully
@@ -63,7 +63,8 @@ public class TextParserTest {
     var parser = new TextParser(new InputStreamReader(resource));
     assertThrows(ParserException.class, parser::parse);
   }
-  /** */
+  /** Text should be read successfully from a valid file
+   * @throws ParserException if the file can not be read*/
   @Test
   void readsTextFromValidFile() throws ParserException {
     InputStream resource = getClass().getResourceAsStream("airline-flight-info.txt");
@@ -72,6 +73,24 @@ public class TextParserTest {
     String content = parser.readText();
     assertNotNull(content);
   }
+  /** Airline should not be returned if file contains invalid time duration*/
+  @Test
+  void invalidFlightDuration() {
+    InputStream resource = getClass().getResourceAsStream("invalid-flight-duration.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
+  /** Airline should not be returned if file contains invalid time duration*/
+  @Test
+  void invalidTime(){
+    InputStream resource = getClass().getResourceAsStream("invalid-flight-time.txt");
+    assertThat(resource, notNullValue());
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
 }
 
 

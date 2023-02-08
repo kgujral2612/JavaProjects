@@ -4,9 +4,12 @@ import edu.pdx.cs410J.ParserException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * A skeletal implementation of the {@link TextParser} class for {@link Project2}.
+ * A skeletal implementation of the {@link TextParser} class for {@link Project3}.
  */
 public class TextParser implements AirlineParser<Airline> {
 
@@ -50,47 +53,62 @@ public class TextParser implements AirlineParser<Airline> {
             }
             line = line.trim();
             switch(count){
-                case -1: if(!Project2.isValidAirlineName(line)){
+                case -1: if(!Project3.isValidAirlineName(line)){
                         return null;
                     }
                     airline = new Airline(line);
                     count ++;
                     break;
-              case 0: if(!Project2.isValidFlightNumber(line)){
+              case 0: if(!Project3.isValidFlightNumber(line)){
                           throw new ParserException(String.format(invalidArgument, "Flight Number", line, "A whole number. eg: 6478"));
                       }
                       number = Integer.parseInt(line);
                       count++;
                       break;
-              case 1: if(!Project2.isValidAirportCode(line)){
+              case 1: if(!Project3.isValidAirportCode(line)){
                           throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "A 3-letter String. eg: PDX"));
+                      }
+                      if(!Project3.isValidAirportName(line)){
+                          throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "Must correspond to a real-world airport code."));
                       }
                       src = line;
                       count++;
                       break;
-              case 2: if(!Project2.isValidDate(line.split(" ")[0])){
+              case 2: if(!Project3.isValidDate(line.split(" ")[0])){
                             throw new ParserException(String.format(invalidArgument, "Departure Date", line, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
                       }
-                      if(!Project2.isValidTime(line.split(" ")[1])){
+                      if(!Project3.isValidTime(line.split(" ")[1])){
                           throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time in the format hh:mm. eg: 05:45"));
+                      }
+                      if(!Project3.isValidTimeMarker(line.split(" ")[2])){
+                          throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time marker. eg: am/pm"));
                       }
                       depart = line;
                       count++;
                       break;
-              case 3: if(!Project2.isValidAirportCode(line)){
+              case 3: if(!Project3.isValidAirportCode(line)){
                           throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "A 3-letter String. eg: PDX"));
+                      }
+                      if(!Project3.isValidAirportName(line)){
+                          throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "Must correspond to a real-world airport code."));
                       }
                       dest = line;
                       count++;
                       break;
-              case 4: if(!Project2.isValidDate(line.split(" ")[0])){
+              case 4: if(!Project3.isValidDate(line.split(" ")[0])){
                           throw new ParserException(String.format(invalidArgument, "Arrival Date", line, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
                       }
-                      if(!Project2.isValidTime(line.split(" ")[1])){
+                      if(!Project3.isValidTime(line.split(" ")[1])){
                           throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time in the format hh:mm. eg: 05:45"));
                       }
+                      if(!Project3.isValidTimeMarker(line.split(" ")[2])){
+                          throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time marker. eg: am/pm"));
+                      }
                       arrive = line;
-                      airline.addFlight(new Flight(number, src, dest, depart, arrive));
+                      if(!Project3.isValidFlightDuration(DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive))){
+                          throw new ParserException(String.format(invalidArgument, "Flight Duration", "negative or zero", "positive duration"));
+                      }
+                      airline.addFlight(new Flight(number, src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive)));
                       count=0;
                       break;
             }
@@ -101,4 +119,21 @@ public class TextParser implements AirlineParser<Airline> {
       throw new ParserException(ioError);
     }
   }
+
+    /** Should be able to read text from a given file
+     * @return String which contains the content of the file
+     * @throws ParserException when an IOException is encountered.*/
+    public String readText()throws ParserException{
+        try (
+                BufferedReader br = new BufferedReader(this.reader)) {
+            String result="", line ="";
+            while ((line = br.readLine()) != null) {
+                result += line + "\n";
+            }
+            return result;
+        }
+        catch (IOException e) {
+            throw new ParserException(ioError);
+        }
+    }
 }

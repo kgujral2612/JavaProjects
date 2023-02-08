@@ -5,6 +5,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -442,15 +443,20 @@ public class Project3 {
         var argMap = parseArgs(args);
         if(argMap.size() == 8){
             airline = new Airline(argMap.get("airline"));
-            flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"),
-                    String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")),
-                    String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
+            try{
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+                Date departure = formatter.parse(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
+                Date arrival = formatter.parse(String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
+                flight = new Flight(Integer.parseInt(argMap.get("flightNumber")), argMap.get("src"), argMap.get("dest"), departure, arrival);
+                if(opMap.get("print")!=null)
+                    print(flight);
 
-            if(opMap.get("print")!=null)
-                print(flight);
-
-            if(opMap.get("textFile")!=null)
-                textFile(opMap.get("textFile"), airline, flight);
+                if(opMap.get("textFile")!=null)
+                    textFile(opMap.get("textFile"), airline, flight);
+            }
+            catch (ParseException e){
+                System.err.println("There was an error parsing the date time");
+            }
         }
     }
 

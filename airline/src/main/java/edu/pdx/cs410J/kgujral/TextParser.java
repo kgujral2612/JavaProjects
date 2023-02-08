@@ -4,6 +4,9 @@ import edu.pdx.cs410J.ParserException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * A skeletal implementation of the {@link TextParser} class for {@link Project3}.
@@ -90,7 +93,7 @@ public class TextParser implements AirlineParser<Airline> {
                           throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time in the format hh:mm. eg: 05:45"));
                       }
                       arrive = line;
-                      airline.addFlight(new Flight(number, src, dest, depart, arrive));
+                      airline.addFlight(new Flight(number, src, dest, getDate(depart), getDate(arrive)));
                       count=0;
                       break;
             }
@@ -101,4 +104,14 @@ public class TextParser implements AirlineParser<Airline> {
       throw new ParserException(ioError);
     }
   }
+    Date getDate(String date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+        try{
+            return formatter.parse(date);
+        }
+        catch(ParseException p){
+            System.err.println("An error occured while creating departure date for the test");
+        }
+        return new Date();
+    }
 }

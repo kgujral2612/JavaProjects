@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kgujral;
 import org.junit.jupiter.api.Test;
+import java.util.Date;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -9,8 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class FlightTest {
   /** a sample flight used for testing */
-  Flight sample_flight = new Flight(3561, "DDN", "DDL", "03/03/2020 05:00", "03/03/2020 05:45");
-
+  Flight sample_flight = new Flight(3561, "DDN", "DDL", DateHelper.stringToDate("03/03/2020 05:00 pm"), DateHelper.stringToDate("03/03/2020 05:45 pm"));
   /**
    * When no values are passed while creating
    * an object of the flight class,
@@ -22,9 +22,9 @@ public class FlightTest {
     assertThat(flight, is(not(equalTo(nullValue()))));
     assertThat(flight.getNumber(), equalTo(42));
     assertThat(flight.getSource(), equalTo(""));
-    assertThat(flight.getDepartureString(), equalTo(""));
+    assertThat(flight.getDepartureString(), is(not(nullValue())));
     assertThat(flight.getDestination(), equalTo(""));
-    assertThat(flight.getArrivalString(), equalTo(""));
+    assertThat(flight.getArrivalString(), is(not(nullValue())));
   }
 
    /** When values are passed while creating
@@ -36,15 +36,15 @@ public class FlightTest {
     int number = 123;
     String src = "PDX";
     String dest = "SFO";
-    String departure = "03/03/2020 16:00";
-    String arrival = "03/03/2020 19:00";
+    Date departure = DateHelper.stringToDate("03/03/2020 6:00 am");
+    Date arrival = DateHelper.stringToDate("03/03/2020 9:00 am");
     Flight flight = new Flight(number, src, dest, departure, arrival);
     assertThat(flight, is(not(equalTo(nullValue()))));
     assertThat(flight.getNumber(), equalTo(number));
     assertThat(flight.getSource(), equalTo(src));
     assertThat(flight.getDestination(), equalTo(dest));
-    assertThat(flight.getDepartureString(), equalTo(departure));
-    assertThat(flight.getArrivalString(), equalTo(arrival));
+    assertThat(flight.getDepartureString(), equalTo("3/3/20, 6:00 AM"));
+    assertThat(flight.getArrivalString(), equalTo("3/3/20, 9:00 AM"));
   }
 
   /** getNumber should return the flight number */
@@ -61,7 +61,7 @@ public class FlightTest {
   /** getDeparture should return the flight departure date and time */
   @Test
   void getDepartureStringReturnsDepartureString(){
-    assertThat(sample_flight.getDepartureString(), is("03/03/2020 05:00"));
+    assertThat(sample_flight.getDepartureString(), is("3/3/20, 5:00 PM"));
   }
   /** getDestination should return the flight destination airport code */
   @Test
@@ -72,7 +72,7 @@ public class FlightTest {
   /** getArrival should return the flight arrival date and time */
   @Test
   void getArrivalStringReturnsArrivalString(){
-    assertThat(sample_flight.getArrivalString(), is("03/03/2020 05:45"));
+    assertThat(sample_flight.getArrivalString(), is("3/3/20, 5:45 PM"));
   }
 
   /** toString should return the flight details in form of a string */
@@ -80,6 +80,7 @@ public class FlightTest {
   void toStringReturnsValidOutput() {
     Flight flight = new Flight();
     var op = flight.toString();
-    assertThat(op, containsString("Flight 42 departs  at  arrives  at "));
+    String d = DateHelper.datetoShortString(new Date());
+    assertThat(op, containsString("Flight 42 departs  at " + d + " arrives  at " + d));
   }
 }

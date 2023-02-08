@@ -4,9 +4,9 @@ import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+
+import java.io.*;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -43,6 +43,16 @@ class Project3IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString("arrive\tArrival date and time (am/pm)"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("options are (options may appear in any order):"));
     }
+    /** When more arguments are passed than required,
+     * an error message should be displayed for the user
+     * */
+    @Test
+    void shouldDisplayErrorMessageWhenTooManyArgumentsAreProvided(){
+        String[] args = {"-print", "-textFile", "FilePath", "Extra one here", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am" , "SFO", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.tooManyArguments));
+    }
+
     /** When the readme option is selected, the project README.txt
      *  should be displayed and the program should exit. */
    @Test
@@ -70,6 +80,30 @@ class Project3IT extends InvokeMainTestCase {
         TextParser parser = new TextParser(new FileReader(filePath));
         Airline read = parser.parse();
         assertThat(read.getName(), equalTo(validArgsPrintFileOp[3]));
+    }
+
+    /** Should catch exception if airline from file is null */
+    @Test
+    void shouldAssignAirlineFromArgsIfAirlineFromFileIsNull(@TempDir File tempDir){
+        String textFilePath = tempDir.getPath() + "my-text.txt";
+        String [] args = new String[] {"-textFile", textFilePath, "Kaushambi Airlines", "6578", "BOM", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    }
+
+    /** Should Issue Error if Airline name is mismatched*/
+    @Test
+    void shouldIssueErrorIfAirlineIsMisMatched(@TempDir File tempDir) throws IOException {
+        String airlineName = "Test Airline";
+        Airline airline = new Airline(airlineName);
+
+        File textFile = new File(tempDir, "airline.txt");
+        TextDumper dumper = new TextDumper(new FileWriter(textFile));
+        dumper.dump(airline);
+
+        String [] args = new String[] {"-textFile", textFile.getPath(), "Kaushambi Airlines", "6578", "BOM", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
+        var result = invokeMain(args);
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.airlineNameMismatch, "Kaushambi Airlines", "Test Airline")));
     }
     /** When the airline name in the text file is different from
      * the airline in the arguments, the program should issue

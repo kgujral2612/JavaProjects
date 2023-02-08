@@ -1,12 +1,14 @@
 package edu.pdx.cs410J.kgujral;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link Project3} class
@@ -181,6 +183,14 @@ public class Project3Test {
         assertThat(opMap.get("textFile"), equalTo("somefile.txt"));
 
     }
+
+    /** Should catch exception if pretty file cannot be accessed */
+    @Test
+    void shouldIssueErrorIfPrettyFileCannotBeAccessed(){
+        Airline airline = new Airline("Sample Airline");
+        Project3.prettyPrint(airline, "");
+    }
+
     /**Arguments passed by the user must be parsed and added onto a hashmap*/
     @Test
     void shouldParseArgs(){

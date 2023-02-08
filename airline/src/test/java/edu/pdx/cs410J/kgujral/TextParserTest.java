@@ -1,8 +1,10 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,6 +75,44 @@ public class TextParserTest {
     String content = parser.readText();
     assertNotNull(content);
   }
+
+  /** Parser object cannot be created if reader is null
+   */
+  @Test
+  void throwsExceptionIfReaderIsNull() {
+    TextParser parser = new TextParser(null);
+    assertThrows(NullPointerException.class, parser::readText);
+  }
+
+  @Test
+  void invalidDepartureAirportCode(@TempDir File dir) throws IOException {
+    File tempFile = new File(dir, "child.txt");
+    TextDumper dumper = new TextDumper(new FileWriter(tempFile));
+    Airline airline = new Airline("Sample Airline");
+    Flight f1 = new Flight(648, "123", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    airline.addFlight(f1);
+    airline.addFlight(f2);
+    dumper.dump(airline);
+
+    TextParser parser = new TextParser(new FileReader(tempFile));
+    assertThrows(ParserException.class, parser::parse);
+  }
+  @Test
+  void invalidArrivalAirportCode(@TempDir File dir) throws IOException {
+    File tempFile = new File(dir, "child.txt");
+    TextDumper dumper = new TextDumper(new FileWriter(tempFile));
+    Airline airline = new Airline("Sample Airline");
+    Flight f1 = new Flight(648, "ABQ", "123", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    airline.addFlight(f1);
+    airline.addFlight(f2);
+    dumper.dump(airline);
+
+    TextParser parser = new TextParser(new FileReader(tempFile));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
   /** Airline should not be returned if file contains invalid time duration*/
   @Test
   void invalidFlightDuration() {

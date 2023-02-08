@@ -1,8 +1,11 @@
 package edu.pdx.cs410J.kgujral;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 import java.util.Date;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for the {@link Flight} class.
@@ -82,5 +85,46 @@ public class FlightTest {
     var op = flight.toString();
     String d = DateHelper.datetoShortString(new Date());
     assertThat(op, containsString("Flight 42 departs  at " + d + " arrives  at " + d));
+  }
+
+  /** comparing 2 flights with different airport codes*/
+  @Test
+  void shouldCompareTwoFlightsByAirportCode(){
+    Flight f1 = new Flight(648, "BFL", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    assertThat(f1.compareTo(f2), is(1));
+  }
+
+  /** comparing 2 flights with same airport codes but different departure dates*/
+  @Test
+  void shouldCompareTwoFlightsByDepartureDate(){
+    Flight f1 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:45 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    assertThat(f1.compareTo(f2), is(-300000));
+  }
+
+  /** comparing 2 equal flights*/
+  @Test
+  void shouldReturnZeroIfTwoFlightAreEqual(){
+    Flight f1 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    assertThat(f1.compareTo(f2), is(0));
+  }
+
+  @Test
+  void shouldSortFlightsCorrectly(){
+    Flight f1 = new Flight(1, "CHA", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f2 = new Flight(2, "BNA", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f3 = new Flight(3, "BNA", "SFO", DateHelper.stringToDate("3/3/2020 05:30 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f4 = new Flight(4, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+    Flight f5 = new Flight(5, "CWQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
+
+    Flight[] flights = {f1, f2, f3, f4, f5};
+    Arrays.sort(flights);
+    assertEquals(flights[0].getNumber(), 4);
+    assertEquals(flights[1].getNumber(), 3);
+    assertEquals(flights[2].getNumber(), 2);
+    assertEquals(flights[3].getNumber(), 1);
+    assertEquals(flights[4].getNumber(), 5);
   }
 }

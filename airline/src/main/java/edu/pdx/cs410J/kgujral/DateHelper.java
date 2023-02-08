@@ -9,12 +9,12 @@ public class DateHelper {
     static String invalidDateMessage = "Unable to parse date because it is invalid. Was %s | Expected 12-hour date time format. eg: 2/5/2022 5:45 pm";
    /** Convert String to Date*/
     public static Date stringToDate(String date){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         return stringToDate(date, formatter);
     }
     /** Convert String to Date*/
     public static Date shortStringToDate(String date){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy, hh:mm a");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy, hh:mm a");
         return stringToDate(date, formatter);
     }
     /** Convert String to Date with a given format*/

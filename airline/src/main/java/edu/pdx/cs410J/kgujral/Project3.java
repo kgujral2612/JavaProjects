@@ -103,44 +103,53 @@ public class Project3 {
      * */
     @VisibleForTesting
     static void prettyPrint(Airline airline, String location, String textFile){
-        Airline airlineFromFile ;
-            var flight = (Flight) airline.getFlights().toArray()[0];
-            TextParser parser;
-            try {
-                parser = new TextParser(new FileReader(textFile));
-                try{
-                    airlineFromFile = parser.parse();
-                    if(airlineFromFile == null){
-                        airlineFromFile = airline;
-                    }
-                    else if(!airlineFromFile.getName().equals(airline.getName())){
-                        System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
-                        return;
-                    }
-                }
-                catch (ParserException e) {
-                    System.err.println(e.getMessage());
-                    return;
-                }
-            }
-            catch (FileNotFoundException e) {
-                airlineFromFile = airline;
-            }
-            airlineFromFile.addFlight(flight);
-
-            try{
-                PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
-                dumper.dump(airlineFromFile);
-            }
-            catch(IOException e){
-                System.err.printf((ioError) + "%n", location);
-            }
+        Airline airlineFromFile = readAirline(textFile, airline);
+        try{
+            PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
+            dumper.dump(airlineFromFile);
+        }
+        catch(IOException e){
+            System.err.printf((ioError) + "%n", location);
+        }
     }
 
     /**
      * Parses the file to gather airline information
      * If the airline is same as the airline provided
-     * in the arguments, the new flight information
+     * the airline inside the file is read and returned
+     * else, null value is returned
+     * @param textFile the path to the textFile
+     * @param airline the airline whose name should be matched with the contents of the textFile
+     * */
+    @VisibleForTesting
+    static Airline readAirline(String textFile, Airline airline){
+        TextParser parser;
+        Airline airlineFromFile ;
+        try {
+            parser = new TextParser(new FileReader(textFile));
+            try{
+                airlineFromFile = parser.parse();
+                if(airlineFromFile == null){
+                    airlineFromFile = new Airline(airline.getName());
+                }
+                else if(!airlineFromFile.getName().equals(airline.getName())){
+                    System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
+                    return null;
+                }
+            }
+            catch (ParserException e) {
+                System.err.println(e.getMessage());
+                return null;
+            }
+        }
+        catch (FileNotFoundException e) {
+            airlineFromFile = new Airline(airline.getName());
+        }
+        return airlineFromFile;
+    }
+
+    /**
+     * The new flight information
      * is appended inside the file
      * In case the file is not found, it creates a new file
      * In case the file has formatting errors,
@@ -151,27 +160,9 @@ public class Project3 {
      * */
     @VisibleForTesting
     static void textFile(String textFile, Airline airline, Flight flight){
-        TextParser parser;
-        Airline airlineFromFile ;
-        try {
-            parser = new TextParser(new FileReader(textFile));
-            try{
-                airlineFromFile = parser.parse();
-                if(airlineFromFile == null){
-                    airlineFromFile = airline;
-                }
-                else if(!airlineFromFile.getName().equals(airline.getName())){
-                    System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
-                    return;
-                }
-            }
-            catch (ParserException e) {
-                System.err.println(e.getMessage());
-                return;
-            }
-        }
-        catch (FileNotFoundException e) {
-            airlineFromFile = airline;
+        Airline airlineFromFile = readAirline(textFile, airline);
+        if(airlineFromFile == null){
+            return;
         }
         airlineFromFile.addFlight(flight);
         try{
@@ -551,6 +542,9 @@ public class Project3 {
             airline = new Airline(argMap.get("airline"));
             Date departure = DateHelper.stringToDate(String.format(datetimeFormat, argMap.get("departDate"), argMap.get("departTime")));
             Date arrival = DateHelper.stringToDate(String.format(datetimeFormat, argMap.get("arriveDate"), argMap.get("arriveTime")));
+            if(departure == null || arrival == null){
+                return;
+            }
             if(!isValidFlightDuration(departure, arrival))
             {
                 System.err.println(String.format(invalidFlightDuration, departure, arrival));

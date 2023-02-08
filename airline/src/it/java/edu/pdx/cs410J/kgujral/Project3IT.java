@@ -58,7 +58,7 @@ class Project3IT extends InvokeMainTestCase {
     @Test
     void shouldPrintFlightInfoWhenOptionIsSelected(){
         var result = invokeMain(validArgsPrintOp);
-        assertThat(result.getTextWrittenToStandardOut(), equalTo("Flight 1234 departs PDX at 3/3/24, 1:03 AM arrives SFO at 3/3/24, 3:33 PM\n"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo("Flight 1234 departs PDX at 3/15/23, 1:03 AM arrives SFO at 3/15/23, 3:33 PM\n"));
     }
     /** When file is not present, a new file should be created
      * in the directory and airline information should be added onto it */
@@ -304,11 +304,11 @@ class Project3IT extends InvokeMainTestCase {
     void shouldPrettyPrintToStdOut(){
         String[] args = {"-pretty", "-", "British Airways", "234", "SFO", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways"));
-        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight # 234\n" +
+        assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways\n" +
+                "Flight # 234\n" +
                 "From San Francisco, CA To San Francisco, CA\n" +
-                "Departs at: Dec 3, 2022, 11:30:00 AM\n" +
-                "Arrives at: Dec 3, 2022, 3:33:00 PM\n" +
+                "Departs at: Mar 12, 2022, 11:30:00 AM\n" +
+                "Arrives at: Mar 12, 2022, 3:33:00 PM\n" +
                 "Total Duration of Flight: 243 minutes."));
     }
 
@@ -320,27 +320,56 @@ class Project3IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString("British Airways"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Flight # 234\n" +
                 "From San Francisco, CA To San Francisco, CA\n" +
-                "Departs at: Dec 3, 2022, 11:30:00 AM\n" +
-                "Arrives at: Dec 3, 2022, 3:33:00 PM\n" +
+                "Departs at: Mar 12, 2022, 11:30:00 AM\n" +
+                "Arrives at: Mar 12, 2022, 3:33:00 PM\n" +
                 "Total Duration of Flight: 243 minutes."));
-        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 234 departs SFO at 12/3/22, 11:30 AM arrives SFO at 12/3/22, 3:33 PM"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 234 departs SFO at 3/12/22, 11:30 AM arrives SFO at 3/12/22, 3:33 PM"));
     }
     /** pretty print to a file*/
     @Test
-    void shouldPrettyPrintToFile(){
-        String[] args = {"-print", "-pretty", "pretty-airline-info", "Kaushambi Airways", "234", "PDX", "3/12/2022", "11:30", "am", "SFO", "3/12/2022", "3:33", "pm"};
+    void shouldPrettyPrintToFile(@TempDir File tempDir) throws FileNotFoundException, ParserException {
+        File prettyFile = new File(tempDir, "temp-pretty-file.txt");
+        String[] args = {"-print", "-pretty", prettyFile.getPath(), "Random Airways", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
+
         var result = invokeMain(args);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+
+        TextParser prettyParser = new TextParser(new FileReader(prettyFile));
+        String content = prettyParser.readText();
+        assertThat(content, containsString("Random Airways\n" +
+                "Flight # 999\n" +
+                "From Berlin, Germany To Manchester, England\n" +
+                "Departs at: Oct 17, 2022, 11:30:00 AM\n" +
+                "Arrives at: Oct 17, 2022, 3:33:00 PM\n" +
+                "Total Duration of Flight: 243 minutes."));
     }
 
     /** pretty print to a file with textFile op*/
-    @Disabled
     @Test
-    void shouldPrettyPrintToFileWithFileOp(){
-        String pathToFile = "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/airline-flight-info.txt";
-        String pathToPrettyFile = "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/pretty-airline-flight-info.txt";
-        String [] args = new String[] {"-pretty", pathToPrettyFile,"-textFile", pathToFile, "Alaska Airlines", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
+    void shouldPrettyPrintToFileWithFileOp(@TempDir File tempDir) throws FileNotFoundException, ParserException {
+        File textFile = new File(tempDir, "temp-text-file.txt");
+        File prettyFile = new File(tempDir, "temp-pretty-file.txt");
+        String textFilePath = textFile.getPath();
+        String prettyFilePath = prettyFile.getPath();
+
+        String [] args = new String[] {"-pretty", prettyFilePath,"-textFile", textFilePath, "Kaushambi Airlines", "6578", "BOM", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertNull(result.getTextWrittenToStandardError());
+        assertThat(result.getTextWrittenToStandardError(), is(""));
+
+        TextParser parser = new TextParser(new FileReader(textFile));
+        Airline read = parser.parse();
+        assertThat(read.getName(), equalTo("Kaushambi Airlines"));
+        assertThat(read.getFlights().size(), equalTo(1));
+        assertThat(read.getFlights().toArray()[0].toString(), containsString("Flight 6578 departs BOM at 3/15/23, 1:03 AM arrives SFO at 3/15/23, 3:33 PM"));
+
+        TextParser prettyParser = new TextParser(new FileReader(prettyFile));
+        String content = prettyParser.readText();
+        assertThat(content, containsString("Kaushambi Airlines"));
+        assertThat(content, containsString("Flight # 6578\n" +
+                "From Bombay, India To San Francisco, CA\n" +
+                "Departs at: Mar 15, 23, 1:03:00 AM\n" +
+                "Arrives at: Mar 15, 23, 3:33:00 PM\n" +
+                "Total Duration of Flight: 870 minutes.\n"));
+
     }
 }

@@ -33,8 +33,8 @@ public class TextDumperTest {
   void airlineAndFlightInfoIsDumped(@TempDir File tempDir) throws IOException, ParserException {
     String airlineName = "Indigo Airline";
     Airline airline = new Airline(airlineName);
-    airline.addFlight(new Flight(6798, "DDN", "DDL", DateHelper.stringToDate("2/01/2022 06:15 pm"), DateHelper.stringToDate("2/01/2022 07:00 pm")));
-    airline.addFlight(new Flight(5241, "DDN", "HYD", DateHelper.stringToDate("2/01/2022 08:23 am"), DateHelper.stringToDate("2/01/2022 11:53 am")));
+    airline.addFlight(new Flight(6798, "BOM", "ABQ", DateHelper.stringToDate("2/01/2022 06:15 pm"), DateHelper.stringToDate("2/01/2022 07:00 pm")));
+    airline.addFlight(new Flight(5241, "BOM", "ABQ", DateHelper.stringToDate("2/01/2022 08:23 am"), DateHelper.stringToDate("2/01/2022 11:53 am")));
 
     File textFile = new File(tempDir, "airline.txt");
     TextDumper dumper = new TextDumper(new FileWriter(textFile));
@@ -44,8 +44,8 @@ public class TextDumperTest {
     Airline read = parser.parse();
     assertThat(read.getName(), equalTo(airlineName));
     assertThat(read.getFlights().size(), equalTo(2));
-    assertThat(read.getFlights().toArray()[0].toString(), equalTo("Flight 6798 departs DDN at 2/1/22, 6:15 PM arrives DDL at 2/1/22, 7:00 PM"));
-    assertThat(read.getFlights().toArray()[1].toString(), equalTo("Flight 5241 departs DDN at 2/1/22, 8:23 AM arrives HYD at 2/1/22, 11:53 AM"));
+    assertThat(read.getFlights().toArray()[0].toString(), equalTo("Flight 6798 departs BOM at 2/1/22, 6:15 PM arrives ABQ at 2/1/22, 7:00 PM"));
+    assertThat(read.getFlights().toArray()[1].toString(), equalTo("Flight 5241 departs BOM at 2/1/22, 8:23 AM arrives ABQ at 2/1/22, 11:53 AM"));
   }
 
   /**The text dumped should be parsable*/

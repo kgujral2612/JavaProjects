@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * The main class for the CS410J airline Project
  */
-public class Project3 {
+public class Project4 {
     /** string containing textFile option */
     static final String textFileOp = "-textFile";
     /** string containing pretty print option */
@@ -50,7 +50,7 @@ public class Project3 {
     @VisibleForTesting
     static String readMe() throws IOException {
         StringBuilder content = new StringBuilder();
-        try (InputStream readme = Project3.class.getResourceAsStream("README.txt")) {
+        try (InputStream readme = Project4.class.getResourceAsStream("README.txt")) {
             if(readme == null)
                 return null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(readme));

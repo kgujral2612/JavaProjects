@@ -12,9 +12,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
- * An integration test for the {@link Project3} main class.
+ * An integration test for the {@link Project4} main class.
  */
-class Project3IT extends InvokeMainTestCase {
+class Project4IT extends InvokeMainTestCase {
     /** valid list of arguments with readme option */
     String[] validArgsReadmeOp = {"-README", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
     /** valid list of arguments with print option */
@@ -24,15 +24,15 @@ class Project3IT extends InvokeMainTestCase {
     /** valid list with readme option and not arguments */
     String[] readmeOp = {"-README"};
     /**
-     * Invokes the main method of {@link Project3} with the given arguments.
+     * Invokes the main method of {@link Project4} with the given arguments.
      */
-    private MainMethodResult invokeMain(String... args) { return invokeMain( Project3.class, args ); }
+    private MainMethodResult invokeMain(String... args) { return invokeMain( Project4.class, args ); }
 
     /** When no arguments are provided, usage should be displayed for the user */
     @Test
     void shouldDisplayUsageWhenNoArgumentsAreProvided(){
         var result = invokeMain();
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingCLIArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingCLIArguments));
         assertThat(result.getTextWrittenToStandardOut(), containsString("java -jar target/airline-2023.0.0.jar [options] <args>"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("args are (in this order):"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("airline\tThe name of the airline"));
@@ -50,7 +50,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldDisplayErrorMessageWhenTooManyArgumentsAreProvided(){
         String[] args = {"-print", "-textFile", "FilePath", "Extra one here", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am" , "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.tooManyArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.tooManyArguments));
     }
 
     /** When the readme option is selected, the project README.txt
@@ -103,7 +103,7 @@ class Project3IT extends InvokeMainTestCase {
 
         String [] args = new String[] {"-textFile", textFile.getPath(), "Kaushambi Airlines", "6578", "BOM", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.airlineNameMismatch, "Kaushambi Airlines", "Test Airline")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.airlineNameMismatch, "Kaushambi Airlines", "Test Airline")));
     }
     /** When the airline name in the text file is different from
      * the airline in the arguments, the program should issue
@@ -113,7 +113,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldNotAddFlightDetailsIfAirlineNameIsDifferentWithOp(){
         String [] args = new String[] {"-textFile", "/Users/kaushambigujral/Desktop/git/PSUWinter23KG/airline/src/test/resources/edu/pdx/cs410J/kgujral/airline-flight-info.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.airlineNameMismatch, "My Awesome Airways", "Alaska Airlines")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.airlineNameMismatch, "My Awesome Airways", "Alaska Airlines")));
     }
     /** When the text file contains invalid data items,
      * the program should identify and should issue
@@ -131,7 +131,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIssueErrorIfFilePathDoesNotExist(){
         String[] args = new String[]{"-textFile", "dir/some.txt", "My Awesome Airways", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "am"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.ioError, args[1])));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.ioError, args[1])));
     }
     /** When the airline name is invalid
      * the program should issue
@@ -140,7 +140,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateAirlineName(){
        String[] args = {"", "1234", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
        var result = invokeMain(args);
-       assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Airline Name", args[0], "A non-empty String. eg: British Airways")));
+       assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Airline Name", args[0], "A non-empty String. eg: British Airways")));
    }
     /** When the flight number is invalid
      * the program should issue
@@ -149,7 +149,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateFlightNumber(){
        String[] args = {"British Airways", "1a23", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
        var result = invokeMain(args);
-       assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Flight Number", args[1], "A whole number. eg: 6478")));
+       assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Flight Number", args[1], "A whole number. eg: 6478")));
    }
     /** When the departure airport code is invalid
      * the program should issue
@@ -158,7 +158,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateDepartureAirportCode(){
         String[] args = {"British Airways", "123", "P1X", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Departure Airport Code", args[2], "A 3-letter String. eg: PDX")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Departure Airport Code", args[2], "A 3-letter String. eg: PDX")));
     }
     /** When the departure airport code does not correspond to an airport name
      * the program should issue
@@ -167,7 +167,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateDepartureAirportName(){
         String[] args = {"British Airways", "123", "ABC", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Departure Airport Code", args[2], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Departure Airport Code", args[2], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
     }
     /** When the departure date is invalid
      * the program should issue
@@ -176,7 +176,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateDepartureDate(){
         String[] args = {"British Airways", "123", "PDX", "3-15-2023", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Date of Departure", args[3], "A date in the format mm/dd/yyyy. eg: 11/03/1997")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Date of Departure", args[3], "A date in the format mm/dd/yyyy. eg: 11/03/1997")));
     }
     /** When the departure time is invalid
      * the program should issue
@@ -185,7 +185,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateDepartureTime(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "103", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Time of Departure", args[4], "12-hour time in the format hh:mm. eg: 05:45")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Time of Departure", args[4], "12-hour time in the format hh:mm. eg: 05:45")));
     }
     /** When the departure time is not succeeded by am/pm
      * the program should issue
@@ -194,7 +194,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateDepartureTimeMarker(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "po", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Time of Departure", args[5], "time must be succeeded by am/pm")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Time of Departure", args[5], "time must be succeeded by am/pm")));
     }
 
     /** When the arrival airport code is invalid
@@ -204,7 +204,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateArrivalAirportCode(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "S4O", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Arrival Airport Code", args[6], "A 3-letter String. eg: SFO")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Arrival Airport Code", args[6], "A 3-letter String. eg: SFO")));
     }
     /** When the arrival airport code does not correspond to an airport name
      * the program should issue
@@ -213,7 +213,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateArrivalAirportName(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "ABC", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Arrival Airport Code", args[6], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Arrival Airport Code", args[6], "Must be a real-world airport code. eg: PDX (for Portland, Oregon, USA) or BOM (for Bombay, India)")));
     }
     /** When the arrival date is invalid
      * the program should issue
@@ -222,7 +222,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateArrivalDate(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "SFO", "3-15-2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Date of Arrival", args[7], "A date in the format mm/dd/yyyy. eg: 11/03/1997")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Date of Arrival", args[7], "A date in the format mm/dd/yyyy. eg: 11/03/1997")));
     }
     /** When the arrival time is invalid
      * the program should issue
@@ -231,7 +231,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateArrivalTime(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "am", "SFO", "3/15/2023", "333", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Time of Arrival", args[8], "12-hour time in the format hh:mm. eg: 08:05")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Time of Arrival", args[8], "12-hour time in the format hh:mm. eg: 08:05")));
     }
     /** When the departure time is not succeeded by am/pm
      * the program should issue
@@ -240,7 +240,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldValidateArrivalTimeMarker(){
         String[] args = {"British Airways", "123", "PDX", "3/15/2023", "1:03", "AM", "SFO", "3/15/2023", "3:33", "bogus meridian"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidArgument, "Time of Arrival", args[9], "time must be succeeded by am/pm")));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidArgument, "Time of Arrival", args[9], "time must be succeeded by am/pm")));
     }
     /** When the Flight Number is missing
      * the program should report it to the user*/
@@ -248,7 +248,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingFlightNumber(){
         String[] args = {"British Airways", "PDX", "3/15/2023", "1:03","am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Flight Number"));
     }
     /** When the Departure Airport Code is missing
@@ -257,7 +257,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingSource(){
         String[] args = {"British Airways", "234", "3/15/2023", "1:03", "am","SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Departure Airport Code"));
     }
     /** When the Date of Departure is missing
@@ -266,7 +266,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingDepartureDate(){
         String[] args = {"British Airways", "234", "SFO", "1:03", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Date of Departure"));
     }
     /** When the Time of Departure is missing
@@ -275,7 +275,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingDepartureTime(){
         String[] args = {"British Airways", "234", "SFO", "3/15/2023", "am", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Time of Departure"));
     }
     /** When am/pm is missing after the Time of Departure
@@ -284,7 +284,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingDepartureTimeMarker(){
         String[] args = {"British Airways", "234", "SFO", "3/3/2023", "SFO", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("am/pm after time of departure"));
     }
     /** When the Arrival Airport Code is missing
@@ -293,7 +293,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingDest(){
         String[] args = {"British Airways", "234", "PDX","3/15/2023", "1:03", "am", "3/15/2023", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Arrival Airport Code"));
     }
     /** When the Date of Arrival is missing
@@ -302,7 +302,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingArriveDate(){
         String[] args = {"British Airways", "234", "PDX", "1:03", "am", "SFO", "3:33", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Date of Arrival"));
     }
     /** When the Time of Arrival is missing
@@ -311,7 +311,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingArrivalTime(){
         String[] args = {"British Airways", "234", "SFO", "3/15/2023", "1:30", "am","SFO", "3/15/2023", "pm"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("Time of Arrival"));
     }
     /** When am/pm is missing after the Time of Arrival
@@ -320,7 +320,7 @@ class Project3IT extends InvokeMainTestCase {
     void shouldIdentifyMissingArrivalTimeMarker(){
         String[] args = {"British Airways", "234", "SFO", "3/3/2023", "1:30", "am", "SFO", "3/15/2023", "3:33"};
         var result = invokeMain(args);
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project3.missingArguments));
+        assertThat(result.getTextWrittenToStandardError(), containsString(Project4.missingArguments));
         assertThat(result.getTextWrittenToStandardError(), containsString("am/pm after time of arrival"));
     }
 
@@ -330,7 +330,7 @@ class Project3IT extends InvokeMainTestCase {
         var result = invokeMain(args);
         var departure = DateHelper.stringToDate(args[3] + " " +args[4] + " " + args[5]);
         var arrival = DateHelper.stringToDate(args[7] + " " +args[8] + " " + args[9]);
-        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project3.invalidFlightDuration,departure, arrival)));
+        assertThat(result.getTextWrittenToStandardError(), containsString(String.format(Project4.invalidFlightDuration,departure, arrival)));
     }
 
     @Test

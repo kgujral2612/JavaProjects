@@ -42,6 +42,7 @@ class Project4IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString("dest\tThree-letter code of arrival airport"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("arrive\tArrival date and time (am/pm)"));
         assertThat(result.getTextWrittenToStandardOut(), containsString("options are (options may appear in any order):"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("-xmlFile file \tWhere to read/write the airline info\n"));
     }
     /** When more arguments are passed than required,
      * an error message should be displayed for the user
@@ -58,9 +59,9 @@ class Project4IT extends InvokeMainTestCase {
    @Test
    void shouldDisplayReadMeWhenOptionIsSelected(){
        var result = invokeMain(validArgsReadmeOp);
-       assertThat(result.getTextWrittenToStandardOut(), containsString("CS501 Project3:: Pretty Printing Your Airline"));
+       assertThat(result.getTextWrittenToStandardOut(), containsString("CS501 Project 4:: Storing Airlines as XML"));
        result = invokeMain(readmeOp);
-       assertThat(result.getTextWrittenToStandardOut(), containsString("CS501 Project3:: Pretty Printing Your Airline"));
+       assertThat(result.getTextWrittenToStandardOut(), containsString("CS501 Project 4:: Storing Airlines as XML"));
    }
     /** When print option is selected, the new flight information
      *  should be displayed */

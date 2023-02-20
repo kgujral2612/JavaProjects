@@ -19,6 +19,8 @@ public class Project4 {
     static final String prettyOp = "-pretty";
     /** string containing README option */
     static final String readMeOp = "-README";
+    /** string containing XML File option */
+    static final String xmlFileOp = "-xmlFile";
     /** string containing print option */
     static final String printOp = "-print";
     /** string containing invalid argument message */
@@ -182,6 +184,13 @@ public class Project4 {
     }
 
     /**
+     * */
+    @VisibleForTesting
+    static void xmlFile(String xmlFile, Airline airline , Flight flight){
+
+    }
+
+    /**
      * Returns true if the airlineName is valid,
      * i.e, it should not be null, empty or blank
      * @param  airlineName  the name of an airline that needs to be validated
@@ -304,7 +313,7 @@ public class Project4 {
         int i=0;
         while(i<args.length){
             if(args[i].startsWith("-")){
-                if(args[i].equals(textFileOp) || args[i].equals(prettyOp))
+                if(args[i].equals(textFileOp) || args[i].equals(prettyOp) || args[i].equals(xmlFileOp))
                     i++;
             }
             else
@@ -347,6 +356,14 @@ public class Project4 {
                             prettyLocation += ".txt";
                     }
                     argMap.put("pretty", prettyLocation);
+                    break;
+                case xmlFileOp:
+                    var xmlFileLocation = args[++i];
+                    if(!xmlFileLocation.equals("")){
+                        if(!xmlFileLocation.endsWith(".xml"))
+                            xmlFileLocation += ".xml";
+                    }
+                    argMap.put("xmlFile", xmlFileLocation);
                     break;
             }
         }
@@ -592,6 +609,7 @@ public class Project4 {
                 "dest\tThree-letter code of arrival airport\n" +
                 "arrive\tArrival date and time (am/pm)\n" +
                 "\noptions are (options may appear in any order):\n" +
+                "-xmlFile file \tWhere to read/write the airline info\n" +
                 "-pretty file \tPretty print the airline’s flights to\n" +
                 "a text file or standard out (file -)\n" +
                 "-textFile file\tWhere to read/write the airline info\n" +

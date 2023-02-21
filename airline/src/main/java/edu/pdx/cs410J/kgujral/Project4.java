@@ -33,6 +33,8 @@ public class Project4 {
     static final String datetimeFormat = "%s %s";
     /** string containing could not load readme message */
     static final String couldNotLoadReadMe = "Unable to lead README.txt file";
+    /** string containing cannot use xml and text options together */
+    static final String cannotUseTextAndXml = "You cannot use both -textFile and -xmlFile options at the same time.";
     /** string containing airline mismatch message  */
     static final String airlineNameMismatch = "The name of the airline specified in the arguments is different from that in the file. Was %s | Expected %s ";
     /** string containing missing CLI arguments message  */
@@ -186,8 +188,28 @@ public class Project4 {
     /**
      * */
     @VisibleForTesting
-    static void xmlFile(String xmlFile, Airline airline , Flight flight){
-
+    static void xmlFile(String xmlFile, Airline airline , Flight flight) {
+        XmlParser parser = new XmlParser(new File(xmlFile));
+        Airline airlineFromFile ;
+        try{airlineFromFile = parser.parse();}
+        catch (ParserException e){
+            System.err.println(e.getMessage());
+            return; }
+        if(airlineFromFile == null){
+            airlineFromFile = new Airline(airline.getName());
+        }
+        else if(!airlineFromFile.getName().equals(airline.getName())){
+            System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
+            return ;
+        }
+        airlineFromFile.addFlight(flight);
+        try{
+            XmlDumper dumper = new XmlDumper(new File(xmlFile));
+            dumper.dump(airlineFromFile);
+        }
+        catch(IOException e){
+            System.err.println("Unable to dump into the XML file.");
+        }
     }
 
     /**
@@ -541,7 +563,7 @@ public class Project4 {
      * @param  args  user input (command-line arguments)
      * */
     @VisibleForTesting
-    static void handleArguments(String[] args){
+    static void handleArguments(String[] args)  {
         var opMap = parseOptions(args);
         if(opMap.get("readme")!= null){
             try{
@@ -552,9 +574,14 @@ public class Project4 {
             }
             return;
         }
+        if(opMap.get("textFile")!=null && opMap.get("xmlFile")!=null){
+            System.err.println(cannotUseTextAndXml);
+            return;
+        }
 
         int opCount = opMap.get("textFile")!=null? opMap.size()+1 : opMap.size();
         opCount = opMap.get("pretty")!=null? opCount+1 : opCount;
+        opCount = opMap.get("xmlFile")!=null? opCount+1 : opCount;
         if(args.length - opCount > 10){
             System.err.println(tooManyArguments);
             return;
@@ -584,6 +611,9 @@ public class Project4 {
 
             if(opMap.get("textFile")!=null)
                 textFile(opMap.get("textFile"), airline, flight);
+
+            if(opMap.get("xmlFile")!=null)
+                xmlFile(opMap.get("xmlFile"), airline, flight);
 
             if(opMap.get("pretty")!=null){
                 String textFile = opMap.get("textFile");

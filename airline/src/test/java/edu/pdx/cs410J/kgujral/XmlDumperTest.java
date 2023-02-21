@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kgujral;
 
+import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -18,7 +19,7 @@ public class XmlDumperTest {
      * onto an XML file such that the file is
      * parsable by the XmlParser*/
     @Test
-    void shouldDumpElementsIntoXmlFile(@TempDir File tempDir) throws IOException {
+    void shouldDumpElementsIntoXmlFile(@TempDir File tempDir) throws IOException, ParserException {
         Airline airline = new Airline("Valid Airline");
         airline.addFlight(new Flight(1234, "SFO", "PDX", DateHelper.stringToDate("3/3/2023 11:00 pm"), DateHelper.stringToDate("3/4/2023 2:00 am")));
         airline.addFlight(new Flight(1356, "BOM", "PDX", DateHelper.stringToDate("3/3/2023 5:00 pm"), DateHelper.stringToDate("3/5/2023 7:20 am")));
@@ -33,5 +34,11 @@ public class XmlDumperTest {
         assertThat(parsedAirline.getFlights().size(), equalTo(2));
         assertThat(parsedAirline.getFlights().toArray()[0].toString(), equalTo("Flight 1234 departs SFO at 3/3/23, 11:00 PM arrives PDX at 3/4/23, 2:00 AM"));
         assertThat(parsedAirline.getFlights().toArray()[1].toString(), equalTo("Flight 1356 departs BOM at 3/3/23, 5:00 PM arrives PDX at 3/5/23, 7:20 AM"));
+    }
+
+    /** Should throw exception if invalid xml is passed*/
+    @Test
+    void shouldThrowErrorIfXmlIsInvalid(){
+
     }
 }

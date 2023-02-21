@@ -11,6 +11,15 @@ public class DateHelperTest {
         String date = "3/3/2023 5:00 am";
         assertThat(DateHelper.stringToDate(date), is(not(nullValue())));
     }
+    /** should build a date using date elements*/
+    @Test
+    void shouldConvertDateElementsToDate(){
+        var result = DateHelper.dateElementsToDate("3", "3", "2023", "15", "00");
+        assertThat(result, is(not(nullValue())));
+        result = DateHelper.dateElementsToDate("3", "3", "2023", "5", "00");
+        assertThat(result, is(not(nullValue())));
+    }
+
     @Test
     void shouldConvertShortStringToDateIfStringContainsValidDate(){
         String date = "3/3/2023, 5:00 am";
@@ -23,12 +32,27 @@ public class DateHelperTest {
     }
     @Test
     void shouldConvertDateToShortString(){
-        Date date = new Date();
-        assertThat(DateHelper.datetoShortString(date), is(not(nullValue())));
+        Date date = DateHelper.stringToDate("3/3/2023 5:00 am");
+        var res = DateHelper.datetoShortString(date);
+        assertThat(res, is(not(nullValue())));
+        assertThat(res, equalTo("3/3/23, 5:00 AM"));
     }
     @Test
     void shouldConvertDateToMediumString(){
-        Date date = new Date();
+        Date date = DateHelper.stringToDate("3/3/2023 5:00 am");
         assertThat(DateHelper.datetoMediumString(date), is(not(nullValue())));
+        assertThat(DateHelper.datetoMediumString(date), equalTo("Mar 3, 2023, 5:00:00 AM"));
+    }
+
+    @Test
+    void shouldBreakdownDate(){
+        Date date = DateHelper.stringToDate("3/3/2023 5:00 pm");
+        var res = DateHelper.breakdownDate(date);
+        assertThat(res, is(not(nullValue())));
+
+        date = DateHelper.stringToDate("3/3/2023 5:00 am");
+        res = DateHelper.breakdownDate(date);
+        assertThat(res, is(not(nullValue())));
+
     }
 }

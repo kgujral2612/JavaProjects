@@ -27,7 +27,7 @@ public class Project4Test {
     void readMeShouldReturnContentOfReadMeFile(){
         try{
             var content = Project4.readMe();
-            assertThat(content, containsString("CS501 Project3:: Pretty Printing Your Airline"));
+            assertThat(content, containsString("CS501 Project 4:: Storing Airlines as XML"));
             assertThat(content, containsString("- Kaushambi Gujral"));
         }
         catch(IOException e){

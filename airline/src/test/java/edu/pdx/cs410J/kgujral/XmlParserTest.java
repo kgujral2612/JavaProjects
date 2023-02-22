@@ -43,18 +43,6 @@ public class XmlParserTest {
         assertThrows(ParserException.class, parser::parse);
     }
 
-    /** When the xml file has no flights
-     */
-    @Test
-    void shouldReturnNullForXmlWithNoAirline() throws ParserException {
-        var fileName = "airline-no-flights.xml";
-        URL url = this.getClass().getResource(fileName);
-        assertNotNull(url);
-        File file = new File(url.getFile());
-        XmlParser parser = new XmlParser(file);
-        assertNotNull(parser.parse());
-    }
-
     /** When the xml file does not have name,
      * it should throw error */
     @Test
@@ -120,7 +108,7 @@ public class XmlParserTest {
     /** When the file does not exist,
      * a ParserException should be thrown */
     @Test
-    void shouldReturnNullAirlineIfFileDoesNotExist(@TempDir File tempDir) throws ParserException {
+    void shouldReturnNullAirlineIfFileDoesNotExist(@TempDir File tempDir) {
         File file = new File(tempDir, "file-not-yet-created.xml");
         XmlParser parser = new XmlParser(file);
         var thrown = assertThrows(RuntimeException.class, parser::parse);

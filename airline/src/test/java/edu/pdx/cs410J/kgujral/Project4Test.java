@@ -186,7 +186,7 @@ public class Project4Test {
     @Test
     void shouldIssueErrorIfPrettyFileCannotBeAccessed(){
         Airline airline = new Airline("Sample Airline");
-        Project4.prettyPrint(airline, "");
+        Project4.prettyPrintTxt(airline, "");
     }
 
     /**Arguments passed by the user must be parsed and added onto a hashmap*/

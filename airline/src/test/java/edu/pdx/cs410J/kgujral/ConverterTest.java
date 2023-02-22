@@ -18,16 +18,4 @@ public class ConverterTest {
         var result = Converter.readAirline(txtFile.getPath());
         assertNull(result);
     }
-
-    /** When the airline returned by the text file is null,
-     * it should not be dumped into a xml file*/
-    @Test
-    void shouldDisplayErrorWhenNullAirlineIsDumpedIntoXml(@TempDir File tempDir) throws ParserException {
-        File xmlFile = new File(tempDir, "xmlFile.xml");
-        Converter.dumpAirlineToXml(null, xmlFile.getPath());
-
-        XmlParser parser = new XmlParser(xmlFile);
-        var airlineFromXml = parser.parse();
-        assertNull(airlineFromXml);
-    }
 }

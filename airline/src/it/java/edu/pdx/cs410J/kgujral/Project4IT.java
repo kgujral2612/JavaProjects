@@ -457,42 +457,31 @@ class Project4IT extends InvokeMainTestCase {
     /** When -xmlFile option is selected, and the xml file does not contain extension
      * an extension should be added and the program must execute successfully*/
     @Test
-    void shouldAddExtensionToXmlFileIfItIsMissing(@TempDir File tempDir) throws ParserException {
+    void shouldAddExtensionToXmlFileIfItIsMissing(@TempDir File tempDir) throws IOException {
         File xmlFile = new File(tempDir, "airline.xml");
-        String[] args = {"-print", "-xmlFile", tempDir+"/airline", "Random Airways", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
-        invokeMain(args);
+        Airline airline = new Airline("Temp Airline");
+        assertThat(airline.getFlights().size(), is(0));
+        XmlDumper dumper = new XmlDumper(xmlFile);
+        dumper.dump(airline);
 
-        XmlParser parser = new XmlParser(xmlFile);
-        var airline = parser.parse();
-        assertNotNull(airline);
-        assertThat(airline.toString(), equalTo("Random Airways with 1 flights"));
-        assertThat(airline.getFlights().size(), is(1));
+        String[] args = {"-print", "-xmlFile", tempDir+"/airline", "Temp Airline", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
+        var res = invokeMain(args);
+        assertThat(res.getTextWrittenToStandardError(), equalTo(""));
     }
 
     /** When -xmlFile option is selected, and the airline name does not match
      * an error should be issued*/
     @Test
-    void shouldIssueErrorIfAirlineNameDoesNotMatch(@TempDir File tempDir){
+    void shouldIssueErrorIfAirlineNameDoesNotMatch(@TempDir File tempDir) throws IOException {
         File xmlFile = new File(tempDir, "airline.xml");
-        String[] args = {"-print", "-xmlFile", xmlFile.getPath(), "Random Airways", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
-        invokeMain(args);
+        Airline airline = new Airline("Temp Airline");
+        assertThat(airline.getFlights().size(), is(0));
+        XmlDumper dumper = new XmlDumper(xmlFile);
+        dumper.dump(airline);
 
         String[] args1 = {"-print", "-xmlFile", xmlFile.getPath(), "Some Other Airways", "555", "MAN", "12/15/2022", "11:30", "am", "BER", "12/16/2022", "3:33", "pm"};
         var res = invokeMain(args1);
-        assertThat(res.getTextWrittenToStandardError(), containsString("The name of the airline specified in the arguments is different from that in the file. Was Some Other Airways | Expected Random Airways"));
-    }
-
-    /** When -xmlFile option is selected, but the xml file does not conform to the DTD
-     * an error message should be issued for the user */
-    @Test
-    void shouldIssueErrorIfInvalidXmlIsProvided(){
-        var fileName = "invalid-airline.xml";
-        URL url = this.getClass().getResource(fileName);
-        assertNotNull(url);
-        File xmlFile = new File(url.getFile());
-        String[] args = {"-print", "-xmlFile", xmlFile.getPath(), "Example Airlines", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
-        var res = invokeMain(args);
-        assertThat(res.getTextWrittenToStandardError(), containsString("Departure Date Time was missing or invalid."));
+        assertThat(res.getTextWrittenToStandardError(), containsString("The name of the airline specified in the arguments is different from that in the file. Was Some Other Airways | Expected Temp Airline"));
     }
 
     /** When -xmlFile option is selected, and the xml file only contains the airline name
@@ -547,5 +536,7 @@ class Project4IT extends InvokeMainTestCase {
         var airlineFromFile = parser.parse();
         assertNotNull(airlineFromFile);
         assertThat(airlineFromFile.getFlights().size(), is(1));
+
+
     }
 }

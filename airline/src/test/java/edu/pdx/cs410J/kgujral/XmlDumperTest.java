@@ -32,14 +32,15 @@ public class XmlDumperTest {
         assertThat(parsedAirline.getFlights().toArray()[1].toString(), equalTo("Flight 1356 departs BOM at 3/3/23, 5:00 PM arrives PDX at 3/5/23, 7:20 AM"));
     }
 
+    /** Should be able to dump contents
+     * of a null airline */
     @Test
-    void shouldIssueError(@TempDir File tempDir) throws IOException {
+    void shouldIssueError(@TempDir File tempDir) throws IOException, ParserException {
         File xmlFile = new File(tempDir, "airline");
         XmlDumper dumper = new XmlDumper(xmlFile);
         dumper.dump(null);
 
         XmlParser parser = new XmlParser(xmlFile);
-        var thrown = assertThrows(ParserException.class, parser::parse);
-        assertEquals("There was a problem parsing the xml file :-(", thrown.getMessage());
+        assertNull(parser.parse());
     }
 }

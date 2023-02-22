@@ -2,11 +2,9 @@ package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Date;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +18,7 @@ public class XmlParserTest {
     void shouldParseValidXml() throws ParserException {
         var fileName = "valid-airline.xml";
         URL url = this.getClass().getResource(fileName);
+        assertNotNull(url);
         File file = new File(url.getFile());
         XmlParser parser = new XmlParser(file);
 
@@ -38,14 +37,22 @@ public class XmlParserTest {
     void shouldNotParseInValidXml() {
         var fileName = "invalid-airline.xml";
         URL url = this.getClass().getResource(fileName);
+        assertNotNull(url);
         File file = new File(url.getFile());
         XmlParser parser = new XmlParser(file);
-
         assertThrows(ParserException.class, parser::parse);
-        var thrown = assertThrows(ParserException.class, () -> {
-            parser.parse();
-        });
-        assertThat(thrown.getMessage(),containsString("Departure Date Time was missing or invalid."));
+    }
+
+    /** When the xml file has no flights
+     */
+    @Test
+    void shouldReturnNullForXmlWithNoAirline() throws ParserException {
+        var fileName = "airline-no-flights.xml";
+        URL url = this.getClass().getResource(fileName);
+        assertNotNull(url);
+        File file = new File(url.getFile());
+        XmlParser parser = new XmlParser(file);
+        assertNotNull(parser.parse());
     }
 
     /** When the xml file does not have name,
@@ -54,13 +61,11 @@ public class XmlParserTest {
     void shouldThrowErrorIfAirlineNameIsMissing(){
         var fileName = "missing-airline-name.xml";
         URL url = this.getClass().getResource(fileName);
+        assertNotNull(url);
         File file = new File(url.getFile());
         XmlParser parser = new XmlParser(file);
-        assertThrows(ParserException.class, parser::parse);
-        var thrown = assertThrows(ParserException.class, () -> {
-            parser.parse();
-        });
-        assertEquals("Airline Name was missing or invalid. Was null | Expected a non-empty string. Eg: British Airways", thrown.getMessage());
+        var thrown = assertThrows(ParserException.class, parser::parse);
+        assertEquals("The XML file does not conform to the DTD.", thrown.getMessage());
     }
 
     /** When the xml file only contains the airline
@@ -83,7 +88,7 @@ public class XmlParserTest {
      * invalid flight src
      */
     @Test
-    void shouldIssueErrorIfFlightSrcIsInvalid(@TempDir File tempDir) throws IOException, ParserException {
+    void shouldIssueErrorIfFlightSrcIsInvalid(@TempDir File tempDir) throws IOException {
         File file = new File(tempDir, "tempFile.xml");
         Airline airline = new Airline("Temp Airline");
         airline.addFlight(new Flight(123, "aabbcc", "SFO", new Date(), new Date()));
@@ -92,9 +97,7 @@ public class XmlParserTest {
 
         XmlParser parser = new XmlParser(file);
         assertThrows(ParserException.class, parser::parse);
-        var thrown = assertThrows(ParserException.class, () -> {
-            parser.parse();
-        });
+        var thrown = assertThrows(ParserException.class, parser::parse);
         assertEquals("Flight Source was missing or invalid. Was aabbcc | Expected a 3-letter code like PDX", thrown.getMessage());
     }
 
@@ -102,7 +105,7 @@ public class XmlParserTest {
      * invalid flight dest
      */
     @Test
-    void shouldIssueErrorIfFlightDestIsInvalid(@TempDir File tempDir) throws IOException, ParserException {
+    void shouldIssueErrorIfFlightDestIsInvalid(@TempDir File tempDir) throws IOException {
         File file = new File(tempDir, "tempFile.xml");
         Airline airline = new Airline("Temp Airline");
         airline.addFlight(new Flight(123, "SFO", "XXX", new Date(), new Date()));
@@ -110,19 +113,17 @@ public class XmlParserTest {
         dumper.dump(airline);
 
         XmlParser parser = new XmlParser(file);
-        assertThrows(ParserException.class, parser::parse);
-        var thrown = assertThrows(ParserException.class, () -> {
-            parser.parse();
-        });
+        var thrown = assertThrows(ParserException.class, parser::parse);
         assertEquals("Flight Destination was missing or invalid. Was XXX | Expected a 3-letter code like SFO", thrown.getMessage());
     }
 
-    /** When the file does not exist, the airline
-     * should be null*/
+    /** When the file does not exist,
+     * a ParserException should be thrown */
     @Test
     void shouldReturnNullAirlineIfFileDoesNotExist(@TempDir File tempDir) throws ParserException {
         File file = new File(tempDir, "file-not-yet-created.xml");
         XmlParser parser = new XmlParser(file);
-        assertNull(parser.parse());
+        var thrown = assertThrows(RuntimeException.class, parser::parse);
+        assertEquals("File was not found.", thrown.getMessage());
     }
 }

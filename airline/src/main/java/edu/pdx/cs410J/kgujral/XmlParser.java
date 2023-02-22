@@ -1,11 +1,12 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.AirlineParser;
-
 import edu.pdx.cs410J.ParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,6 +31,8 @@ public class XmlParser implements AirlineParser<Airline> {
         String year = dateTime.getElementsByTagName("date").item(0).getAttributes().item(2).getTextContent();
         String hours = dateTime.getElementsByTagName("time").item(0).getAttributes().item(0).getTextContent();
         String minute = dateTime.getElementsByTagName("time").item(0).getAttributes().item(1).getTextContent();
+        if(day.isEmpty() || month.isEmpty() || year.isEmpty() || hours.isEmpty() || minute.isEmpty())
+            return null;
         return DateHelper.dateElementsToDate(day, month, year, hours, minute);
     }
     @Override
@@ -42,8 +45,10 @@ public class XmlParser implements AirlineParser<Airline> {
             doc.getDocumentElement().normalize();
             Airline airline;
 
-            try{airline = new Airline(doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent());}
-            catch(Exception e){throw new ParserException(String.format(invalidOrMissingEl, "Airline Name", null, "a non-empty string. Eg: British Airways"));}
+            if(doc.getDocumentElement().getChildNodes().getLength() == 0){
+                return null;
+            }
+            airline = new Airline(doc.getDocumentElement().getElementsByTagName("name").item(0).getTextContent());
 
             NodeList flightList = doc.getElementsByTagName("flight");
             try{
@@ -51,31 +56,28 @@ public class XmlParser implements AirlineParser<Airline> {
                     Node node = flightList.item(i);
                     Element element = (Element) node;
 
-                    String number = null, src = null, dest = null;
-                    try{number = element.getElementsByTagName("number").item(0).getTextContent();}
-                    catch(NullPointerException e){throw new ParserException(String.format(invalidOrMissingEl, "Flight number", number, "a number like 6748")); }
+                    String number, src, dest ;
+                    number = element.getElementsByTagName("number").item(0).getTextContent();
                     if(!Project4.isValidFlightNumber(number))
                         throw new ParserException(String.format(invalidOrMissingEl, "Flight number", number, "a number like 6748"));
 
-                    try{src = element.getElementsByTagName("src").item(0).getTextContent();}
-                    catch(NullPointerException e){ throw new ParserException(String.format(invalidOrMissingEl, "Flight Source", src, "a 3-letter code like PDX")); }
+                    src = element.getElementsByTagName("src").item(0).getTextContent();
                     if(!Project4.isValidAirportCode(src) || !Project4.isValidAirportName(src))
                         throw new ParserException(String.format(invalidOrMissingEl, "Flight Source", src, "a 3-letter code like PDX"));
 
-                    Element departureDate = null, arrivalDate = null;
+                    Element departureDate, arrivalDate ;
                     Date depart, arrive;
-                    try{departureDate = (Element) element.getElementsByTagName("depart").item(0);
-                        depart = getDateFromElement(departureDate);}
-                    catch(NullPointerException e){throw new ParserException(String.format(invalidOrMissingEl, "Departure Date Time", departureDate, "24-hour date time in form of attributes."));}
-                    catch (Exception e){throw new ParserException(String.format(invalidOrMissingEl, "Departure Date Time", departureDate, "24-hour date time in form of attributes.")); }
+                    departureDate = (Element) element.getElementsByTagName("depart").item(0);
+                    depart = getDateFromElement(departureDate);
+                    if(depart == null)
+                        throw new ParserException("The Departure Date and Time does not conform to the DTD.");
 
-                    try{arrivalDate = (Element) element.getElementsByTagName("arrive").item(0);
-                         arrive = getDateFromElement(arrivalDate);}
-                    catch (NullPointerException e){throw new ParserException(String.format(invalidOrMissingEl, "Arrival Date Time", arrivalDate, "24-hour date time in form of attributes."));}
-                    catch (Exception e){throw new ParserException(String.format(invalidOrMissingEl, "Arrival Date Time", arrivalDate, "24-hour date time in form of attributes.")); }
+                    arrivalDate = (Element) element.getElementsByTagName("arrive").item(0);
+                    arrive = getDateFromElement(arrivalDate);
+                    if(arrive == null)
+                        throw new ParserException("The Arrival Date and Time does not conform to the DTD.");
 
-                    try{dest = element.getElementsByTagName("dest").item(0).getTextContent();}
-                    catch (NullPointerException e){throw new ParserException(String.format(invalidOrMissingEl, "Flight Source", dest, "a 3-letter code like SFO")); }
+                    dest = element.getElementsByTagName("dest").item(0).getTextContent();
                     if(!Project4.isValidAirportCode(dest) || !Project4.isValidAirportName(dest))
                         throw new ParserException(String.format(invalidOrMissingEl, "Flight Destination", dest, "a 3-letter code like SFO"));
 
@@ -83,18 +85,24 @@ public class XmlParser implements AirlineParser<Airline> {
                 }
             }
             catch(ParserException e){
-                throw new ParserException(e.getMessage());
+                throw e;
+            }
+            catch(Exception e){
+                throw new ParserException("The XML file does not conform to the DTD.");
             }
             return airline;
         }
-        catch (ParserException e){
-            throw new ParserException(e.getMessage());
-        }
         catch(FileNotFoundException e){
+            throw new RuntimeException("File was not found.");
+        }
+        catch(NullPointerException e){
+            throw new ParserException("The XML file does not conform to the DTD.");
+        }
+        catch(SAXParseException e){
             return null;
         }
         catch(Exception e){
-            throw new ParserException("There was a problem parsing the xml file :-(");
+            throw new ParserException(e.getMessage());
         }
     }
 }

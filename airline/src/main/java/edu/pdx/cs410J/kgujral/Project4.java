@@ -83,7 +83,7 @@ public class Project4 {
      * object information must be written
      * */
     @VisibleForTesting
-    static void prettyPrint(Airline airline, String location){
+    static void prettyPrintTxt(Airline airline, String location){
         if(location.equals("-")){
             System.out.println(PrettyHelper.prettify(airline));
         }
@@ -106,9 +106,30 @@ public class Project4 {
      * airline information must be read from
      * */
     @VisibleForTesting
-    static void prettyPrint(Airline airline, String location, String textFile){
-        Airline airlineFromFile = readAirline(textFile, airline);
+    static void prettyPrintTxt(Airline airline, String location, String textFile){
+        Airline airlineFromFile = readAirlineFromTxt(textFile, airline);
         if(airlineFromFile == null){
+            return;
+        }
+        if(location.equals("-")){
+            System.out.println(PrettyHelper.prettify(airlineFromFile));
+            return;
+        }
+        try{
+            PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
+            dumper.dump(airlineFromFile);
+        }
+        catch(IOException e){
+            System.err.printf((ioError) + "%n", location);
+        }
+    }
+
+    static void prettyPrintXml(Airline airline, String location, String xmlFile){
+        Airline airlineFromFile = readAirlineFromXml(xmlFile);
+        if(airlineFromFile == null){
+            return;
+        }
+        if(!airlineFromFile.getName().equals(airline.getName())){
             return;
         }
         if(location.equals("-")){
@@ -133,7 +154,7 @@ public class Project4 {
      * @param airline the airline whose name should be matched with the contents of the textFile
      * */
     @VisibleForTesting
-    static Airline readAirline(String textFile, Airline airline){
+    static Airline readAirlineFromTxt(String textFile, Airline airline){
         TextParser parser;
         Airline airlineFromFile ;
         try {
@@ -160,6 +181,27 @@ public class Project4 {
     }
 
     /**
+     * Parses the xml file to gather airline information
+     * If the airline is same as the airline provided
+     * the airline inside the file is read and returned
+     * else, null value is returned
+     * @param xmlFile the path to the xml file
+     * */
+    @VisibleForTesting
+    static Airline readAirlineFromXml(String xmlFile){
+        XmlParser parser;
+        Airline airlineFromFile;
+        try{
+            parser = new XmlParser(new File(xmlFile));
+            airlineFromFile = parser.parse();
+        } catch (ParserException e) {
+            System.err.println(e.getMessage());
+            airlineFromFile = null;
+        }
+        return airlineFromFile;
+    }
+
+    /**
      * The new flight information
      * is appended inside the file
      * In case the file is not found, it creates a new file
@@ -171,7 +213,7 @@ public class Project4 {
      * */
     @VisibleForTesting
     static void textFile(String textFile, Airline airline, Flight flight){
-        Airline airlineFromFile = readAirline(textFile, airline);
+        Airline airlineFromFile = readAirlineFromTxt(textFile, airline);
         if(airlineFromFile == null){
             return;
         }
@@ -185,22 +227,31 @@ public class Project4 {
         }
     }
 
-    /**
+    /** Reads data from the given xml file and dumps the new flight info
+     * @param  xmlFile the location of the xml file
+     * @param airline the Airline object
+     * @param flight the new flight
      * */
     @VisibleForTesting
-    static void xmlFile(String xmlFile, Airline airline , Flight flight) {
-        XmlParser parser = new XmlParser(new File(xmlFile));
-        Airline airlineFromFile ;
-        try{airlineFromFile = parser.parse();}
-        catch (ParserException e){
+    static void xmlFile(String xmlFile, Airline airline, Flight flight) {
+        XmlParser parser;
+        Airline airlineFromFile;
+        try{
+            parser = new XmlParser(new File(xmlFile));
+            airlineFromFile = parser.parse();
+        } catch (ParserException e) {
             System.err.println(e.getMessage());
-            return; }
+            return;
+        }
+        catch (RuntimeException e){
+            airlineFromFile = null;
+        }
         if(airlineFromFile == null){
             airlineFromFile = new Airline(airline.getName());
         }
         else if(!airlineFromFile.getName().equals(airline.getName())){
             System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
-            return ;
+            return;
         }
         airlineFromFile.addFlight(flight);
         try{
@@ -617,10 +668,13 @@ public class Project4 {
 
             if(opMap.get("pretty")!=null){
                 String textFile = opMap.get("textFile");
-                if(textFile == null)
-                    prettyPrint(airline, opMap.get("pretty"));
+                String xmlFile = opMap.get("xmlFile");
+                if(textFile == null && xmlFile == null)
+                    prettyPrintTxt(airline, opMap.get("pretty"));
+                else if (textFile == null)
+                    prettyPrintXml(airline, opMap.get("pretty"), opMap.get("xmlFile"));
                 else
-                    prettyPrint(airline, opMap.get("pretty"), opMap.get("textFile"));
+                    prettyPrintTxt(airline, opMap.get("pretty"), opMap.get("textFile"));
             }
         }
     }

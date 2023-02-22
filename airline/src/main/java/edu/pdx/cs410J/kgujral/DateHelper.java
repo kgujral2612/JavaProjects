@@ -66,7 +66,8 @@ public class DateHelper {
         return new DateBreakDown(month, day, year, String.valueOf(hours), String.valueOf(minutes));
     }
 }
-
+/** Class whose objects help breakdown Date into
+ * month, day, year, hours and minutes */
 class DateBreakDown{
     private final String month;
     private final String day;
@@ -74,6 +75,12 @@ class DateBreakDown{
     private final String hours;
     private final String minutes;
 
+    /** Parameterized constructor
+     * @param month month of the date
+     * @param day day of the date
+     * @param year year of the date
+     * @param hours hours of the date
+     * @param minutes minutes of the date*/
     public DateBreakDown(String month, String day, String year, String hours, String minutes){
         this.month = month;
         this.day = day;
@@ -81,19 +88,28 @@ class DateBreakDown{
         this.hours = hours;
         this.minutes = minutes;
     }
-
+    /** returns month
+     * @return String month*/
     public String getMonth(){
         return this.month;
     }
+    /** returns day
+     * @return String day*/
     public String getDay(){
         return this.day;
     }
+    /** returns year
+     * @return String year*/
     public String getYear(){
         return this.year;
     }
+    /** returns hours
+     * @return String hours*/
     public String getHours(){
         return this.hours;
     }
+    /** returns minutes
+     * @return String minutes*/
     public String getMinutes(){
         return this.minutes;
     }

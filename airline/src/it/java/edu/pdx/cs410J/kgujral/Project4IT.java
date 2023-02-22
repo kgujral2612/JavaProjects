@@ -488,6 +488,7 @@ class Project4IT extends InvokeMainTestCase {
     void shouldIssueErrorIfInvalidXmlIsProvided(){
         var fileName = "invalid-airline.xml";
         URL url = this.getClass().getResource(fileName);
+        assertNotNull(url);
         File xmlFile = new File(url.getFile());
         String[] args = {"-print", "-xmlFile", xmlFile.getPath(), "Example Airlines", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
         var res = invokeMain(args);
@@ -508,6 +509,40 @@ class Project4IT extends InvokeMainTestCase {
         String[] args = {"-print", "-xmlFile", file.getPath(), "Temp Airline", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
         invokeMain(args);
 
+        XmlParser parser = new XmlParser(file);
+        var airlineFromFile = parser.parse();
+        assertNotNull(airlineFromFile);
+        assertThat(airlineFromFile.getFlights().size(), is(1));
+    }
+
+    /**When pretty print std and xml options are given together*/
+    @Test
+    void shouldAddFlightsToXmlWithPrettyPrintToStd(@TempDir File tempDir) throws ParserException {
+        File file = new File(tempDir, "tempFile.xml");
+        String[] args = {"-pretty", "-", "-xmlFile", file.getPath(), "Temp Airline", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Temp Airline\n" +
+                "Flight # 999\n" +
+                "From Berlin, Germany To Manchester, England\n" +
+                "Departs at: Oct 17, 2022, 11:30:00 AM\n" +
+                "Arrives at: Oct 17, 2022, 3:33:00 PM\n" +
+                "Total Duration of Flight: 243 minutes."));
+
+        XmlParser parser = new XmlParser(file);
+        var airlineFromFile = parser.parse();
+        assertNotNull(airlineFromFile);
+        assertThat(airlineFromFile.getFlights().size(), is(1));
+    }
+    /**When pretty print file and xml options are given together*/
+    @Test
+    void shouldAddFlightsToXmlWithPrettyPrintToFile(@TempDir File tempDir) throws ParserException {
+        File prettyFile = new File(tempDir, "prettyFile.txt");
+        File file = new File(tempDir, "tempFile.xml");
+        String[] args = {"-pretty", prettyFile.getPath(), "-xmlFile", file.getPath(), "Temp Airline", "999", "BER", "10/17/2022", "11:30", "am", "MAN", "10/17/2022", "3:33", "pm"};
+        var result = invokeMain(args);
+
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
         XmlParser parser = new XmlParser(file);
         var airlineFromFile = parser.parse();
         assertNotNull(airlineFromFile);

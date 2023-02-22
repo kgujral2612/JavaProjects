@@ -1,17 +1,13 @@
 package edu.pdx.cs410J.kgujral;
-
 import edu.pdx.cs410J.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Unit tests for {@link XmlDumper} class */
 public class XmlDumperTest {
@@ -36,9 +32,14 @@ public class XmlDumperTest {
         assertThat(parsedAirline.getFlights().toArray()[1].toString(), equalTo("Flight 1356 departs BOM at 3/3/23, 5:00 PM arrives PDX at 3/5/23, 7:20 AM"));
     }
 
-    /** Should throw exception if invalid xml is passed*/
     @Test
-    void shouldThrowErrorIfXmlIsInvalid(){
+    void shouldIssueError(@TempDir File tempDir) throws IOException {
+        File xmlFile = new File(tempDir, "airline");
+        XmlDumper dumper = new XmlDumper(xmlFile);
+        dumper.dump(null);
 
+        XmlParser parser = new XmlParser(xmlFile);
+        var thrown = assertThrows(ParserException.class, parser::parse);
+        assertEquals("There was a problem parsing the xml file :-(", thrown.getMessage());
     }
 }

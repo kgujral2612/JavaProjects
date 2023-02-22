@@ -31,7 +31,7 @@ public class Converter {
      * */
     @VisibleForTesting
     static void printUsage(){
-        String msg = "java edu.pdx.cs410J.<login-id>.Converter textFile xmlFile";
+        String msg = "java -cp target/airline-2023.0.0.jar edu.pdx.cs410J.kgujral.Converter textFile xmlFile";
         System.out.println(msg);
     }
     /** Reads amd returns the airline from the given text file

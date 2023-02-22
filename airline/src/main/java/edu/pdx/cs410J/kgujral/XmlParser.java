@@ -8,6 +8,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import javax.swing.text.html.parser.Parser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -100,6 +101,9 @@ public class XmlParser implements AirlineParser<Airline> {
         }
         catch(SAXParseException e){
             return null;
+        }
+        catch(ParserException e){
+            throw e;
         }
         catch(Exception e){
             throw new ParserException(e.getMessage());

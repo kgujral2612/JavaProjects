@@ -195,8 +195,7 @@ public class Project4 {
             parser = new XmlParser(new File(xmlFile));
             airlineFromFile = parser.parse();
         } catch (ParserException e) {
-            System.err.println(e.getMessage());
-            airlineFromFile = null;
+             airlineFromFile = null;
         }
         return airlineFromFile;
     }

@@ -18,8 +18,6 @@ public class Converter {
 
     /** string containing unsuccessful xml dump message*/
     static final String xmlDumpUnsuccessful = "Unable to dump into the XML file.";
-    /** string containing airline null message*/
-    static final String airlineNull = "The airline parsed from the given text file was null.";
 
     /** string containing too few CLI arguments message  */
     static final String tooFewArgs = "Too few args. Was %s args | Expected 2 arguments, i.e textFilePath and xmlFilePath";
@@ -65,7 +63,6 @@ public class Converter {
     static void dumpAirlineToXml(Airline airline, String xmlFile) {
         xmlFile = xmlFile.endsWith(".xml")? xmlFile: xmlFile+".xml";
         if(airline == null){
-            System.err.println(airlineNull);
             return;
         }
         try{

@@ -5,10 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import javax.swing.text.html.parser.Parser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -41,7 +38,10 @@ public class XmlParser implements AirlineParser<Airline> {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try{
+            AirlineXmlHelper helper = new AirlineXmlHelper();
             DocumentBuilder db = dbf.newDocumentBuilder();
+            db.setErrorHandler(helper);
+            db.setEntityResolver(helper);
             Document doc = db.parse(file);
             doc.getDocumentElement().normalize();
             Airline airline;

@@ -60,13 +60,15 @@ public class XmlDumper extends AirlineXmlHelper implements AirlineDumper<Airline
         }
         Document doc ;
         try {
+
+            AirlineXmlHelper helper = new AirlineXmlHelper();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            builder.setErrorHandler(this);
-            builder.setEntityResolver(this);
+            builder.setErrorHandler(helper);
+            builder.setEntityResolver(helper);
             DOMImplementation dom = builder.getDOMImplementation();
-            DocumentType docType = dom.createDocumentType("airline", "-//Portland State University//DTD CS410J Airline//EN", "http://www.cs.pdx.edu/~whitlock/dtds/airline.dtd");
+            DocumentType docType = dom.createDocumentType("airline", AirlineXmlHelper.PUBLIC_ID, AirlineXmlHelper.SYSTEM_ID);
             doc = dom.createDocument(null, "airline", docType);
         } catch (ParserConfigurationException var17) {
             System.err.println("Ill-configured XML parser");

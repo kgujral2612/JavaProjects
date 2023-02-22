@@ -12,13 +12,15 @@ import java.util.HashMap;
 /**
  * The main class for the CS410J airline Project
  */
-public class Project3 {
+public class Project4 {
     /** string containing textFile option */
     static final String textFileOp = "-textFile";
     /** string containing pretty print option */
     static final String prettyOp = "-pretty";
     /** string containing README option */
     static final String readMeOp = "-README";
+    /** string containing XML File option */
+    static final String xmlFileOp = "-xmlFile";
     /** string containing print option */
     static final String printOp = "-print";
     /** string containing invalid argument message */
@@ -31,6 +33,8 @@ public class Project3 {
     static final String datetimeFormat = "%s %s";
     /** string containing could not load readme message */
     static final String couldNotLoadReadMe = "Unable to lead README.txt file";
+    /** string containing cannot use xml and text options together */
+    static final String cannotUseTextAndXml = "You cannot use both -textFile and -xmlFile options at the same time.";
     /** string containing airline mismatch message  */
     static final String airlineNameMismatch = "The name of the airline specified in the arguments is different from that in the file. Was %s | Expected %s ";
     /** string containing missing CLI arguments message  */
@@ -50,7 +54,7 @@ public class Project3 {
     @VisibleForTesting
     static String readMe() throws IOException {
         StringBuilder content = new StringBuilder();
-        try (InputStream readme = Project3.class.getResourceAsStream("README.txt")) {
+        try (InputStream readme = Project4.class.getResourceAsStream("README.txt")) {
             if(readme == null)
                 return null;
             BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -79,7 +83,7 @@ public class Project3 {
      * object information must be written
      * */
     @VisibleForTesting
-    static void prettyPrint(Airline airline, String location){
+    static void prettyPrintTxt(Airline airline, String location){
         if(location.equals("-")){
             System.out.println(PrettyHelper.prettify(airline));
         }
@@ -102,9 +106,30 @@ public class Project3 {
      * airline information must be read from
      * */
     @VisibleForTesting
-    static void prettyPrint(Airline airline, String location, String textFile){
-        Airline airlineFromFile = readAirline(textFile, airline);
+    static void prettyPrintTxt(Airline airline, String location, String textFile){
+        Airline airlineFromFile = readAirlineFromTxt(textFile, airline);
         if(airlineFromFile == null){
+            return;
+        }
+        if(location.equals("-")){
+            System.out.println(PrettyHelper.prettify(airlineFromFile));
+            return;
+        }
+        try{
+            PrettyPrinter dumper = new PrettyPrinter(new FileWriter(location));
+            dumper.dump(airlineFromFile);
+        }
+        catch(IOException e){
+            System.err.printf((ioError) + "%n", location);
+        }
+    }
+
+    static void prettyPrintXml(Airline airline, String location, String xmlFile){
+        Airline airlineFromFile = readAirlineFromXml(xmlFile);
+        if(airlineFromFile == null){
+            return;
+        }
+        if(!airlineFromFile.getName().equals(airline.getName())){
             return;
         }
         if(location.equals("-")){
@@ -129,7 +154,7 @@ public class Project3 {
      * @param airline the airline whose name should be matched with the contents of the textFile
      * */
     @VisibleForTesting
-    static Airline readAirline(String textFile, Airline airline){
+    static Airline readAirlineFromTxt(String textFile, Airline airline){
         TextParser parser;
         Airline airlineFromFile ;
         try {
@@ -156,6 +181,26 @@ public class Project3 {
     }
 
     /**
+     * Parses the xml file to gather airline information
+     * If the airline is same as the airline provided
+     * the airline inside the file is read and returned
+     * else, null value is returned
+     * @param xmlFile the path to the xml file
+     * */
+    @VisibleForTesting
+    static Airline readAirlineFromXml(String xmlFile){
+        XmlParser parser;
+        Airline airlineFromFile;
+        try{
+            parser = new XmlParser(new File(xmlFile));
+            airlineFromFile = parser.parse();
+        } catch (ParserException e) {
+             airlineFromFile = null;
+        }
+        return airlineFromFile;
+    }
+
+    /**
      * The new flight information
      * is appended inside the file
      * In case the file is not found, it creates a new file
@@ -167,7 +212,7 @@ public class Project3 {
      * */
     @VisibleForTesting
     static void textFile(String textFile, Airline airline, Flight flight){
-        Airline airlineFromFile = readAirline(textFile, airline);
+        Airline airlineFromFile = readAirlineFromTxt(textFile, airline);
         if(airlineFromFile == null){
             return;
         }
@@ -178,6 +223,42 @@ public class Project3 {
         }
         catch(IOException e){
             System.err.printf((ioError) + "%n", textFile);
+        }
+    }
+
+    /** Reads data from the given xml file and dumps the new flight info
+     * @param  xmlFile the location of the xml file
+     * @param airline the Airline object
+     * @param flight the new flight
+     * */
+    @VisibleForTesting
+    static void xmlFile(String xmlFile, Airline airline, Flight flight) {
+        XmlParser parser;
+        Airline airlineFromFile;
+        try{
+            parser = new XmlParser(new File(xmlFile));
+            airlineFromFile = parser.parse();
+        } catch (ParserException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
+        catch (RuntimeException e){
+            airlineFromFile = null;
+        }
+        if(airlineFromFile == null){
+            airlineFromFile = new Airline(airline.getName());
+        }
+        else if(!airlineFromFile.getName().equals(airline.getName())){
+            System.err.printf((airlineNameMismatch) + "%n", airline.getName(), airlineFromFile.getName());
+            return;
+        }
+        airlineFromFile.addFlight(flight);
+        try{
+            XmlDumper dumper = new XmlDumper(new File(xmlFile));
+            dumper.dump(airlineFromFile);
+        }
+        catch(IOException e){
+            System.err.println("Unable to dump into the XML file.");
         }
     }
 
@@ -304,7 +385,7 @@ public class Project3 {
         int i=0;
         while(i<args.length){
             if(args[i].startsWith("-")){
-                if(args[i].equals(textFileOp) || args[i].equals(prettyOp))
+                if(args[i].equals(textFileOp) || args[i].equals(prettyOp) || args[i].equals(xmlFileOp))
                     i++;
             }
             else
@@ -347,6 +428,14 @@ public class Project3 {
                             prettyLocation += ".txt";
                     }
                     argMap.put("pretty", prettyLocation);
+                    break;
+                case xmlFileOp:
+                    var xmlFileLocation = args[++i];
+                    if(!xmlFileLocation.equals("")){
+                        if(!xmlFileLocation.endsWith(".xml"))
+                            xmlFileLocation += ".xml";
+                    }
+                    argMap.put("xmlFile", xmlFileLocation);
                     break;
             }
         }
@@ -524,7 +613,7 @@ public class Project3 {
      * @param  args  user input (command-line arguments)
      * */
     @VisibleForTesting
-    static void handleArguments(String[] args){
+    static void handleArguments(String[] args)  {
         var opMap = parseOptions(args);
         if(opMap.get("readme")!= null){
             try{
@@ -535,9 +624,14 @@ public class Project3 {
             }
             return;
         }
+        if(opMap.get("textFile")!=null && opMap.get("xmlFile")!=null){
+            System.err.println(cannotUseTextAndXml);
+            return;
+        }
 
         int opCount = opMap.get("textFile")!=null? opMap.size()+1 : opMap.size();
         opCount = opMap.get("pretty")!=null? opCount+1 : opCount;
+        opCount = opMap.get("xmlFile")!=null? opCount+1 : opCount;
         if(args.length - opCount > 10){
             System.err.println(tooManyArguments);
             return;
@@ -568,12 +662,18 @@ public class Project3 {
             if(opMap.get("textFile")!=null)
                 textFile(opMap.get("textFile"), airline, flight);
 
+            if(opMap.get("xmlFile")!=null)
+                xmlFile(opMap.get("xmlFile"), airline, flight);
+
             if(opMap.get("pretty")!=null){
                 String textFile = opMap.get("textFile");
-                if(textFile == null)
-                    prettyPrint(airline, opMap.get("pretty"));
+                String xmlFile = opMap.get("xmlFile");
+                if(textFile == null && xmlFile == null)
+                    prettyPrintTxt(airline, opMap.get("pretty"));
+                else if (textFile == null)
+                    prettyPrintXml(airline, opMap.get("pretty"), opMap.get("xmlFile"));
                 else
-                    prettyPrint(airline, opMap.get("pretty"), opMap.get("textFile"));
+                    prettyPrintTxt(airline, opMap.get("pretty"), opMap.get("textFile"));
             }
         }
     }
@@ -592,6 +692,7 @@ public class Project3 {
                 "dest\tThree-letter code of arrival airport\n" +
                 "arrive\tArrival date and time (am/pm)\n" +
                 "\noptions are (options may appear in any order):\n" +
+                "-xmlFile file \tWhere to read/write the airline info\n" +
                 "-pretty file \tPretty print the airline’s flights to\n" +
                 "a text file or standard out (file -)\n" +
                 "-textFile file\tWhere to read/write the airline info\n" +

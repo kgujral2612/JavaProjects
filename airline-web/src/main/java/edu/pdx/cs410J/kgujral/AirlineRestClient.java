@@ -6,6 +6,8 @@ import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
@@ -40,10 +42,12 @@ public class AirlineRestClient
       this.http = http;
     }
 
-  /**
-   * Returns all dictionary entries from the server
-   */
-  public Map<String, String> getAllDictionaryEntries() throws IOException, ParserException {
+
+   /** Returns all flights of an airline
+    * @throws ParserException when the airline info cannot be parsed
+    * @throws IOException when the file cannot be accessed
+    * */
+  public Airline getAllFlights() throws IOException, ParserException {
     Response response = http.get(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
 
@@ -51,16 +55,45 @@ public class AirlineRestClient
     return parser.parse();
   }
 
-  /**
-   * Returns the definition for the given word
-   */
-  public String getDefinition(String word) throws IOException, ParserException {
-    Response response = http.get(Map.of(AirlineServlet.WORD_PARAMETER, word));
+
+  /** Returns all flights with a given src
+   * @throws ParserException when the airline info cannot be parsed
+   * @throws IOException when the file cannot be accessed
+   * */
+  public Collection<Flight> getFlightsBySrc(String src) throws IOException, ParserException {
+    Response response = http.get(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
     String content = response.getContent();
 
     TextParser parser = new TextParser(new StringReader(content));
-    return parser.parse().get(word);
+    Airline airline = parser.parse();
+    Collection<Flight> flights = new ArrayList<>();
+      for (var flight : airline.getFlights()) {
+          if(flight.getSource().equals(src)){
+              flights.add(flight);
+          }
+      }
+      return flights;
+  }
+
+  /** Returns all flights with a given src and dest
+   * @throws ParserException when the airline info cannot be parsed
+   * @throws IOException when the file cannot be accessed
+   * */
+  public Collection<Flight> getFlightsBySrcAndDest(String src, String dest) throws IOException, ParserException{
+      Response response = http.get(Map.of());
+      throwExceptionIfNotOkayHttpStatus(response);
+      String content = response.getContent();
+
+      TextParser parser = new TextParser(new StringReader(content));
+      Airline airline = parser.parse();
+      Collection<Flight> flights = new ArrayList<>();
+      for (var flight : airline.getFlights()) {
+          if(flight.getSource().equals(src) && flight.getDestination().equals(dest)){
+              flights.add(flight);
+          }
+      }
+      return flights;
   }
 
   public void addDictionaryEntry(String word, String definition) throws IOException {
@@ -80,5 +113,4 @@ public class AirlineRestClient
       throw new RestException(code, message);
     }
   }
-
 }

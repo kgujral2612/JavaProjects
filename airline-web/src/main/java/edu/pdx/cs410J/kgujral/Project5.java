@@ -24,6 +24,10 @@ public class Project5 {
 
 
     public static void main(String... args) {
+        if(args == null || args.length == 0){
+            usage("You must provide some arguments to interact with the program!");
+            return;
+        }
         String hostName = null;
         String portString = null;
         String airlineName = null;

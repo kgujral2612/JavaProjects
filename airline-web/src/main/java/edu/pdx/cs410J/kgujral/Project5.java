@@ -249,17 +249,11 @@ public class Project5 {
 
             client.addFlight(airlineName, flight);
 
-            Airline airlineFromClient = client.getAllFlights(airlineName);
-            if (airlineFromClient == null) {
-                message = "Could not add flight info\n";
+            message = Messages.addedFlightTo(flightNumber, airlineName);
+            if(shouldPrint)
+                print(flight);
 
-            } else {
-                message = Messages.addedFlightTo(flightNumber, airlineName);
-                if(shouldPrint)
-                    print(flight);
-            }
-
-        } catch (IOException | ParserException ex ) {
+        } catch (IOException ex ) {
             error(Messages.errorConnectingServer(hostName, portString));
             return;
         } catch (Exception e) {
@@ -297,7 +291,7 @@ public class Project5 {
     private static void error( String message )
     {
         PrintStream err = System.err;
-        err.println("** " + message);
+        err.println(message);
     }
 
     /**

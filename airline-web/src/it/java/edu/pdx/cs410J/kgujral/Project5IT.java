@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.ParserException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -11,7 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.MethodOrderer.MethodName;
-import static org.mockito.Mockito.*;
 
 /**
  * An integration test for {@link Project5} that invokes its main method with
@@ -108,12 +106,25 @@ class Project5IT extends InvokeMainTestCase {
         result = invokeMain( Project5.class, args);
         assertThat(result.getTextWrittenToStandardError(), containsString("Port Number"));
 
+        //Invalid search src
+        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airline", "PDX1", "SFO"};
+        result = invokeMain( Project5.class, args);
+        assertThat(result.getTextWrittenToStandardError(), containsString("Source for searching"));
+
+        //Invalid search dest
+        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airline", "PDX", "SFO1"};
+        result = invokeMain( Project5.class, args);
+        assertThat(result.getTextWrittenToStandardError(), containsString("Destination for searching"));
+
+        //Missing Destination in Search
+        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airline", "PDX"};
+        result = invokeMain( Project5.class, args);
+        assertThat(result.getTextWrittenToStandardError(), containsString("Invalid argument Destination for searching . Given: null"));
     }
 
     /** When all args are valid,
      * should post info to the serve*/
    @Test
-   @Disabled
    void shouldPostNewFlightInfoToServer() throws IOException, ParserException {
        //arrange
        String airlineName = "Test Airline";
@@ -134,17 +145,14 @@ class Project5IT extends InvokeMainTestCase {
 
        //act
        MainMethodResult result = invokeMain( Project5.class, args);
-       MockClientPost();
-       MockClientGet("Test Airline", airline);
 
        //assert
        assertThat(result.getTextWrittenToStandardOut(), containsString(Messages.addedFlightTo("3453","Test Airline")));
    }
 
    /** Should print description of the new flight */
-   @Disabled
    @Test
-   void shouldPrintAirlineInfo() throws IOException, ParserException {
+   void shouldPrintAirlineInfo() {
        //arrange
        String airlineName = "Test Airline";
        String flightNumber = "3453";
@@ -164,12 +172,11 @@ class Project5IT extends InvokeMainTestCase {
        airline.addFlight(flight);
 
        //act
-       MockClientPost();
-       MockClientGet("Test Airline", airline);
        MainMethodResult result = invokeMain( Project5.class, args);
 
        //assert
        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+       assertThat(result.getTextWrittenToStandardOut(), containsString("Flight 3453 departs PDX at 7/19/23, 1:02 AM arrives SFO at 7/19/23, 11:02 PM"));
    }
 
     /** Should search by src and dest
@@ -274,14 +281,5 @@ class Project5IT extends InvokeMainTestCase {
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Invalid argument Airline Name . Given: TestAirway | Expected: Test Airline\n"));
-    }
-
-    void MockClientGet(String airlineName, Airline airline) throws ParserException, IOException {
-        AirlineRestClient restClient = mock(AirlineRestClient.class);
-        when(restClient.getAllFlights(airlineName)).thenReturn(airline);
-    }
-    void MockClientPost() throws IOException {
-        AirlineRestClient restClient = mock(AirlineRestClient.class);
-        doNothing().when(restClient).addFlight(isA(String.class), isA(Flight.class));
     }
 }

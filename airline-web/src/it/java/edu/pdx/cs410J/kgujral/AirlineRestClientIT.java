@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
@@ -32,7 +31,7 @@ class AirlineRestClientIT {
   @Test
   void shouldAddNewAirlineInfo() throws IOException, ParserException {
     var client = newClient();
-    String airlineName = "Test Airways";
+    String airlineName = "Test Airline";
 
     String flightNum = "68445";
     String src = "PDX";

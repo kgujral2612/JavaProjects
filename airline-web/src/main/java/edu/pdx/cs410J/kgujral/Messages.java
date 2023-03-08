@@ -20,12 +20,25 @@ public class Messages
         return "Extraneous Arguments provided!";
     }
 
+    public static  String errorConnectingServer(String hostname, String port){
+        return String.format("There was an error while connecting to the host. " +
+                "Please check whether the provided hostname %s and port %s are correct.", hostname, port);
+    }
+
     public static String addedFlightTo(String flightNum, String airline){
         return String.format("Added Flight # %s to %s", flightNum, airline);
     }
 
     public static String allAirlineInfoDeleted() {
         return "All airline information has been deleted";
+    }
+
+    public static String noFlights(String src, String dest){
+        return String.format("No flights were found from %s to %s", src, dest);
+    }
+
+    public static String noAirline(String airline){
+        return String.format("The airline %s is not present on the server", airline);
     }
 
 }

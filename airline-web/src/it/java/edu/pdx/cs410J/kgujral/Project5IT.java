@@ -192,17 +192,26 @@ class Project5IT extends InvokeMainTestCase {
                 DateHelper.stringToDate(arrDate + " " + arrTime + " " + arrTimeMarker));
         Airline airline = new Airline(airlineName);
         airline.addFlight(flight);
-        MainMethodResult result = invokeMain( Project5.class, args);
+        invokeMain( Project5.class, args);
 
+        //when flight info exists
         args = new String[]{"-host", "localhost", "-port", "8080", "-print", "-search", "Test Airline", "ORD", "BER"};
-        result = invokeMain( Project5.class, args);
+        MainMethodResult result = invokeMain( Project5.class, args);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Test Airline"));
+
+        // when flight info does not exist
+        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airline", "BOM", "BJX"};
+        result = invokeMain( Project5.class, args);
+
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(Messages.noFlights("BOM", "BJX")));
     }
 
     /** Should search by airline
      * and pretty print on std */
     @Test
-    void shouldSearchFlightsByAirline() throws IOException, ParserException {
+    void shouldSearchFlightsByAirline() {
         // add an airline info
         String airlineName = "Test Airline";
         String flightNumber = "3453";
@@ -219,14 +228,52 @@ class Project5IT extends InvokeMainTestCase {
                 DateHelper.stringToDate(arrDate + " " + arrTime + " " + arrTimeMarker));
         Airline airline = new Airline(airlineName);
         airline.addFlight(flight);
-        MainMethodResult result = invokeMain( Project5.class, args);
+        invokeMain( Project5.class, args);
 
         // search an airline info
         args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airline"};
-        result = invokeMain( Project5.class, args);
+        MainMethodResult result = invokeMain( Project5.class, args);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Test Airline"));
+    }
+
+    /**When no airline is on the server, an error message should be issued for the user*/
+    @Test
+    void shouldIssueErrorWhenAirlineInfoIsNotOnServer(){
+        String[] args = new String[]{"-host", "localhost", "-port", "8080", "-search", "TestAirway"};
+        var result = invokeMain( Project5.class, args);
+
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("No airline information is stored on the server"));
+    }
+
+    /**When airline name mismatches, a message should be issued */
+    @Test
+    void shouldIssueErrorWhenAirlineInfoMismatches(){
+        // add an airline info
+        String airlineName = "Test Airline";
+        String flightNumber = "3453";
+        String src = "PDX";
+        String depDate = "07/19/2023"; String depTime = "1:02"; String depTimeMarker = "am";
+        String dest = "SFO";
+        String arrDate = "07/19/2023"; String arrTime = "11:02"; String arrTimeMarker = "pm";
+        String[] args = new String[]{"-host", "localhost", "-port", "8080",
+                airlineName, flightNumber, src, depDate, depTime, depTimeMarker, dest, arrDate, arrTime, arrTimeMarker};
+
+        Flight flight = new Flight(Integer.parseInt(flightNumber),
+                src, dest,
+                DateHelper.stringToDate(depDate + " " + depTime + " " + depTimeMarker),
+                DateHelper.stringToDate(arrDate + " " + arrTime + " " + arrTimeMarker));
+        Airline airline = new Airline(airlineName);
+        airline.addFlight(flight);
+        invokeMain( Project5.class, args);
+
+        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "TestAirway"};
+        MainMethodResult result = invokeMain( Project5.class, args);
+
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Invalid argument Airline Name . Given: TestAirway | Expected: Test Airline\n"));
     }
 
     void MockClientGet(String airlineName, Airline airline) throws ParserException, IOException {

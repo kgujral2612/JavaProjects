@@ -199,9 +199,13 @@ public class Project5 {
             if(shouldSearchWithAirline){
                 try{
                     Airline airlineFromClient = client.getAllFlights(searchAirlineName);
+                    if(airlineFromClient == null){
+                        System.out.println(Messages.noAirline(searchAirlineName));
+                        return;
+                    }
                     System.out.println(PrettyHelper.prettify(airlineFromClient));
                 } catch (IOException | ParserException ex ) {
-                    error("While contacting server: " + ex.getMessage());
+                    error(Messages.errorConnectingServer(hostName, portString));
                     return;
                 }catch (Exception e) {
                     error(e.getMessage());
@@ -217,12 +221,16 @@ public class Project5 {
                 try{
                     Airline airlineFromClient = new Airline(searchAirlineName);
                     Collection<Flight> flights = client.getFlightsBySrcAndDest(searchAirlineName, searchSrc, searchDest);
+                    if(flights== null || flights.toArray().length == 0){
+                        System.out.println(Messages.noFlights(searchSrc, searchDest));
+                        return;
+                    }
                     for(var flight: flights){
                         airlineFromClient.addFlight(flight);
                     }
                     System.out.println(PrettyHelper.prettify(airlineFromClient));
                 } catch (IOException | ParserException ex ) {
-                    error("While contacting server: " + ex.getMessage());
+                    error(Messages.errorConnectingServer(hostName, portString));
                     return;
                 }catch (Exception e) {
                     error(e.getMessage());
@@ -233,7 +241,7 @@ public class Project5 {
             return;
         }
 
-        String message = "";
+        String message;
 
         try {
             Flight flight = new Flight(Integer.parseInt(flightNumber),
@@ -252,7 +260,7 @@ public class Project5 {
             }
 
         } catch (IOException | ParserException ex ) {
-            error("While contacting server: " + ex.getMessage());
+            error(Messages.errorConnectingServer(hostName, portString));
             return;
         } catch (Exception e) {
             error(e.getMessage());

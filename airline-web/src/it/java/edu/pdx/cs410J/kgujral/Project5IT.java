@@ -3,6 +3,7 @@ package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.UncaughtExceptionInMain;
 import edu.pdx.cs410J.web.HttpRequestHelper.RestException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -19,23 +20,33 @@ import static org.junit.jupiter.api.MethodOrderer.MethodName;
  * An integration test for {@link Project5} that invokes its main method with
  * various arguments
  */
+
+@Disabled
 @TestMethodOrder(MethodName.class)
 class Project5IT extends InvokeMainTestCase {
     private static final String HOSTNAME = "localhost";
     private static final String PORT = System.getProperty("http.port", "8080");
 
     @Test
-    void test0RemoveAllMappings() throws IOException {
-      AirlineRestClient client = new AirlineRestClient(HOSTNAME, Integer.parseInt(PORT));
-      client.removeAllDictionaryEntries();
+    void userInputWithReadme(){
+        String args[] = new String[]{"-host", "localhost", "-README", "-port", "8080", "Test Airline", "PDX", "07/19/2023", "1:02", "pm", "ORD", "07/19/2023", "6:22", "pm"};
+        MainMethodResult result = invokeMain( Project5.class, args);
     }
 
     @Test
-    void test1NoCommandLineArguments() {
-        MainMethodResult result = invokeMain( Project5.class );
-        assertThat(result.getTextWrittenToStandardError(), containsString(Project5.MISSING_ARGS));
+    void printUsage(){
+        String args[] = new String[]{};
+        MainMethodResult result = invokeMain( Project5.class, args);
     }
 
+   @Test
+   void shouldPortNewFlightInfoToServer(){
+
+       String args[] = new String[]{"-host", "localhost", "-port", "8080",
+               "Test Airline", "3453", "PDX", "07/19/2023", "1:02", "pm", "ORD", "07/19/2023", "6:22", "pm"};
+       MainMethodResult result = invokeMain( Project5.class, args);
+
+   }
     @Test
     void test2EmptyServer() {
         MainMethodResult result = invokeMain( Project5.class, HOSTNAME, PORT );

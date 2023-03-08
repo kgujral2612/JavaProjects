@@ -16,6 +16,10 @@ public class Messages
         return String.format( "Defined %s as %s", word, definition );
     }
 
+    public static String addedFlightTo(String flightNum, String airline){
+        return String.format("Added Flight # %s to %s", flightNum, airline);
+    }
+
     public static String allAirlineInfoDeleted() {
         return "All airline information has been deleted";
     }

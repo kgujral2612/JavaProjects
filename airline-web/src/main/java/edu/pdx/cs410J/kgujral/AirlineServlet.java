@@ -23,10 +23,7 @@ public class AirlineServlet extends HttpServlet {
     static final String DEST = "dest";
     static final String DEPART = "depart";
     static final String ARRIVE = "arrive";
-  static final String WORD_PARAMETER = "word";
-  static final String DEFINITION_PARAMETER = "definition";
 
-  private final Map<String, String> dictionary = new HashMap<>();
   private Airline airline = null;
 
   /**
@@ -57,30 +54,32 @@ public class AirlineServlet extends HttpServlet {
       response.setContentType( "text/plain" );
 
       String airline = getParameter(AIRLINE_NAME, request);
-      if(airline == null) {
-          missingRequiredParameter(response, AIRLINE_NAME);
-          return;
-      }
+
       String flightNumber = getParameter(FLIGHT_NUM, request);
+
       if(flightNumber == null) {
           missingRequiredParameter(response, FLIGHT_NUM);
           return;
       }
       String src = getParameter(SRC, request);
+
       if(src == null){
           missingRequiredParameter(response, SRC);
           return;
       }
+
       String dest = getParameter(DEST, request);
       if(dest == null){
           missingRequiredParameter(response, DEST);
           return;
       }
+
       String depart = getParameter(DEPART, request);
       if(depart == null){
           missingRequiredParameter(response, DEPART );
           return;
       }
+
       String arrive = getParameter(ARRIVE, request);
       if (arrive == null) {
           missingRequiredParameter(response, ARRIVE);
@@ -88,14 +87,17 @@ public class AirlineServlet extends HttpServlet {
       }
 
       if(this.airline == null){
+          if(airline == null){
+              missingRequiredParameter(response, AIRLINE_NAME);
+              return;
+          }
           this.airline = new Airline(airline);
       }
 
       Flight flight = new Flight(Integer.parseInt(flightNumber),
-                            src, dest, DateHelper.stringToDate(depart),
-                                DateHelper.stringToDate(arrive));
+                            src, dest, DateHelper.shortStringToDate(depart),
+                                DateHelper.shortStringToDate(arrive));
       this.airline.addFlight(flight);
-
 
       PrintWriter pw = response.getWriter();
       pw.println(airline);
@@ -149,6 +151,12 @@ public class AirlineServlet extends HttpServlet {
       response.setStatus( HttpServletResponse.SC_OK );
   }
 
+  private void writeMessage(HttpServletResponse response, String message) throws IOException {
+      PrintWriter pw = response.getWriter();
+      pw.println(message);
+
+      response.setStatus( HttpServletResponse.SC_OK );
+  }
   /**
    * Returns the value of the HTTP request parameter with the given name.
    *

@@ -40,7 +40,7 @@ public class AirlineRestClientTest {
     
     AirlineRestClient client = new AirlineRestClient(http);
 
-    Airline airlineFromClient = client.getAllFlights();
+    Airline airlineFromClient = client.getAllFlights(airline.getName());
     assertThat(airlineFromClient.toString(), equalTo(airline.toString()));
     assertThat(airlineFromClient.getFlights().toArray().length, is(2));
   }

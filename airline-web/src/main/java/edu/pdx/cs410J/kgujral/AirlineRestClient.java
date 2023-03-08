@@ -47,12 +47,15 @@ public class AirlineRestClient
     * @throws ParserException when the airline info cannot be parsed
     * @throws IOException when the file cannot be accessed
     * */
-  public Airline getAllFlights() throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
+  public Airline getAllFlights(String airlineName) throws IOException, ParserException {
+      Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
+      throwExceptionIfNotOkayHttpStatus(response);
 
-    TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return parser.parse();
+      if(response == null || response.getContent() == null)
+        return null;
+
+      TextParser parser = new TextParser(new StringReader(response.getContent()));
+      return parser.parse();
   }
 
 
@@ -96,14 +99,12 @@ public class AirlineRestClient
       return flights;
   }
 
-  public void addDictionaryEntry(String word, String definition) throws IOException {
-    Response response = http.post(Map.of(AirlineServlet.WORD_PARAMETER, word, AirlineServlet.DEFINITION_PARAMETER, definition));
-    throwExceptionIfNotOkayHttpStatus(response);
-  }
-
-  public void removeAllDictionaryEntries() throws IOException {
-    Response response = http.delete(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
+  public void addFlight(String airline, Flight flight) throws IOException {
+      Response response = http.post(Map.of(AirlineServlet.AIRLINE_NAME, airline,
+              AirlineServlet.FLIGHT_NUM, String.valueOf(flight.getNumber()),
+              AirlineServlet.SRC, flight.getSource(), AirlineServlet.DEST, flight.getDestination(),
+              AirlineServlet.DEPART, flight.getDepartureString(), AirlineServlet.ARRIVE, flight.getArrivalString()));
+      throwExceptionIfNotOkayHttpStatus(response);
   }
 
   private void throwExceptionIfNotOkayHttpStatus(Response response) {

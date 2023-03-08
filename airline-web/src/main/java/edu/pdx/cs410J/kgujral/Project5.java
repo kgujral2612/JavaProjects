@@ -1,40 +1,102 @@
 package edu.pdx.cs410J.kgujral;
 
+import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.ParserException;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Map;
 
 /**
  * The main class that parses the command line and communicates with the
  * Airline server using REST.
  */
+
 public class Project5 {
 
+    /** string containing missing args message */
     public static final String MISSING_ARGS = "Missing command line arguments";
+    /** string containing textFile option */
+    static final String hostOp = "-host";
+    static final String portOp = "-port";
+    static final String searchOp = "-search";
+    static final String printOp = "-print";
+    static final String readmeOp = "-README";
+
 
     public static void main(String... args) {
         String hostName = null;
         String portString = null;
-        String word = null;
-        String definition = null;
+        String airlineName = null;
+        String flightNumber = null;
+        String src = null;
+        String dest = null;
+        String depart = null;
+        String arrive = null;
 
-        for (String arg : args) {
-            if (hostName == null) {
-                hostName = arg;
+        String depDate = null, depTime = null, depMarker = null;
+        String arrDate = null, arrTime = null, arrMarker = null;
+        boolean shouldPrint = false;
 
-            } else if ( portString == null) {
-                portString = arg;
 
-            } else if (word == null) {
-                word = arg;
+        for (int i=0; i<args.length; i++) {
+            String arg = args[i];
+            if(arg.equals(hostOp)){
+             hostName = args[++i];
+            }
+            else if(arg.equals(portOp)){
+                portString = args[++i];
+            }
+            else if(arg.equals(searchOp)){
 
-            } else if (definition == null) {
-                definition = arg;
+            }
+            else if(arg.equals(printOp)){
+                shouldPrint = true;
+            }
+            else if (arg.equals(readmeOp)){
+                try {
+                    readMe();
+                    return;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else if (airlineName == null) {
+                airlineName = arg;
 
-            } else {
+            } else if (flightNumber == null) {
+                flightNumber = arg;
+
+            } else if (src == null) {
+                src = arg;
+
+            } else if (depart == null) {
+                if(depDate == null)
+                    depDate = arg;
+                else if(depTime == null)
+                    depTime = arg;
+                else if(depMarker == null)
+                {
+                    depMarker = arg;
+                    depart = depDate + " " + depTime + " " + depMarker;
+                }
+
+            }
+            else if (dest == null) {
+                dest = arg;
+            }
+            else if (arrive == null) {
+                if(arrDate == null)
+                    arrDate = arg;
+                else if(arrTime == null)
+                    arrTime = arg;
+                else if(arrMarker == null)
+                {
+                    arrMarker = arg;
+                    arrive = arrDate + " " + arrTime + " " + arrMarker;
+                }
+
+            }
+            else {
                 usage("Extraneous command line argument: " + arg);
             }
         }
@@ -59,32 +121,56 @@ public class Project5 {
 
         AirlineRestClient client = new AirlineRestClient(hostName, port);
 
-        String message;
-        try {
-            if (word == null) {
-                // Print all word/definition pairs
-                Map<String, String> dictionary = client.getAllDictionaryEntries();
-                StringWriter sw = new StringWriter();
-                PrettyPrinter pretty = new PrettyPrinter(sw);
-                pretty.dump(dictionary);
-                message = sw.toString();
+        String message = "";
 
-            } else if (definition == null) {
-                // Print all dictionary entries
-                message = PrettyPrinter.formatDictionaryEntry(word, client.getDefinition(word));
+        try {
+            Flight flight = new Flight(Integer.parseInt(flightNumber),
+                    src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive));
+
+            client.addFlight(airlineName, flight);
+
+            Airline airlineFromClient = client.getAllFlights(airlineName);
+            if (airlineFromClient == null) {
+                message = "Could not add flight info\n";
 
             } else {
-                // Post the word/definition pair
-                client.addDictionaryEntry(word, definition);
-                message = Messages.definedWordAs(word, definition);
+                message = Messages.addedFlightTo(flightNumber, airlineName);
             }
 
         } catch (IOException | ParserException ex ) {
             error("While contacting server: " + ex.getMessage());
             return;
+        } catch (Exception e) {
+            error("Some error " + e.getMessage());
+            return;
         }
 
         System.out.println(message);
+    }
+
+    /** Prints out project readme
+     * @throws IOException if file cannot be read
+     * */
+    private static void readMe() throws IOException{
+        StringBuilder content = new StringBuilder();
+        try (InputStream readme = Project5.class.getResourceAsStream("README.txt")) {
+            if(readme == null)
+                return;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
+            String line;
+            while((line = reader.readLine())!=null){
+                content.append(line);
+                content.append("\n");
+            }
+        }
+        System.out.println(content);
+    }
+
+    /** Prints a description of the new flight
+     * @param flight the flight whose description needs to be printed
+     * */
+    private static void print(Flight flight) {
+        System.out.println(flight);
     }
 
     private static void error( String message )

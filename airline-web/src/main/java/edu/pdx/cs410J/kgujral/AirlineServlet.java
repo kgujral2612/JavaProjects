@@ -29,18 +29,26 @@ public class AirlineServlet extends HttpServlet {
   /**
    * Handles an HTTP GET request from a client by writing the definition of the
    * word specified in the "word" HTTP parameter to the HTTP response.  If the
-   * "word" parameter is not specified, all of the entries in the dictionary
+   * "word" parameter is not specified, all the entries in the dictionary
    * are written to the HTTP response.
    */
   @Override
-  protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws IOException
+  protected void doGet( HttpServletRequest request, HttpServletResponse response) throws IOException
   {
       response.setContentType( "text/plain" );
 
       String airline = getParameter(AIRLINE_NAME, request);
-      if(airline != null){
-        writeAllFlightInfo(response);
+      if(this.airline == null){
+          writeMessage(response, "No airline information is stored on the server.");
+          return;
       }
+      if(!this.airline.getName().equals(airline)){
+          writeMessage(response, Messages.invalidArg(
+                  "Airline Name", airline, this.airline.getName()));
+          return;
+      }
+
+      writeAllFlightInfo(response);
   }
 
   /**
@@ -54,6 +62,10 @@ public class AirlineServlet extends HttpServlet {
       response.setContentType( "text/plain" );
 
       String airline = getParameter(AIRLINE_NAME, request);
+      if(airline == null){
+          missingRequiredParameter(response, AIRLINE_NAME);
+          return;
+      }
 
       String flightNumber = getParameter(FLIGHT_NUM, request);
 
@@ -87,10 +99,6 @@ public class AirlineServlet extends HttpServlet {
       }
 
       if(this.airline == null){
-          if(airline == null){
-              missingRequiredParameter(response, AIRLINE_NAME);
-              return;
-          }
           this.airline = new Airline(airline);
       }
 
@@ -154,7 +162,6 @@ public class AirlineServlet extends HttpServlet {
   private void writeMessage(HttpServletResponse response, String message) throws IOException {
       PrintWriter pw = response.getWriter();
       pw.println(message);
-
       response.setStatus( HttpServletResponse.SC_OK );
   }
   /**
@@ -171,17 +178,6 @@ public class AirlineServlet extends HttpServlet {
     } else {
       return value;
     }
-  }
-
-  @VisibleForTesting
-  String getFlight(String flight) {
-      var flights  = this.airline.getFlights();
-      for(var f: flights){
-          if(flight.equals(f)){
-              return f.toString();
-          }
-      }
-      return "";
   }
 
   @VisibleForTesting

@@ -49,46 +49,25 @@ public class AirlineRestClient
     * */
   public Airline getAllFlights(String airlineName) throws IOException, ParserException {
       Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
-      throwExceptionIfNotOkayHttpStatus(response);
-
       if(response == null || response.getContent() == null)
-        return null;
+          return null;
+      throwExceptionIfNotOkayHttpStatus(response);
 
       TextParser parser = new TextParser(new StringReader(response.getContent()));
       return parser.parse();
-  }
-
-
-  /** Returns all flights with a given src
-   * @throws ParserException when the airline info cannot be parsed
-   * @throws IOException when the file cannot be accessed
-   * */
-  public Collection<Flight> getFlightsBySrc(String src) throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
-    String content = response.getContent();
-
-    TextParser parser = new TextParser(new StringReader(content));
-    Airline airline = parser.parse();
-    Collection<Flight> flights = new ArrayList<>();
-      for (var flight : airline.getFlights()) {
-          if(flight.getSource().equals(src)){
-              flights.add(flight);
-          }
-      }
-      return flights;
   }
 
   /** Returns all flights with a given src and dest
    * @throws ParserException when the airline info cannot be parsed
    * @throws IOException when the file cannot be accessed
    * */
-  public Collection<Flight> getFlightsBySrcAndDest(String src, String dest) throws IOException, ParserException{
-      Response response = http.get(Map.of());
+  public Collection<Flight> getFlightsBySrcAndDest(String airlineName, String src, String dest) throws IOException, ParserException{
+      Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
+      if(response == null || response.getContent() == null)
+          return null;
       throwExceptionIfNotOkayHttpStatus(response);
-      String content = response.getContent();
 
-      TextParser parser = new TextParser(new StringReader(content));
+      TextParser parser = new TextParser(new StringReader(response.getContent()));
       Airline airline = parser.parse();
       Collection<Flight> flights = new ArrayList<>();
       for (var flight : airline.getFlights()) {

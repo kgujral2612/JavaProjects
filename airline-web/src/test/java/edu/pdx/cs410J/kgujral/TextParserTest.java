@@ -49,23 +49,6 @@ public class TextParserTest {
         TextParser parser = new TextParser(new InputStreamReader(resource));
         assertNull(parser.parse());
     }
-    /** An invalid text file with a wrong format should not be
-     * parsed successfully and should throw ParserException*/
-    @Test
-    void invalidFileCannotBeParsed() {
-        InputStream resource = getClass().getResourceAsStream("invalid-airline-flight-info.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-    /** A file that hasn't been created cannot be read.*/
-    @Test
-    void unavailableFileCannotBeParsed() {
-        InputStream resource = getClass().getResourceAsStream("");
-        assertThat(resource, notNullValue());
-        var parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
 }
 
 

@@ -11,9 +11,13 @@ public class Messages
         return String.format("The required parameter \"%s\" is missing", parameterName);
     }
 
-    public static String definedWordAs(String word, String definition )
+    public static String invalidArg(String argName, String given, String expected )
     {
-        return String.format( "Defined %s as %s", word, definition );
+        return String.format("Invalid argument %s . Given: %s | Expected: %s", argName, given, expected );
+    }
+
+    public static  String extraneousArg(){
+        return "Extraneous Arguments provided!";
     }
 
     public static String addedFlightTo(String flightNum, String airline){

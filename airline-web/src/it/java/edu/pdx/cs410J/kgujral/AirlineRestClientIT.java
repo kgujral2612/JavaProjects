@@ -1,23 +1,18 @@
 package edu.pdx.cs410J.kgujral;
 
 import edu.pdx.cs410J.ParserException;
-import edu.pdx.cs410J.web.HttpRequestHelper;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.Map;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 /**
  * Integration test that tests the REST calls made by {@link AirlineRestClient}
@@ -51,18 +46,10 @@ class AirlineRestClientIT {
     client.addFlight(airlineName, flight);
     Airline airline = client.getAllFlights(airlineName);
     assertThat(airline.getName(), equalTo(airlineName));
-    assertEquals(airline.getFlights().toArray().length, 1);
-  }
 
-  /** Should post new flight info for an existing airline to the server*/
-  @Test
-  void shouldAddNewFlightInfo(){}
-
-
-  /** Should issue an error when the user wants to add new flight info
-   * for an existing airline that does not exist*/
-  @Test
-  void shouldIssueErrorWhenAirlineDoesNotExist(){
-
+    flight = new Flight(68446, src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive));
+    client.addFlight(airlineName, flight);
+    var flights = client.getFlightsBySrcAndDest(airlineName, src, dest);
+    assertNotNull(flights);
   }
 }

@@ -1,10 +1,7 @@
 package edu.pdx.cs410J.kgujral;
-
-import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.ParserException;
-
 import java.io.*;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -13,33 +10,37 @@ import java.util.Map;
 
 public class Project5 {
 
-    /** string containing missing args message */
-    public static final String MISSING_ARGS = "Missing command line arguments";
-    /** string containing textFile option */
+    /** string containing host option */
     static final String hostOp = "-host";
+    /** string containing host option */
     static final String portOp = "-port";
+    /** string containing host option */
     static final String searchOp = "-search";
+    /** string containing host option */
     static final String printOp = "-print";
+    /** string containing host option */
     static final String readmeOp = "-README";
 
 
     public static void main(String... args) {
         if(args == null || args.length == 0){
-            usage("You must provide some arguments to interact with the program!");
+            usage();
             return;
         }
         String hostName = null;
         String portString = null;
-        String airlineName = null;
+        String airlineName = null, searchAirlineName = null;
         String flightNumber = null;
-        String src = null;
-        String dest = null;
+        String src = null, searchSrc = null;
+        String dest = null, searchDest = null;
         String depart = null;
         String arrive = null;
 
         String depDate = null, depTime = null, depMarker = null;
         String arrDate = null, arrTime = null, arrMarker = null;
         boolean shouldPrint = false;
+        boolean shouldSearch = false;
+        boolean shouldSearchWithAirline = true;
 
 
         for (int i=0; i<args.length; i++) {
@@ -49,9 +50,6 @@ public class Project5 {
             }
             else if(arg.equals(portOp)){
                 portString = args[++i];
-            }
-            else if(arg.equals(searchOp)){
-
             }
             else if(arg.equals(printOp)){
                 shouldPrint = true;
@@ -64,53 +62,124 @@ public class Project5 {
                     throw new RuntimeException(e);
                 }
             }
+            else if(arg.equals(searchOp)){
+                shouldSearch = true;
+                // either searchOp is succeeded by the Airline name
+                // or it is succeeded by Airline name, src and dest airport codes
+                searchAirlineName = args[++i];
+            }
+            else if(shouldSearch && searchSrc==null){
+                searchSrc = arg;
+                shouldSearchWithAirline = false;
+                if(!ValidationHelper.isValidAirportCode(searchSrc) || !ValidationHelper.isValidAirportName(searchSrc)){
+                    System.err.println(Messages.invalidArg("Source for searching", searchSrc, "A 3-letter real-world airport code. eg: PDX"));
+                    return;
+                }
+            }
+            else if(shouldSearch && searchDest==null){
+                searchDest = arg;
+                if(!ValidationHelper.isValidAirportCode(searchDest) || !ValidationHelper.isValidAirportName(searchDest)){
+                    System.err.println(Messages.invalidArg("Destination for searching", searchDest, "A 3-letter real-world airport code. eg: PDX"));
+                    return;
+                }
+            }
             else if (airlineName == null) {
                 airlineName = arg;
+                if(!ValidationHelper.isValidAirlineName(airlineName)){
+                    System.err.println(Messages.invalidArg("Airline Name", airlineName, "A non-empty String. eg: British Airways"));
+                    return;
+                }
 
             } else if (flightNumber == null) {
                 flightNumber = arg;
+                if(!ValidationHelper.isValidFlightNumber(flightNumber)){
+                    System.err.println(Messages.invalidArg("Flight Number", flightNumber, "A whole number. eg: 6478"));
+                    return;
+                }
 
             } else if (src == null) {
                 src = arg;
+                if(!ValidationHelper.isValidAirportCode(src) || !ValidationHelper.isValidAirportName(src)){
+                    System.err.println(Messages.invalidArg("Source", src, "A 3-letter real-world airport code. eg: PDX"));
+                    return;
+                }
 
             } else if (depart == null) {
-                if(depDate == null)
+                if(depDate == null){
                     depDate = arg;
+                    if(!ValidationHelper.isValidDate(depDate)){
+                        System.err.println(Messages.invalidArg("Departure Date", depDate, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
+                        return;
+                    }
+                }
+
                 else if(depTime == null)
+                {
                     depTime = arg;
+                    if(!ValidationHelper.isValidTime(depTime)){
+                        System.err.println(Messages.invalidArg("Departure Time", depTime, "12-hour time in the format hh:mm. eg: 08:05"));
+                        return;
+                    }
+
+                }
                 else if(depMarker == null)
                 {
                     depMarker = arg;
+                    if(!ValidationHelper.isValidTimeMarker(depMarker)){
+                        System.err.println(Messages.invalidArg("Departure Time Marker", depMarker, "a marker after time: am/pm"));
+                        return;
+                    }
                     depart = depDate + " " + depTime + " " + depMarker;
                 }
 
             }
             else if (dest == null) {
                 dest = arg;
+                if(!ValidationHelper.isValidAirportCode(dest) || !ValidationHelper.isValidAirportName(dest)){
+                    System.err.println(Messages.invalidArg("Destination", dest, "A 3-letter real-world airport code. eg: PDX"));
+                    return;
+                }
             }
             else if (arrive == null) {
-                if(arrDate == null)
+                if(arrDate == null){
                     arrDate = arg;
+                    if(!ValidationHelper.isValidDate(arrDate)){
+                        System.err.println(Messages.invalidArg("Arrival Date", arrDate, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
+                        return;
+                    }
+                }
+
                 else if(arrTime == null)
+                {
                     arrTime = arg;
+                    if(!ValidationHelper.isValidTime(arrTime)){
+                        System.err.println(Messages.invalidArg("Arrival Time", arrTime, "12-hour time in the format hh:mm. eg: 08:05"));
+                        return;
+                    }
+
+                }
                 else if(arrMarker == null)
                 {
                     arrMarker = arg;
+                    if(!ValidationHelper.isValidTimeMarker(arrMarker)){
+                        System.err.println(Messages.invalidArg("Arrival Time Marker", arrMarker, "a marker after time: am/pm"));
+                        return;
+                    }
                     arrive = arrDate + " " + arrTime + " " + arrMarker;
                 }
-
             }
             else {
-                usage("Extraneous command line argument: " + arg);
+                System.err.println(Messages.extraneousArg());
+                usage();
             }
         }
 
         if (hostName == null) {
-            usage( MISSING_ARGS );
+            System.err.println(Messages.invalidArg("Host Name", null, "A host name, eg: localhost"));
             return;
 
         } else if ( portString == null) {
-            usage( "Missing port" );
+            System.err.println(Messages.invalidArg("Port Number", null, "A port number, eg: 8080"));
             return;
         }
 
@@ -119,11 +188,50 @@ public class Project5 {
             port = Integer.parseInt( portString );
 
         } catch (NumberFormatException ex) {
-            usage("Port \"" + portString + "\" must be an integer");
+            System.err.println(Messages.invalidArg("Port Number", portString, "A port number, eg: 8080"));
             return;
         }
 
         AirlineRestClient client = new AirlineRestClient(hostName, port);
+
+        if(shouldSearch){
+            //search with airline
+            if(shouldSearchWithAirline){
+                try{
+                    Airline airlineFromClient = client.getAllFlights(searchAirlineName);
+                    System.out.println(PrettyHelper.prettify(airlineFromClient));
+                } catch (IOException | ParserException ex ) {
+                    error("While contacting server: " + ex.getMessage());
+                    return;
+                }catch (Exception e) {
+                    error(e.getMessage());
+                    return;
+                }
+            }
+            //search with airline, src and dest
+            else{
+                if(searchDest == null){
+                    System.err.println(Messages.invalidArg("Destination for searching", null, "A 3-letter real-world airport code. eg: PDX"));
+                    return;
+                }
+                try{
+                    Airline airlineFromClient = new Airline(searchAirlineName);
+                    Collection<Flight> flights = client.getFlightsBySrcAndDest(searchAirlineName, searchSrc, searchDest);
+                    for(var flight: flights){
+                        airlineFromClient.addFlight(flight);
+                    }
+                    System.out.println(PrettyHelper.prettify(airlineFromClient));
+                } catch (IOException | ParserException ex ) {
+                    error("While contacting server: " + ex.getMessage());
+                    return;
+                }catch (Exception e) {
+                    error(e.getMessage());
+                    return;
+                }
+            }
+
+            return;
+        }
 
         String message = "";
 
@@ -139,16 +247,17 @@ public class Project5 {
 
             } else {
                 message = Messages.addedFlightTo(flightNumber, airlineName);
+                if(shouldPrint)
+                    print(flight);
             }
 
         } catch (IOException | ParserException ex ) {
             error("While contacting server: " + ex.getMessage());
             return;
         } catch (Exception e) {
-            error("Some error " + e.getMessage());
+            error(e.getMessage());
             return;
         }
-
         System.out.println(message);
     }
 
@@ -185,24 +294,24 @@ public class Project5 {
 
     /**
      * Prints usage information for this program and exits
-     * @param message An error message to print
      */
-    private static void usage( String message )
+    private static void usage()
     {
         PrintStream err = System.err;
-        err.println("** " + message);
-        err.println();
-        err.println("usage: java Project5 host port [word] [definition]");
-        err.println("  host         Host of web server");
-        err.println("  port         Port of web server");
-        err.println("  word         Word in dictionary");
-        err.println("  definition   Definition of word");
-        err.println();
-        err.println("This simple program posts words and their definitions");
-        err.println("to the server.");
-        err.println("If no definition is specified, then the word's definition");
-        err.println("is printed.");
-        err.println("If no word is specified, all dictionary entries are printed");
+        err.println("You must provide some arguments to interact with the program!\n" +
+                "usage: java -jar target/airline-client.jar [options] <args>\n" +
+                "args are (in this order):\n" +
+                "airline The name of the airline\n" +
+                "flightNumber The flight number\n" +
+                "src Three-letter code of departure airport\n" +
+                "depart Departure date/time\n" +
+                "dest Three-letter code of arrival airport\n" +
+                "arrive Arrival date/time\n" +
+                "-host hostname Host computer on which the server runs\n" +
+                "-port port Port on which the server is listening\n" +
+                "-search Search for flights\n" +
+                "-print Prints a description of the new flight\n" +
+                "-README Prints a README for this project and exits");
         err.println();
     }
 }

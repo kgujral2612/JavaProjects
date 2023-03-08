@@ -12,8 +12,6 @@ public class TextParser implements AirlineParser<Airline> {
 
   /** The reader object that reads text files */
   private final Reader reader;
-  /** missing or invalid argument message */
-  static final String invalidArgument = "Invalid %s in text file! Was %s | Expected %s";
   /** io error message */
   static final String ioError = "Unable to read the given text file.";
 
@@ -50,84 +48,28 @@ public class TextParser implements AirlineParser<Airline> {
         }
         line = line.trim();
         switch(count){
-          case -1: if(!ValidationHelper.isValidAirlineName(line)){
-            return null;
-          }
-            airline = new Airline(line);
-            count ++;
-            break;
-          case 0: if(!ValidationHelper.isValidFlightNumber(line)){
-            throw new ParserException(String.format(invalidArgument, "Flight Number", line, "A whole number. eg: 6478"));
-          }
-            number = Integer.parseInt(line);
-            count++;
-            break;
-          case 1: if(!ValidationHelper.isValidAirportCode(line)){
-            throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "A 3-letter String. eg: PDX"));
-          }
-            if(!ValidationHelper.isValidAirportName(line)){
-              throw new ParserException(String.format(invalidArgument, "Departure Airport Code", line, "Must correspond to a real-world airport code."));
-            }
-            src = line;
-            count++;
-            break;
-          case 2: if(!ValidationHelper.isValidDate(line.split(" ")[0])){
-            throw new ParserException(String.format(invalidArgument, "Departure Date", line, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
-          }
-            if(!ValidationHelper.isValidTime(line.split(" ")[1])){
-              throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time in the format hh:mm. eg: 05:45"));
-            }
-            if(!ValidationHelper.isValidTimeMarker(line.split(" ")[2])){
-              throw new ParserException(String.format(invalidArgument, "Departure Time", line, "A time marker. eg: am/pm"));
-            }
-            depart = line;
-            count++;
-            break;
-          case 3: if(!ValidationHelper.isValidAirportCode(line)){
-            throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "A 3-letter String. eg: PDX"));
-          }
-            if(!ValidationHelper.isValidAirportName(line)){
-              throw new ParserException(String.format(invalidArgument, "Arrival Airport Code", line, "Must correspond to a real-world airport code."));
-            }
-            dest = line;
-            count++;
-            break;
-          case 4: if(!ValidationHelper.isValidDate(line.split(" ")[0])){
-            throw new ParserException(String.format(invalidArgument, "Arrival Date", line, "A date in the format mm/dd/yyyy. eg: 11/03/1997"));
-          }
-            if(!ValidationHelper.isValidTime(line.split(" ")[1])){
-              throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time in the format hh:mm. eg: 05:45"));
-            }
-            if(!ValidationHelper.isValidTimeMarker(line.split(" ")[2])){
-              throw new ParserException(String.format(invalidArgument, "Arrival Time", line, "A time marker. eg: am/pm"));
-            }
-            arrive = line;
-            if(!ValidationHelper.isValidFlightDuration(DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive))){
-              throw new ParserException(String.format(invalidArgument, "Flight Duration", "negative or zero", "positive duration"));
-            }
-            airline.addFlight(new Flight(number, src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive)));
-            count=0;
-            break;
+          case -1: airline = new Airline(line);
+                  count ++;
+                  break;
+          case 0: number = Integer.parseInt(line);
+                  count++;
+                  break;
+          case 1: src = line;
+                  count++;
+                  break;
+          case 2: depart = line;
+                  count++;
+                  break;
+          case 3: dest = line;
+                  count++;
+                  break;
+          case 4: arrive = line;
+                  airline.addFlight(new Flight(number, src, dest, DateHelper.stringToDate(depart), DateHelper.stringToDate(arrive)));
+                  count=0;
+                  break;
         }
       }
       return airline;
-    }
-    catch (IOException e) {
-      throw new ParserException(ioError);
-    }
-  }
-
-  /** Should be able to read text from a given file
-   * @return String which contains the content of the file
-   * @throws ParserException when an IOException is encountered.*/
-  public String readText()throws ParserException{
-    try (
-            BufferedReader br = new BufferedReader(this.reader)) {
-      String result="", line ="";
-      while ((line = br.readLine()) != null) {
-        result += line + "\n";
-      }
-      return result;
     }
     catch (IOException e) {
       throw new ParserException(ioError);

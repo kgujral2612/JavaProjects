@@ -11,13 +11,34 @@ public class Messages
         return String.format("The required parameter \"%s\" is missing", parameterName);
     }
 
-    public static String definedWordAs(String word, String definition )
+    public static String invalidArg(String argName, String given, String expected )
     {
-        return String.format( "Defined %s as %s", word, definition );
+        return String.format("Invalid argument %s . Given: %s | Expected: %s", argName, given, expected );
+    }
+
+    public static  String extraneousArg(){
+        return "Extraneous Arguments provided!";
+    }
+
+    public static  String errorConnectingServer(String hostname, String port){
+        return String.format("There was an error while connecting to the host. " +
+                "Please check whether the provided hostname %s and port %s are correct.", hostname, port);
+    }
+
+    public static String addedFlightTo(String flightNum, String airline){
+        return String.format("Added Flight # %s to %s", flightNum, airline);
     }
 
     public static String allAirlineInfoDeleted() {
         return "All airline information has been deleted";
+    }
+
+    public static String noFlights(String src, String dest){
+        return String.format("No flights were found from %s to %s", src, dest);
+    }
+
+    public static String noAirline(String airline){
+        return String.format("The airline %s is not present on the server", airline);
     }
 
 }

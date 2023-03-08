@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.kgujral;
 import edu.pdx.cs410J.ParserException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -48,107 +49,6 @@ public class TextParserTest {
         TextParser parser = new TextParser(new InputStreamReader(resource));
         assertNull(parser.parse());
     }
-    /** An invalid text file with a wrong format should not be
-     * parsed successfully and should throw ParserException*/
-    @Test
-    void invalidFileCannotBeParsed() {
-        InputStream resource = getClass().getResourceAsStream("invalid-airline-flight-info.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-    /** A file that hasn't been created cannot be read.*/
-    @Test
-    void unavailableFileCannotBeParsed() {
-        InputStream resource = getClass().getResourceAsStream("");
-        assertThat(resource, notNullValue());
-        var parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-    /** Text should be read successfully from a valid file
-     * @throws ParserException if the file can not be read*/
-    @Test
-    void readsTextFromValidFile() throws ParserException {
-        InputStream resource = getClass().getResourceAsStream("airline-flight-info.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        String content = parser.readText();
-        assertNotNull(content);
-    }
-
-    /** Parser object cannot be created if reader is null
-     */
-    @Test
-    void throwsExceptionIfReaderIsNull() {
-        TextParser parser = new TextParser(null);
-        assertThrows(NullPointerException.class, parser::readText);
-    }
-
-    @Test
-    void invalidDepartureAirportCode(@TempDir File dir) throws IOException {
-        File tempFile = new File(dir, "child.txt");
-        TextDumper dumper = new TextDumper(new FileWriter(tempFile));
-        Airline airline = new Airline("Sample Airline");
-        Flight f1 = new Flight(648, "123", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
-        Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
-        airline.addFlight(f1);
-        airline.addFlight(f2);
-        dumper.dump(airline);
-
-        TextParser parser = new TextParser(new FileReader(tempFile));
-        assertThrows(ParserException.class, parser::parse);
-    }
-    @Test
-    void invalidArrivalAirportCode(@TempDir File dir) throws IOException {
-        File tempFile = new File(dir, "child.txt");
-        TextDumper dumper = new TextDumper(new FileWriter(tempFile));
-        Airline airline = new Airline("Sample Airline");
-        Flight f1 = new Flight(648, "ABQ", "123", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
-        Flight f2 = new Flight(648, "ABQ", "SFO", DateHelper.stringToDate("3/3/2020 05:40 am"), DateHelper.stringToDate("3/3/2020 05:40 pm"));
-        airline.addFlight(f1);
-        airline.addFlight(f2);
-        dumper.dump(airline);
-
-        TextParser parser = new TextParser(new FileReader(tempFile));
-        assertThrows(ParserException.class, parser::parse);
-    }
-
-    /** Airline should not be returned if file contains invalid time duration*/
-    @Test
-    void invalidFlightDuration() {
-        InputStream resource = getClass().getResourceAsStream("invalid-flight-duration.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-
-    /** Airline should not be returned if file contains invalid time duration*/
-    @Test
-    void invalidTime(){
-        InputStream resource = getClass().getResourceAsStream("invalid-flight-time.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-
-    /** Airline should not be returned if file contains departure invalid airport code*/
-    @Test
-    void invalidDepartureAirportCode(){
-        InputStream resource = getClass().getResourceAsStream("invalid-departure-airport-code.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-
-    /** Airline should not be returned if file contains invalid airport code*/
-    @Test
-    void invalidArrivalAirportCode(){
-        InputStream resource = getClass().getResourceAsStream("invalid-arrival-airport-code.txt");
-        assertThat(resource, notNullValue());
-        TextParser parser = new TextParser(new InputStreamReader(resource));
-        assertThrows(ParserException.class, parser::parse);
-    }
-
 }
 
 

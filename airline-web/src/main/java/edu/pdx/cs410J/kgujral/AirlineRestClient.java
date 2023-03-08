@@ -47,45 +47,27 @@ public class AirlineRestClient
     * @throws ParserException when the airline info cannot be parsed
     * @throws IOException when the file cannot be accessed
     * */
-  public Airline getAllFlights() throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
+  public Airline getAllFlights(String airlineName) throws IOException, ParserException {
+      Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
+      if(response == null || response.getContent() == null)
+          return null;
+      throwExceptionIfNotOkayHttpStatus(response);
 
-    TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return parser.parse();
-  }
-
-
-  /** Returns all flights with a given src
-   * @throws ParserException when the airline info cannot be parsed
-   * @throws IOException when the file cannot be accessed
-   * */
-  public Collection<Flight> getFlightsBySrc(String src) throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
-    String content = response.getContent();
-
-    TextParser parser = new TextParser(new StringReader(content));
-    Airline airline = parser.parse();
-    Collection<Flight> flights = new ArrayList<>();
-      for (var flight : airline.getFlights()) {
-          if(flight.getSource().equals(src)){
-              flights.add(flight);
-          }
-      }
-      return flights;
+      TextParser parser = new TextParser(new StringReader(response.getContent()));
+      return parser.parse();
   }
 
   /** Returns all flights with a given src and dest
    * @throws ParserException when the airline info cannot be parsed
    * @throws IOException when the file cannot be accessed
    * */
-  public Collection<Flight> getFlightsBySrcAndDest(String src, String dest) throws IOException, ParserException{
-      Response response = http.get(Map.of());
+  public Collection<Flight> getFlightsBySrcAndDest(String airlineName, String src, String dest) throws IOException, ParserException{
+      Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
+      if(response == null || response.getContent() == null)
+          return null;
       throwExceptionIfNotOkayHttpStatus(response);
-      String content = response.getContent();
 
-      TextParser parser = new TextParser(new StringReader(content));
+      TextParser parser = new TextParser(new StringReader(response.getContent()));
       Airline airline = parser.parse();
       Collection<Flight> flights = new ArrayList<>();
       for (var flight : airline.getFlights()) {
@@ -96,14 +78,12 @@ public class AirlineRestClient
       return flights;
   }
 
-  public void addDictionaryEntry(String word, String definition) throws IOException {
-    Response response = http.post(Map.of(AirlineServlet.WORD_PARAMETER, word, AirlineServlet.DEFINITION_PARAMETER, definition));
-    throwExceptionIfNotOkayHttpStatus(response);
-  }
-
-  public void removeAllDictionaryEntries() throws IOException {
-    Response response = http.delete(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
+  public void addFlight(String airline, Flight flight) throws IOException {
+      Response response = http.post(Map.of(AirlineServlet.AIRLINE_NAME, airline,
+              AirlineServlet.FLIGHT_NUM, String.valueOf(flight.getNumber()),
+              AirlineServlet.SRC, flight.getSource(), AirlineServlet.DEST, flight.getDestination(),
+              AirlineServlet.DEPART, flight.getDepartureString(), AirlineServlet.ARRIVE, flight.getArrivalString()));
+      throwExceptionIfNotOkayHttpStatus(response);
   }
 
   private void throwExceptionIfNotOkayHttpStatus(Response response) {

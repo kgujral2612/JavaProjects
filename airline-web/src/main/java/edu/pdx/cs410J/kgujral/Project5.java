@@ -64,9 +64,13 @@ public class Project5 {
             }
             else if(arg.equals(searchOp)){
                 shouldSearch = true;
-                // either searchOp is succeeded by the Airline name
-                // or it is succeeded by Airline name, src and dest airport codes
-                searchAirlineName = args[++i];
+            }
+            else if(shouldSearch && searchAirlineName== null){
+                searchAirlineName = arg;
+                if(!ValidationHelper.isValidAirlineName(searchAirlineName)){
+                    System.err.println(Messages.invalidArg("Airline Name for searching", airlineName, "A non-empty String. eg: British Airways"));
+                    return;
+                }
             }
             else if(shouldSearch && searchSrc==null){
                 searchSrc = arg;
@@ -220,9 +224,14 @@ public class Project5 {
                 }
                 try{
                     Airline airlineFromClient = new Airline(searchAirlineName);
+                    Airline airlineFromRestClient = client.getAllFlights(searchAirlineName);
+                    if(airlineFromRestClient == null){
+                        System.out.println(Messages.noAirline(searchAirlineName));
+                        return;
+                    }
                     Collection<Flight> flights = client.getFlightsBySrcAndDest(searchAirlineName, searchSrc, searchDest);
                     if(flights== null || flights.toArray().length == 0){
-                        System.out.println(Messages.noFlights(searchSrc, searchDest));
+                        System.out.println(Messages.noFlights(searchSrc, searchDest, searchAirlineName));
                         return;
                     }
                     for(var flight: flights){

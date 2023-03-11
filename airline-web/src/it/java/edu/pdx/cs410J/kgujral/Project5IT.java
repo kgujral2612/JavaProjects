@@ -212,7 +212,7 @@ class Project5IT extends InvokeMainTestCase {
         result = invokeMain( Project5.class, args);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-        assertThat(result.getTextWrittenToStandardOut(), containsString(Messages.noFlights("BOM", "BJX")));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(Messages.noFlights("BOM", "BJX", "Test Airline")));
     }
 
     /** Should search by airline
@@ -248,11 +248,16 @@ class Project5IT extends InvokeMainTestCase {
     /**When no airline is on the server, an error message should be issued for the user*/
     @Test
     void shouldIssueErrorWhenAirlineInfoIsNotOnServer(){
-        String[] args = new String[]{"-host", "localhost", "-port", "8080", "-search", "TestAirway"};
+        String[] args = new String[]{"-host", "localhost", "-port", "8080", "-search", "Test Airway"};
         var result = invokeMain( Project5.class, args);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-        assertThat(result.getTextWrittenToStandardOut(), containsString("No airline information is stored on the server"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("The airline Test Airway is not present on the server"));
+
+        args = new String[]{"-search","-host", "localhost", "-port", "8080", "Test Airway", "PDX", "SFO"};
+        result = invokeMain( Project5.class, args);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("The airline Test Airway is not present on the server"));
     }
 
     /**When airline name mismatches, a message should be issued */
@@ -276,10 +281,10 @@ class Project5IT extends InvokeMainTestCase {
         airline.addFlight(flight);
         invokeMain( Project5.class, args);
 
-        args = new String[]{"-host", "localhost", "-port", "8080", "-search", "TestAirway"};
+        args = new String[]{"-host", "localhost", "-search", "-port", "8080", "TestAirway"};
         MainMethodResult result = invokeMain( Project5.class, args);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-        assertThat(result.getTextWrittenToStandardOut(), containsString("Invalid argument Airline Name . Given: TestAirway | Expected: Test Airline\n"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("The airline stored on the server is different from what you provided. Given: TestAirway | Expected: Test Airline\n"));
     }
 }

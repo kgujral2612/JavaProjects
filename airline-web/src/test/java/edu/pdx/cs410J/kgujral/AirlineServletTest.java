@@ -78,7 +78,7 @@ class AirlineServletTest {
 
     servlet.doGet(request, response);
 
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
     assertThat(stringWriter.toString(), equalTo("No airline information is stored on the server.\n"));
   }
 
@@ -154,7 +154,7 @@ class AirlineServletTest {
     //get info
     servlet.doGet(request, response);
 
-    assertThat(stringWriter.toString(), containsString("Invalid argument Airline Name . Given: BOGUS AIRLINE | Expected: TEST AIRLINE"));
+    assertThat(stringWriter.toString(), containsString("The airline stored on the server is different from what you provided. Given: BOGUS AIRLINE | Expected: TEST AIRLINE"));
   }
 
 }

@@ -16,6 +16,11 @@ public class Messages
         return String.format("Invalid argument %s . Given: %s | Expected: %s", argName, given, expected );
     }
 
+    public static String serverAirlineMismatch(String given, String expected )
+    {
+        return String.format("The airline stored on the server is different from what you provided. Given: %s | Expected: %s", given, expected );
+    }
+
     public static  String extraneousArg(){
         return "Extraneous Arguments provided!";
     }
@@ -33,8 +38,8 @@ public class Messages
         return "All airline information has been deleted";
     }
 
-    public static String noFlights(String src, String dest){
-        return String.format("No flights were found from %s to %s", src, dest);
+    public static String noFlights(String src, String dest, String airline){
+        return String.format("No flights were found from %s to %s for the airline %s", src, dest, airline);
     }
 
     public static String noAirline(String airline){

@@ -39,12 +39,11 @@ public class AirlineServlet extends HttpServlet {
 
       String airline = getParameter(AIRLINE_NAME, request);
       if(this.airline == null){
-          writeMessage(response, "No airline information is stored on the server.");
+          writeMessageError(response, "No airline information is stored on the server.");
           return;
       }
       if(!this.airline.getName().equals(airline)){
-          writeMessage(response, Messages.invalidArg(
-                  "Airline Name", airline, this.airline.getName()));
+          writeMessage(response, Messages.serverAirlineMismatch(airline, this.airline.getName()));
           return;
       }
 
@@ -159,10 +158,18 @@ public class AirlineServlet extends HttpServlet {
       response.setStatus( HttpServletResponse.SC_OK );
   }
 
+  /** Writes a message and returns successful https code*/
   private void writeMessage(HttpServletResponse response, String message) throws IOException {
       PrintWriter pw = response.getWriter();
       pw.println(message);
       response.setStatus( HttpServletResponse.SC_OK );
+  }
+
+  /** Writes a message and returns unsuccessful https code*/
+  private void writeMessageError(HttpServletResponse response, String message) throws IOException {
+        PrintWriter pw = response.getWriter();
+        pw.println(message);
+        response.setStatus( HttpServletResponse.SC_NOT_FOUND );
   }
   /**
    * Returns the value of the HTTP request parameter with the given name.

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
 import static edu.pdx.cs410J.web.HttpRequestHelper.RestException;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -49,8 +50,9 @@ public class AirlineRestClient
     * */
   public Airline getAllFlights(String airlineName) throws IOException, ParserException {
       Response response = http.get(Map.of(AirlineServlet.AIRLINE_NAME, airlineName));
-      if(response == null || response.getContent() == null)
+      if(response.getHttpStatusCode() == HTTP_NOT_FOUND || response == null || response.getContent() == null){
           return null;
+      }
       throwExceptionIfNotOkayHttpStatus(response);
 
       TextParser parser = new TextParser(new StringReader(response.getContent()));

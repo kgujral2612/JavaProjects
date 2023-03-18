@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Airline</string>
+    <string name="add_airline_or_flight">Press to add new airlines or flights</string>
+</resources>

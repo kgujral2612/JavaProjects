@@ -3,4 +3,15 @@
     <string name="add_airline_or_flight">Press to add new airlines or flights</string>
     <string name="project_6">Project 6</string>
     <string name="search_hint">Search for an airline or a flight</string>
+    <string name="add_btn_desc">This button adds new airline or flight information.</string>
+
+    <string name="airline_name_eg">Alaska Airlines</string>
+    <string name="flight_num_eg">6897</string>
+    <string name="src_eg">SFO</string>
+    <string name="dest_eg">PDX</string>
+    <string name="departure_eg">2/2/2020</string>
+    <string name="arrival_eg">3/3/2020</string>
+    <string name="add_airline_flight_info">Add Airline/Flight Info</string>
+    <string name="airline_name">Airline Name</string>
+
 </resources>

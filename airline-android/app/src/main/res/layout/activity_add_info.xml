@@ -6,11 +6,231 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Flight"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:minHeight="290dp"
+        android:minWidth="380dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/add_airline_flight_info"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginVertical="10dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/airlineNameIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/airline_name"
+                    android:textSize="18sp"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/airlineNameTxt"/>
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/airline_name_eg"
+                    android:textColorHint="@color/gray"
+                    android:labelFor="@+id/airlineNameTxt"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="5dp"
+                    >
+                </EditText>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/flightNumberIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Flight Number"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/flightNumberTxt"
+                    android:textSize="18sp"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/flight_num_eg"
+                    android:textColorHint="@color/gray"
+                    android:labelFor="@+id/flightNumberTxt"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:inputType="numberDecimal"
+                    >
+                </EditText>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/srcIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Source Airport"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/srcTxt"
+                    android:textSize="18sp"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/src_eg"
+                    android:labelFor="@+id/srcTxt"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:textColorHint="@color/gray"
+                    >
+                </EditText>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/destIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Destination Airport"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/destTxt"
+                    android:textSize="18sp"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:labelFor="@+id/destTxt"
+                    android:hint="@string/dest_eg"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:textColorHint="@color/gray"
+                    >
+                </EditText>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/departureIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Departure Time"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/departureTxt"
+                    android:textSize="18sp"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/departure_eg"
+                    android:labelFor="@+id/departureTxt"
+                    android:minHeight="48dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:textColorHint="@color/gray"
+                    >
+                </EditText>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/arrivalIp"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arrival Time"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/arrivalTxt"
+                    android:textSize="18sp"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:hint="@string/arrival_eg"
+                    android:labelFor="@+id/arrivalTxt"
+                    android:minHeight="48dp"
+                    android:textColorHint="@color/gray"
+                    >
+                </EditText>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginVertical="5dp"
+                >
+                <Button
+                    android:layout_width="130sp"
+                    android:layout_height="70sp"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"
+                    android:text="Add"
+                    android:backgroundTint="@color/colorAccent"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:minHeight="48dp"
+                    android:contentDescription="@string/add_btn_desc"
+                    />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

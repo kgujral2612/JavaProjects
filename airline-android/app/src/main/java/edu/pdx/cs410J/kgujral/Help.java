@@ -6,8 +6,14 @@ import androidx.core.content.ContextCompat;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ListView;
+
+import edu.pdx.cs410J.kgujral.databinding.ActivityMainBinding;
 
 public class Help extends AppCompatActivity {
+
+    private ListView listView;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +28,19 @@ public class Help extends AppCompatActivity {
 
         // call menu handler
         menuHandler();
+
+        listView = findViewById(R.id.help_topic_list);
+
+        // initialize custom adapter
+        createCustomAdapter();
+    }
+
+    private void createCustomAdapter() {
+
+        HelpTopic[] helpTopics = HelpTopicHelper.getHelpTopics();
+        HelpListAdapter helpListAdapter = new HelpListAdapter(this,  helpTopics);
+        listView.setAdapter(helpListAdapter);
+        listView.setClickable(true);
     }
 
     private void menuHandler() {

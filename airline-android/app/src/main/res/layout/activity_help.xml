@@ -10,9 +10,19 @@
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
         android:textSize="34sp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="30dp"
         android:text="@string/help"/>
 
 
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginHorizontal="10dp"
+        android:id="@+id/help_topic_list"
+        >
+    </ListView>
 
     <include layout="@layout/menu" />
 </RelativeLayout>

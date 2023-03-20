@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         >
 
@@ -17,6 +17,8 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="30dp"
             android:fontFamily="sans-serif"
             android:text="@string/project_6"
             android:textAlignment="viewStart"
@@ -25,7 +27,8 @@
         <androidx.appcompat.widget.SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="2dp"
+            android:layout_marginVertical="5dp"
+            android:textAlignment="textStart"
             app:queryHint="@string/search_hint"
             android:id="@+id/search_bar"
             app:iconifiedByDefault="false"

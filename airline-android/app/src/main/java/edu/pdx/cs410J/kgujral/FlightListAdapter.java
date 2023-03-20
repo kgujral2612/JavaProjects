@@ -30,17 +30,15 @@ public class FlightListAdapter extends ArrayAdapter<Flight> {
         TextView flightDest = convertView.findViewById(R.id.destDisplay);
         TextView flightDepart = convertView.findViewById(R.id.departureDisplay);
         TextView flightArrive = convertView.findViewById(R.id.arrivalDisplay);
+        TextView flightDuration = convertView.findViewById(R.id.totalDurationDisplay);
 
         flightNum.setText(Integer.toString(flight.getNumber()));
-        flightSrc.setText(flight.getSource());
-        flightDest.setText(flight.getDestination());
-        flightDepart.setText(flight.getDepartureString());
-        flightArrive.setText(flight.getArrivalString());
+        flightSrc.setText(PrettyHelper.prettyAirportName(flight.getSource()));
+        flightDest.setText(PrettyHelper.prettyAirportName(flight.getDestination()));
+        flightDepart.setText(PrettyHelper.prettyDate(flight.getDeparture()));
+        flightArrive.setText(PrettyHelper.prettyDate(flight.getArrival()));
+        flightDuration.setText(PrettyHelper.prettyDuration(flight.getArrival(), flight.getDeparture()));
 
         return convertView;
-    }
-
-    public Flight getItemAtPosition(int position){
-        return getItem(position);
     }
 }

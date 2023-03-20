@@ -58,7 +58,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Source Airport"
+                    android:text="From"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:textSize="18sp"
@@ -85,7 +85,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destination Airport"
+                    android:text="To"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:textSize="18sp"
@@ -112,7 +112,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Departure Time"
+                    android:text="Departs at"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:textSize="18sp"
@@ -140,7 +140,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Arrival Time"
+                    android:text="Arrives at"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:textSize="18sp"
@@ -153,6 +153,33 @@
                     android:layout_weight="1"
                     android:hint="@string/arrival_eg"
                     android:id="@+id/arrivalDisplay"
+                    android:minHeight="48dp"
+                    android:textColorHint="@color/gray"
+                    >
+                </TextView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginVertical="5dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arrives at"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:hint="@string/duration_eg"
+                    android:id="@+id/totalDurationDisplay"
                     android:minHeight="48dp"
                     android:textColorHint="@color/gray"
                     >

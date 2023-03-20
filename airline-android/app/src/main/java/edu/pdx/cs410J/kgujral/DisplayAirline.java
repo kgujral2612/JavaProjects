@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import edu.pdx.cs410J.kgujral.databinding.ActivityMainBinding;
 
@@ -34,13 +35,17 @@ public class DisplayAirline extends AppCompatActivity {
         // get the airline which needs to be displayed
         Airline airline = getAirline();
 
+        // sort all flights in the airline
+        ArrayList<Flight> flights = (ArrayList<Flight>) airline.getFlights();
+        Collections.sort(flights);
+
         // set airline name on the display page
         setAirlineName(airline);
 
         listView = findViewById(R.id.flight_list);
 
         // initialize custom adapter
-        createCustomAdapter(airline);
+        createCustomAdapter(flights);
 
     }
 
@@ -48,8 +53,8 @@ public class DisplayAirline extends AppCompatActivity {
         MenuHandler menuHandler = new MenuHandler(this);
         menuHandler.buttonActions();
     }
-    private void createCustomAdapter(Airline airline) {
-        FlightListAdapter flightListAdapter = new FlightListAdapter(this, (ArrayList<Flight>) airline.getFlights());
+    private void createCustomAdapter(ArrayList<Flight> flights) {
+        FlightListAdapter flightListAdapter = new FlightListAdapter(this, flights);
         listView.setAdapter(flightListAdapter);
         listView.setClickable(false);
     }

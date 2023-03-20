@@ -1,10 +1,11 @@
 package edu.pdx.cs410J.kgujral;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * The Flight class
  * */
-public class Flight implements Comparable<Flight> {
+public class Flight implements Comparable<Flight>, Serializable {
     /** The flight number */
     private final int number;
     /** The flight departure airport code */

@@ -34,7 +34,10 @@ public class ListAdapter  extends ArrayAdapter<Airline> {
         airlineName.setText(airline.getName());
         flightCount.setText(airline.getFlights().toArray().length + " flights");
 
-
         return convertView;
+    }
+
+    public Airline getItemAtPosition(int position){
+        return getItem(position);
     }
 }

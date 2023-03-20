@@ -1,12 +1,13 @@
 package edu.pdx.cs410J.kgujral;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * The Airline class
  * */
-public class Airline{
+public class Airline implements Serializable {
     /** The airline name */
     private final String name;
     /** The collection of flights inside an airline*/

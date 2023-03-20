@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 public class FlightListAdapter extends ArrayAdapter<Flight> {
 
-    public FlightListAdapter(@NonNull Context context, ArrayList<Flight> userArrayList) {
-        super(context, R.layout.list_item, userArrayList);
+    public FlightListAdapter(@NonNull Context context, ArrayList<Flight> flights) {
+        super(context, R.layout.flight_info, flights);
     }
 
     @NonNull
@@ -22,7 +22,7 @@ public class FlightListAdapter extends ArrayAdapter<Flight> {
 
         Flight flight = getItem(position);
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.flight_info, parent, false);
         }
 
         TextView flightNum = convertView.findViewById(R.id.flightNumberDisplay);
@@ -31,12 +31,16 @@ public class FlightListAdapter extends ArrayAdapter<Flight> {
         TextView flightDepart = convertView.findViewById(R.id.departureDisplay);
         TextView flightArrive = convertView.findViewById(R.id.arrivalDisplay);
 
-        flightNum.setText(flight.getNumber());
+        flightNum.setText(Integer.toString(flight.getNumber()));
         flightSrc.setText(flight.getSource());
         flightDest.setText(flight.getDestination());
         flightDepart.setText(flight.getDepartureString());
         flightArrive.setText(flight.getArrivalString());
 
         return convertView;
+    }
+
+    public Flight getItemAtPosition(int position){
+        return getItem(position);
     }
 }

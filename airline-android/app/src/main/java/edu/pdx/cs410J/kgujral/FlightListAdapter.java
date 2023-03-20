@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class FlightListAdapter extends ArrayAdapter<Flight> {
 
     public FlightListAdapter(@NonNull Context context, ArrayList<Flight> flights) {
-        super(context, R.layout.flight_info, flights);
+        super(context, R.layout.flight_info_item, flights);
     }
 
     @NonNull
@@ -22,7 +22,7 @@ public class FlightListAdapter extends ArrayAdapter<Flight> {
 
         Flight flight = getItem(position);
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.flight_info, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.flight_info_item, parent, false);
         }
 
         TextView flightNum = convertView.findViewById(R.id.flightNumberDisplay);

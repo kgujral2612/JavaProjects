@@ -16,7 +16,7 @@ public class AirlineListAdapter extends ArrayAdapter<Airline> {
 
 
     public AirlineListAdapter(@NonNull Context context, ArrayList<Airline> userArrayList) {
-        super(context, R.layout.airline_list, userArrayList);
+        super(context, R.layout.airline_list_item, userArrayList);
     }
 
     @NonNull
@@ -25,7 +25,7 @@ public class AirlineListAdapter extends ArrayAdapter<Airline> {
 
         Airline airline = getItem(position);
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.airline_list, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.airline_list_item, parent, false);
         }
 
         TextView airlineName = convertView.findViewById(R.id.airlineName);

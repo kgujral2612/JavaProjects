@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_main);
-        //setContentView(binding.getRoot());
 
         // Hide the Action Bar
         getSupportActionBar().hide();
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.add_button);
         addBtn.setOnClickListener(view -> openAddAirline());
 
+        // To do: must search by airline/flight src/number
         // Search View
         searchView = findViewById(R.id.search_bar);
 
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         createCustomAdapter();
 
+        /*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.arrayAdapter.getFilter().filter(newText);
                 return false;
             }
-        });
+        });*/
     }
 
     private void createCustomAdapter() {
@@ -78,17 +79,6 @@ public class MainActivity extends AppCompatActivity {
         //listView.setOnItemClickListener((parent, view, position, id) -> {
           //  Toast.makeText(MainActivity.this, "You clicked" + listAdapter.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
         //});
-    }
-
-    private void initList() {
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nameList);
-        listView.setAdapter(arrayAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this, "You clicked" + adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void changeStatusBarColor(){

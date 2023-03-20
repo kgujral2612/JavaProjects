@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         // Change the color of the status bar
         changeStatusBarColor();
 
+        // call menu handler
+        menuHandler();
+
         // Add intent to the button
         addBtn = findViewById(R.id.add_button);
         addBtn.setOnClickListener(view -> openAddAirline());
@@ -62,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });*/
+    }
+
+    private void menuHandler() {
+        MenuHandler menuHandler = new MenuHandler(this);
+        menuHandler.buttonActions();
     }
 
     private void createCustomAdapter() {

@@ -28,6 +28,9 @@ public class DisplayAirline extends AppCompatActivity {
         // Change the color of the status bar
         changeStatusBarColor();
 
+        // call menu handler
+        menuHandler();
+
         // get the airline which needs to be displayed
         Airline airline = getAirline();
 
@@ -41,6 +44,10 @@ public class DisplayAirline extends AppCompatActivity {
 
     }
 
+    private void menuHandler() {
+        MenuHandler menuHandler = new MenuHandler(this);
+        menuHandler.buttonActions();
+    }
     private void createCustomAdapter(Airline airline) {
         FlightListAdapter flightListAdapter = new FlightListAdapter(this, (ArrayList<Flight>) airline.getFlights());
         listView.setAdapter(flightListAdapter);

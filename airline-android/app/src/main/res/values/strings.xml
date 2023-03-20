@@ -13,5 +13,7 @@
     <string name="arrival_eg">3/3/2020</string>
     <string name="add_airline_flight_info">Add Airline/Flight Info</string>
     <string name="airline_name">Airline Name</string>
+    <string name="help_menu">Press to view help menu</string>
+    <string name="home">Press to return to home</string>
 
 </resources>

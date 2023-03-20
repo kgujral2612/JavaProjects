@@ -4,16 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class AddInfo extends AppCompatActivity {
+public class Help extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_info);
+        setContentView(R.layout.activity_help);
 
         // Hide the Action Bar
         getSupportActionBar().hide();

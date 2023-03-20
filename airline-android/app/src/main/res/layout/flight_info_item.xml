@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".DisplayAirline">
 
     <androidx.cardview.widget.CardView
@@ -11,14 +12,17 @@
         android:minHeight="290dp"
         android:minWidth="380dp"
         android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/light_gray"
+        android:background="@android:drawable/dialog_holo_light_frame"
         android:layout_marginTop="20dp"
+        app:cardElevation="10dp"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="5dp"
+            android:layout_margin="15dp"
             >
 
             <LinearLayout
@@ -41,11 +45,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/flight_num_eg"
-                    android:textColorHint="@color/gray"
                     android:id="@+id/flightNumberDisplay"
                     android:minHeight="48dp"
                     android:layout_marginHorizontal="5dp"
                     android:inputType="numberDecimal"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
             </LinearLayout>
@@ -72,7 +77,8 @@
                     android:id="@+id/srcDisplay"
                     android:minHeight="48dp"
                     android:layout_marginHorizontal="5dp"
-                    android:textColorHint="@color/gray"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
             </LinearLayout>
@@ -99,7 +105,8 @@
                     android:hint="@string/dest_eg"
                     android:minHeight="48dp"
                     android:layout_marginHorizontal="5dp"
-                    android:textColorHint="@color/gray"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
             </LinearLayout>
@@ -126,7 +133,8 @@
                     android:id="@+id/departureDisplay"
                     android:minHeight="48dp"
                     android:layout_marginHorizontal="5dp"
-                    android:textColorHint="@color/gray"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
 
@@ -154,7 +162,8 @@
                     android:hint="@string/arrival_eg"
                     android:id="@+id/arrivalDisplay"
                     android:minHeight="48dp"
-                    android:textColorHint="@color/gray"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
             </LinearLayout>
@@ -181,7 +190,8 @@
                     android:hint="@string/duration_eg"
                     android:id="@+id/totalDurationDisplay"
                     android:minHeight="48dp"
-                    android:textColorHint="@color/gray"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorAccent"
                     >
                 </TextView>
             </LinearLayout>

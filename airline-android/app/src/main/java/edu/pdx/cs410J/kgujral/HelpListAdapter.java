@@ -30,4 +30,6 @@ public class HelpListAdapter extends ArrayAdapter<HelpTopic> {
 
         return convertView;
     }
+
+    public HelpTopic getItemAtPosition(int position){ return getItem(position); }
 }

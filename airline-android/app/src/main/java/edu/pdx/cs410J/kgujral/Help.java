@@ -3,6 +3,7 @@ package edu.pdx.cs410J.kgujral;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,6 +42,12 @@ public class Help extends AppCompatActivity {
         HelpListAdapter helpListAdapter = new HelpListAdapter(this,  helpTopics);
         listView.setAdapter(helpListAdapter);
         listView.setClickable(true);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            HelpTopic helpTopic = helpListAdapter.getItemAtPosition(position);
+            Intent intent = new Intent(this, HelpContent.class);
+            intent.putExtra("helpTopic", helpTopic);
+            startActivity(intent);
+        });
     }
 
     private void menuHandler() {

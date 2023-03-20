@@ -16,5 +16,6 @@
     <string name="help_menu">Press to view help menu</string>
     <string name="home">Press to return to home</string>
     <string name="duration_eg">60 minutes.</string>
+    <string name="help">Help</string>
 
 </resources>

@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class ListAdapter  extends ArrayAdapter<Airline> {
+public class AirlineListAdapter extends ArrayAdapter<Airline> {
 
 
-    public ListAdapter(@NonNull Context context, ArrayList<Airline> userArrayList) {
-        super(context, R.layout.list_item, userArrayList);
+    public AirlineListAdapter(@NonNull Context context, ArrayList<Airline> userArrayList) {
+        super(context, R.layout.airline_list, userArrayList);
     }
 
     @NonNull
@@ -25,7 +25,7 @@ public class ListAdapter  extends ArrayAdapter<Airline> {
 
         Airline airline = getItem(position);
         if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.airline_list, parent, false);
         }
 
         TextView airlineName = convertView.findViewById(R.id.airlineName);

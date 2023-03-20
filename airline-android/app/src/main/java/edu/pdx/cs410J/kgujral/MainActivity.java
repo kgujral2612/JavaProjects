@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createCustomAdapter() {
-        ListAdapter listAdapter = new ListAdapter(MainActivity.this, getAirlines());
+        AirlineListAdapter listAdapter = new AirlineListAdapter(MainActivity.this, getAirlines());
         listView.setAdapter(listAdapter);
         listView.setClickable(true);
         listView.setOnItemClickListener((parent, view, position, id) -> {

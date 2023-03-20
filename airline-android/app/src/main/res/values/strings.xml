@@ -17,5 +17,6 @@
     <string name="home">Press to return to home</string>
     <string name="duration_eg">60 minutes.</string>
     <string name="help">Help</string>
+    <string name="internalStoragePath">persistentAirlines</string>
 
 </resources>

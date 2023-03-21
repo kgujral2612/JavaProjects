@@ -19,10 +19,12 @@ public class MenuHandler {
         FloatingActionButton addBtn = ((Activity) this.context).findViewById(R.id.add_button);
         FloatingActionButton homeBtn = ((Activity) this.context).findViewById(R.id.home_button);
         FloatingActionButton helpBtn = ((Activity) this.context).findViewById(R.id.help_button);
+        FloatingActionButton searchBtn = ((Activity)this.context).findViewById(R.id.search_btn);
 
         addBtn.setOnClickListener(view -> openScreen(AddInfo.class));
         homeBtn.setOnClickListener(view -> openScreen(MainActivity.class));
         helpBtn.setOnClickListener(view -> openScreen(Help.class));
+        searchBtn.setOnClickListener(view -> openScreen(SearchFlight.class));
     }
 
     private void openScreen(Class<?> screen) {

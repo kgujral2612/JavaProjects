@@ -4,7 +4,7 @@
     <string name="project_6">Project 6</string>
     <string name="search_hint">Search for an airline or a flight</string>
     <string name="add_btn_desc">This button adds new airline or flight information.</string>
-
+    <string name="search_btn_desc">This button searches for flights.</string>
     <string name="airline_name_eg">Alaska Airlines</string>
     <string name="flight_num_eg">6897</string>
     <string name="src_eg">SFO</string>
@@ -12,11 +12,13 @@
     <string name="departure_eg">2/24/2020 10:53 AM</string>
     <string name="arrival_eg">3/30/2020 01:33 PM</string>
     <string name="add_airline_flight_info">Add Airline/Flight Info</string>
+    <string name="search_flight">Search Flights</string>
     <string name="airline_name">Airline Name</string>
     <string name="help_menu">Press to view help menu</string>
     <string name="home">Press to return to home</string>
     <string name="duration_eg">60 minutes.</string>
     <string name="help">Help</string>
     <string name="internalStoragePath">persistentAirlines</string>
+    <string name="search_for_flights">Search for flights</string>
 
 </resources>

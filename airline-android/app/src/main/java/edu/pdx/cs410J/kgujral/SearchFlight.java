@@ -50,31 +50,38 @@ public class SearchFlight extends AppCompatActivity {
         String dest = ((EditText)findViewById(R.id.destTxtSearch)).getText().toString();
 
         if(airlineName.isEmpty()){
-            openDialog("Invalid Airline Name", String.format(invalidIp, "A non-empty String. eg: British Airways", "empty or null"));
+            openDialog("Missing Airline Name", String.format(invalidIp, "A non-empty String. eg: British Airways", "empty or null"));
             ((EditText)findViewById(R.id.airlineNameTxtIp)).setText("");
             return;
         }
+
+        if((src.isEmpty() && !dest.isEmpty()) || (!src.isEmpty() && dest.isEmpty())){
+            openDialog("Missing source or destination", "You should either provide both source and destination or none of the two");
+            ((EditText)findViewById(R.id.srcTxtSearch)).setText("");
+            ((EditText)findViewById(R.id.destTxtSearch)).setText("");
+            return;
+        }
+
         ArrayList<Airline> airlineArrayList = getAirlines();
         ArrayList<Flight> flightArrayList = new ArrayList<>();
+        boolean srcDestPresent = false;
+
         for(Airline airline: airlineArrayList){
             if(airline.getName().equalsIgnoreCase(airlineName)){
                 ArrayList<Flight> filteredFlights = new ArrayList<>();
-                if(!src.isEmpty()){
+                if(!src.isEmpty() && !dest.isEmpty()){
+                    srcDestPresent = true;
                     for(Flight flight: airline.getFlights()){
-                        if(flight.getSource().equalsIgnoreCase(src)){
+                        if(flight.getSource().equalsIgnoreCase(src) && flight.getDestination().equalsIgnoreCase(dest)){
                             filteredFlights.add(flight);
                         }
                     }
                 }
-                if(!dest.isEmpty()){
-                    for(Flight flight: airline.getFlights()){
-                        if(flight.getDestination().equalsIgnoreCase(src)){
-                            filteredFlights.add(flight);
-                        }
-                    }
-                }
-                if(filteredFlights.size()!=0) flightArrayList.addAll(filteredFlights);
-                else flightArrayList.addAll(airline.getFlights());
+
+                if(!srcDestPresent && filteredFlights.size()==0)
+                    flightArrayList.addAll(airline.getFlights());
+                else
+                    flightArrayList.addAll(filteredFlights);
             }
         }
 

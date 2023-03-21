@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,6 +55,7 @@ public class SearchFlight extends AppCompatActivity {
             return;
         }
         ArrayList<Airline> airlineArrayList = getAirlines();
+        ArrayList<Flight> flightArrayList = new ArrayList<>();
         for(Airline airline: airlineArrayList){
             if(airline.getName().equalsIgnoreCase(airlineName)){
                 ArrayList<Flight> filteredFlights = new ArrayList<>();
@@ -71,13 +73,30 @@ public class SearchFlight extends AppCompatActivity {
                         }
                     }
                 }
-                if(filteredFlights.size()!=0){
-                    airline.getFlights().removeAll(airline.getFlights());
-                    airline.getFlights().addAll(filteredFlights);
-                }
+                if(filteredFlights.size()!=0) flightArrayList.addAll(filteredFlights);
+                else flightArrayList.addAll(airline.getFlights());
             }
         }
 
+        if(flightArrayList.size() == 0){
+            Toast.makeText(this, "Could not find flights with the given query", Toast.LENGTH_SHORT).show();
+            resetInputs();
+            closeKeyboard();
+            return;
+        }
+        Airline tempAirline = new Airline("Search results");
+        for (Flight flight: flightArrayList) {
+            tempAirline.addFlight(flight);
+        }
+        Intent intent = new Intent(this, DisplayAirline.class);
+        intent.putExtra("airline", tempAirline);
+        startActivity(intent);
+    }
+
+    private void resetInputs() {
+        ((EditText)findViewById(R.id.airlineNameTxtSearch)).setText("");
+        ((EditText)findViewById(R.id.srcTxtSearch)).setText("");
+        ((EditText)findViewById(R.id.destTxtSearch)).setText("");
     }
 
     private ArrayList<Airline> getAirlines() {

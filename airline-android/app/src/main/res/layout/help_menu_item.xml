@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginVertical="20dp"
+    android:layout_marginVertical="30dp"
     >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="55dp"
+        android:minHeight="65dp"
         android:text="How to add information for a new flight"
         android:textColor="@color/black"
         android:id="@+id/help_topic"
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginVertical="3dp"
+        android:layout_centerVertical="true"
         android:src="@drawable/arrow_forward_ios_24"
         />
 

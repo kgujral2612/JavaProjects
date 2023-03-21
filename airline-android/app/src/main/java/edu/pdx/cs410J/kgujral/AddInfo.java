@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 
 public class AddInfo extends AppCompatActivity {
 
+    static String invalidIp = "Expected: %s | Given %s";
+    static String invalidFlightDur = "Arrival must occur after Departure. " +
+            "Given Arrival: %s, Departure: %s";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +38,11 @@ public class AddInfo extends AppCompatActivity {
         addButton();
     }
 
+    /**
+     * Reads the user input and performs validation
+     * Create an airline object and returns.
+     *
+     * */
     private Airline readForm() {
         String airlineName = ((EditText)findViewById(R.id.airlineNameTxtIp)).getText().toString();
         String flightNum = ((EditText)findViewById(R.id.flightNumberTxtIp)).getText().toString();
@@ -43,6 +52,57 @@ public class AddInfo extends AppCompatActivity {
         String arrival = ((EditText)findViewById(R.id.arrivalTxtIp)).getText().toString();
 
         // perform validations
+        // 1. airlineName
+        if(!ValidationHelper.isValidAirlineName(airlineName)) {
+            openDialog("Invalid Airline Name", String.format(invalidIp, "A non-empty String. eg: British Airways", "empty or null"));
+            ((EditText)findViewById(R.id.airlineNameTxtIp)).setText("");
+            return null;
+        }
+        // 2. flight number
+        if(!ValidationHelper.isValidFlightNumber(flightNum)){
+            if(flightNum == null || flightNum.isEmpty()) flightNum = "empty";
+            openDialog("Invalid Flight Number", String.format(invalidIp, "A whole number. eg: 6478", flightNum));
+            ((EditText)findViewById(R.id.flightNumberTxtIp)).setText("");
+            return null;
+        }
+        // 3. src
+        if(!ValidationHelper.isValidAirportCode(src) &&
+                !ValidationHelper.isValidAirportName(src)){
+            if(src == null || src.isEmpty()) src = "empty";
+            openDialog("Invalid Source", String.format(invalidIp, "A 3-letter real-world airport code. eg: PDX", src));
+            ((EditText)findViewById(R.id.srcTxtIp)).setText("");
+            return null;
+        }
+        // 4. dest
+        if(!ValidationHelper.isValidAirportCode(dest) &&
+                !ValidationHelper.isValidAirportName(dest)){
+            if(dest == null || dest.isEmpty()) dest = "empty";
+            openDialog("Invalid Destination", String.format(invalidIp, "A 3-letter real-world airport code. eg: PDX", dest));
+            ((EditText)findViewById(R.id.destTxtIp)).setText("");
+            return null;
+        }
+
+        // 5. departure
+        if(!ValidationHelper.isValidDateTime(departure)){
+            if(departure == null || departure.isEmpty()) departure = "empty";
+            openDialog("Invalid Departure Time", String.format(invalidIp, "A date in the format mm/dd/yyyy hh:mm. eg: 11/03/1997 11:30 PM", departure));
+            ((EditText)findViewById(R.id.departureTxtIp)).setText("");
+            return null;
+        }
+        // 6. Arrival
+        if(!ValidationHelper.isValidDateTime(arrival)){
+            if(arrival == null || arrival.isEmpty()) arrival = "empty";
+            openDialog("Invalid Arrival Time", String.format(invalidIp, "A date in the format mm/dd/yyyy hh:mm. eg: 11/04/1997 10:15 AM", arrival));
+            ((EditText)findViewById(R.id.arrivalTxtIp)).setText("");
+            return null;
+        }
+        // 6. Flight Duration
+        if(!ValidationHelper.isValidFlightDuration(departure, arrival)){
+            openDialog("Invalid Flight Duration", String.format(invalidFlightDur, arrival, departure));
+            ((EditText)findViewById(R.id.departureTxtIp)).setText("");
+            ((EditText)findViewById(R.id.arrivalTxtIp)).setText("");
+            return null;
+        }
 
         // create airline object
         Airline airline = new Airline(airlineName);
@@ -53,7 +113,19 @@ public class AddInfo extends AppCompatActivity {
         return airline;
     }
 
+    private void openDialog(String title, String message) {
+        ErrorDialog dialog = new ErrorDialog();
+        dialog.setTitle(title);
+        dialog.setMessage(message);
+        dialog.show(getSupportFragmentManager(), "Error dialog");
+    }
+
     private ArrayList<Airline> addAirline(ArrayList<Airline> airlines, Airline tempAirline){
+        if(tempAirline.getFlights().toArray().length == 0){
+            airlines.add(tempAirline);
+            return airlines;
+        }
+
         for (int i=0; i<airlines.size(); i++) {
             Airline airline = airlines.get(i);
             if(airline.getName().equals(tempAirline.getName())){
@@ -71,18 +143,30 @@ public class AddInfo extends AppCompatActivity {
         addBtn.setOnClickListener(x -> {
             // read the form
             Airline airline = readForm();
-            InternalStorageHelper internalStorageHelper = new InternalStorageHelper(getString(R.string.internalStoragePath), this);
+            if(airline != null){
+                InternalStorageHelper internalStorageHelper = new InternalStorageHelper(getString(R.string.internalStoragePath), this);
 
-            // get all airlines
-            ArrayList<Airline> airlineArrayList = internalStorageHelper.readFromFile();
-            if(airlineArrayList == null)
-                airlineArrayList = new ArrayList();
+                // get all airlines
+                ArrayList<Airline> airlineArrayList = internalStorageHelper.readFromFile();
+                if(airlineArrayList == null)
+                    airlineArrayList = new ArrayList();
 
-            // append the flight to the airline if it exists
-            airlineArrayList = addAirline(airlineArrayList, airline);
+                // append the flight to the airline if it exists
+                airlineArrayList = addAirline(airlineArrayList, airline);
 
-            // write to internal
-            internalStorageHelper.writeToFile(airlineArrayList);
+                // write to internal
+                internalStorageHelper.writeToFile(airlineArrayList);
+
+                // Toast
+                if(airline.getFlights().size() != 0){
+                    Toast.makeText(AddInfo.this, "Airline " + airline.getName() + " added successfully", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Flight flight = (Flight) airline.getFlights().toArray()[0];
+                    Toast.makeText(AddInfo.this, "Flight # " + Integer.toString(flight.getNumber()) +
+                            " to airline " + airline.getName() + " added successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 

@@ -14,9 +14,11 @@ import java.util.ArrayList;
 
 public class AirlineListAdapter extends ArrayAdapter<Airline> {
 
+    ArrayList<Airline> airlineArrayList;
 
     public AirlineListAdapter(@NonNull Context context, ArrayList<Airline> userArrayList) {
         super(context, R.layout.airline_list_item, userArrayList);
+        airlineArrayList = userArrayList;
     }
 
     @NonNull

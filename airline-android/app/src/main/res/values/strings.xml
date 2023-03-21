@@ -9,8 +9,8 @@
     <string name="flight_num_eg">6897</string>
     <string name="src_eg">SFO</string>
     <string name="dest_eg">PDX</string>
-    <string name="departure_eg">2/2/2020</string>
-    <string name="arrival_eg">3/3/2020</string>
+    <string name="departure_eg">2/24/2020 10:53 AM</string>
+    <string name="arrival_eg">3/30/2020 01:33 PM</string>
     <string name="add_airline_flight_info">Add Airline/Flight Info</string>
     <string name="airline_name">Airline Name</string>
     <string name="help_menu">Press to view help menu</string>

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private SearchView searchView;
     private ListView listView;
     ActivityMainBinding binding;
+    AirlineListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,29 +43,35 @@ public class MainActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.add_button);
         addBtn.setOnClickListener(view -> openAddAirline());
 
-        // To do: must search by airline/flight src/number
+        // To do: must search by airline/flight src/dest/number
         // Search View
         searchView = findViewById(R.id.search_bar);
 
         // List View
         listView = findViewById(R.id.list_items);
 
+        // custom adapter
         createCustomAdapter();
 
-        /*
+        // search query
+        customSearchView();
+    }
+
+    private void customSearchView() {
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                MainActivity.this.arrayAdapter.getFilter().filter(query);
+                MainActivity.this.listAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                MainActivity.this.arrayAdapter.getFilter().filter(newText);
+                MainActivity.this.listAdapter.getFilter().filter(newText);
                 return false;
             }
-        });*/
+        });
     }
 
     private void menuHandler() {
@@ -73,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createCustomAdapter() {
-        AirlineListAdapter listAdapter = new AirlineListAdapter(MainActivity.this, getAirlines());
+        listAdapter = new AirlineListAdapter(MainActivity.this, getAirlines());
         listView.setAdapter(listAdapter);
         listView.setClickable(true);
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -88,29 +95,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private ArrayList<Airline> getAirlines(){
-        String[] airlineNames = {"British Airways", "Indigo Airlines", "Kingfisher Airlines", "Qatar Airways", "Air India", "Singapore Airlines"};
-        Flight f1 = new Flight(1234, "SFO", "PDX", DateHelper.stringToDate("03/03/2020 6:00 am"), DateHelper.stringToDate("03/03/2020 9:00 am"));
-        Flight f2 = new Flight(4321, "BER", "PDX", DateHelper.stringToDate("03/03/2020 6:00 am"), DateHelper.stringToDate("03/03/2020 9:00 am"));
-        Flight f3 = new Flight(9230, "BOM", "DDL", DateHelper.stringToDate("03/03/2020 6:00 am"), DateHelper.stringToDate("03/03/2020 9:00 am"));
 
-        ArrayList<Airline> airlines = new ArrayList<>();
-        int i=0;
-        Airline airline = new Airline(airlineNames[i++]);
-        airline.addFlight(f1);
-        airline.addFlight(f2);
-        airlines.add(airline);
+        InternalStorageHelper internalStorageHelper = new InternalStorageHelper(getString(R.string.internalStoragePath), this);
+        ArrayList<Airline> airlines = internalStorageHelper.readFromFile();
 
-        airline = new Airline(airlineNames[i++]);
-        airlines.add(airline);
-
-        airline = new Airline(airlineNames[i++]);
-        airline.addFlight(f2);
-        airline.addFlight(f1);
-        airline.addFlight(f3);
-        airlines.add(airline);
-
-        airline = new Airline(airlineNames[i++]);
-        airlines.add(airline);
+        if(airlines == null)
+            airlines = new ArrayList<>();
 
         return airlines;
     }

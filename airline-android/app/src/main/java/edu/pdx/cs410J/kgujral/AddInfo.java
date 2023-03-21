@@ -3,12 +3,15 @@ package edu.pdx.cs410J.kgujral;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -58,6 +61,14 @@ public class AddInfo extends AppCompatActivity {
             ((EditText)findViewById(R.id.airlineNameTxtIp)).setText("");
             return null;
         }
+        // create airline object
+        Airline airline = new Airline(airlineName);
+
+        // allow for empty airline addition
+        if(flightNum.isEmpty() && src.isEmpty() && dest.isEmpty() && departure.isEmpty() && arrival.isEmpty()){
+            return  airline;
+        }
+
         // 2. flight number
         if(!ValidationHelper.isValidFlightNumber(flightNum)){
             if(flightNum == null || flightNum.isEmpty()) flightNum = "empty";
@@ -104,8 +115,6 @@ public class AddInfo extends AppCompatActivity {
             return null;
         }
 
-        // create airline object
-        Airline airline = new Airline(airlineName);
         airline.addFlight(new Flight(
                 Integer.parseInt(flightNum), src, dest,
                 DateHelper.stringToDate(departure),
@@ -158,7 +167,7 @@ public class AddInfo extends AppCompatActivity {
                 internalStorageHelper.writeToFile(airlineArrayList);
 
                 // Toast
-                if(airline.getFlights().size() != 0){
+                if(airline.getFlights().size() == 0){
                     Toast.makeText(AddInfo.this, "Airline " + airline.getName() + " added successfully", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -166,6 +175,10 @@ public class AddInfo extends AppCompatActivity {
                     Toast.makeText(AddInfo.this, "Flight # " + Integer.toString(flight.getNumber()) +
                             " to airline " + airline.getName() + " added successfully", Toast.LENGTH_SHORT).show();
                 }
+
+                resetInputFields();
+
+                closeKeyboard();
             }
         });
     }
@@ -179,5 +192,20 @@ public class AddInfo extends AppCompatActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+    }
+
+    private void resetInputFields(){
+        ((EditText)findViewById(R.id.airlineNameTxtIp)).setText("");
+        ((EditText)findViewById(R.id.flightNumberTxtIp)).setText("");
+        ((EditText)findViewById(R.id.srcTxtIp)).setText("");
+        ((EditText)findViewById(R.id.destTxtIp)).setText("");
+        ((EditText)findViewById(R.id.departureTxtIp)).setText("");
+        ((EditText)findViewById(R.id.arrivalTxtIp)).setText("");
+    }
+    private void closeKeyboard(){
+        RelativeLayout mainLayout;
+        mainLayout = findViewById(R.id.parentLayoutAdd);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), 0);
     }
 }

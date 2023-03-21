@@ -4,11 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -58,20 +63,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void customSearchView() {
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                MainActivity.this.listAdapter.getFilter().filter(query);
-                return false;
+                searchView.clearFocus();
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                MainActivity.this.listAdapter.getFilter().filter(newText);
-                return false;
+                if(newText.isEmpty()){
+                    listAdapter.filter("");
+                    listView.clearTextFilter();
+                }
+                listAdapter.filter(newText);
+                return true;
             }
         });
+        searchView.setOnCloseListener(() -> {
+            searchView.clearFocus();
+            closeKeyboard();
+            return false;
+        });
+
     }
 
     private void menuHandler() {
@@ -95,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private ArrayList<Airline> getAirlines(){
-
         InternalStorageHelper internalStorageHelper = new InternalStorageHelper(getString(R.string.internalStoragePath), this);
         ArrayList<Airline> airlines = internalStorageHelper.readFromFile();
 
@@ -109,5 +122,14 @@ public class MainActivity extends AppCompatActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+    }
+
+    private void closeKeyboard(){
+        View view = this.getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

@@ -3,6 +3,7 @@ package edu.pdx.cs410J.kgujral;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
@@ -32,21 +33,33 @@ public class DisplayAirline extends AppCompatActivity {
         // call menu handler
         menuHandler();
 
+        listView = findViewById(R.id.flight_list);
+
         // get the airline which needs to be displayed
         Airline airline = getAirline();
+        ArrayList<Flight> flights = (ArrayList<Flight>) airline.getFlights();
+
+        // display a message if the airline contains no flights
+        if(flights.isEmpty()) {
+            noFlightsMessage();
+            return;
+        }
 
         // sort all flights in the airline
-        ArrayList<Flight> flights = (ArrayList<Flight>) airline.getFlights();
         Collections.sort(flights);
 
         // set airline name on the display page
         setAirlineName(airline);
 
-        listView = findViewById(R.id.flight_list);
-
         // initialize custom adapter
         createCustomAdapter(flights);
 
+    }
+
+    private void noFlightsMessage() {
+        TextView noFlightsMsg = (TextView) findViewById(R.id.no_flight_msg);
+        noFlightsMsg.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.INVISIBLE);
     }
 
     private void menuHandler() {

@@ -20,5 +20,6 @@
     <string name="help">Help</string>
     <string name="internalStoragePath">persistentAirlines</string>
     <string name="search_for_flights">Search for flights</string>
+    <string name="no_flights_in_airline">This airline contains no flights. Please add new flight information by using the \'+\' button at the bottom.</string>
 
 </resources>

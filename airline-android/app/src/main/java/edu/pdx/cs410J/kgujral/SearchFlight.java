@@ -65,10 +65,13 @@ public class SearchFlight extends AppCompatActivity {
         ArrayList<Airline> airlineArrayList = getAirlines();
         ArrayList<Flight> flightArrayList = new ArrayList<>();
         boolean srcDestPresent = false;
+        boolean emptyAirline = false;
 
         for(Airline airline: airlineArrayList){
             if(airline.getName().equalsIgnoreCase(airlineName)){
                 ArrayList<Flight> filteredFlights = new ArrayList<>();
+                if(airline.getFlights().isEmpty())
+                    emptyAirline = true;
                 if(!src.isEmpty() && !dest.isEmpty()){
                     srcDestPresent = true;
                     for(Flight flight: airline.getFlights()){
@@ -78,6 +81,8 @@ public class SearchFlight extends AppCompatActivity {
                     }
                 }
 
+                if(emptyAirline && !srcDestPresent)
+                    continue;
                 if(!srcDestPresent && filteredFlights.size()==0)
                     flightArrayList.addAll(airline.getFlights());
                 else
@@ -85,7 +90,7 @@ public class SearchFlight extends AppCompatActivity {
             }
         }
 
-        if(flightArrayList.size() == 0){
+        if(flightArrayList.size() == 0 && !emptyAirline){
             Toast.makeText(this, "Could not find flights with the given query", Toast.LENGTH_SHORT).show();
             resetInputs();
             closeKeyboard();

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Help">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="viewStart"
+        android:textSize="34sp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="30dp"
+        android:text="@string/help"/>
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginHorizontal="10dp"
+        android:id="@+id/help_topic_list"
+        >
+    </ListView>
+
+    <include layout="@layout/menu" />
+</RelativeLayout>
